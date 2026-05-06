@@ -21,9 +21,13 @@ def init_db():
             CREATE TABLE IF NOT EXISTS news (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
-                content TEXT,
+                description TEXT,
+                image_url TEXT,
+                link_url TEXT,
+                button_text TEXT,
+                is_active INTEGER DEFAULT 1,
+                show_banner INTEGER DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-
         db.commit()
