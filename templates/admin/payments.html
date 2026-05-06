@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+{% block title %}To'lovlar — Admin{% endblock %}
+
+{% block content %}
+<style>
+  .pay-wrap *, .pay-wrap *::before, .pay-wrap *::after { box-sizing: border-box; }
+
+  .pay-wrap {
+    --p1: #6366f1;
+    --p1l: #eef2ff;
+    --green: #10b981;
+    --greenl: #d1fae5;
+    --yellow: #f59e0b;
+    --yellowl: #fef3c7;
+    --red: #ef4444;
+    --redl: #fef2f2;
+    --blue: #3b82f6;
+    --bluel: #eff6ff;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --text: #111827;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--text);
+  }
+
+  .pay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .pay-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .pay-header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--p1l);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--p1);
+    font-size: 18px;
+  }
+
+  .pay-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .pay-header-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .pay-pending-badge {
+    background: var(--yellowl);
+    color: var(--yellow);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .pay-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .pay-card-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .pay-card-title {
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .pay-table-wrap { overflow-x: auto; }
+
+  .pay-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .pay-table thead tr { background: var(--bg); }
+
+  .pay-table th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pay-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .pay-table tbody tr:last-child td { border-bottom: none; }
+  .pay-table tbody tr:hover { background: #fafafa; }
+
+  .pay-id { font-weight: 700; color: var(--p1); font-size: 12px; }
+  .pay-username { font-weight: 600; }
+  .pay-amount { font-weight: 700; color: var(--green); }
+
+  .pay-method {
+    background: var(--bluel);
+    color: var(--blue);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .pay-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .pay-status.pending   { background: var(--yellowl); color: var(--yellow); }
+  .pay-status.completed { background: var(--greenl);  color: var(--green); }
+  .pay-status.rejected  { background: var(--redl);    color: var(--red); }
+
+  .pay-receipt-thumb {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    background: var(--bg);
+    text-align: center;
+    line-height: 50px;
+    font-size: 18px;
+    color: var(--red);
+    text-decoration: none;
+  }
+  .pay-receipt-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pay-receipt-none {
+    display: inline-block;
+    color: var(--muted);
+    font-size: 11px;
+    font-style: italic;
+  }
+
+  .pay-time {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .pay-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .pay-btn {
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .pay-btn:hover { transform: translateY(-1px); }
+  .pay-btn.approve { background: var(--green); color: white; }
+  .pay-btn.reject  { background: var(--red); color: white; }
+  .pay-btn.upload  { background: var(--p1); color: white; }
+  .pay-btn.delete  { background: var(--bg); color: var(--red); border: 1px solid var(--redl); }
+
+  /* Modal */
+  .pay-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .pay-modal.show { display: flex; }
+  .pay-modal-content {
+    background: white;
+    border-radius: 14px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: auto;
+    padding: 20px;
+    position: relative;
+  }
+  .pay-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  .pay-modal img,
+  .pay-modal iframe {
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 14px;
+  }
+  .pay-modal iframe { height: 70vh; border: 1px solid var(--border); }
+
+  /* Toast */
+  .pay-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #111827;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.25s;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .pay-toast.show { opacity: 1; }
+</style>
+
+<div class="pay-wrap">
+
+  <div class="pay-header">
+    <div class="pay-header-left">
+      <div class="pay-header-icon"><i class="fas fa-wallet"></i></div>
+      <div>
+        <h1>To'lov cheklari</h1>
+        <div class="pay-header-sub">Foydalanuvchilar to'lovlarini boshqarish</div>
+      </div>
+    </div>
+    {% if pending_count %}
+    <div class="pay-pending-badge">
+      ⏳ {{ pending_count }} ta tasdiq kutmoqda
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="pay-card">
+    <div class="pay-card-head">
+      <div class="pay-card-title">Barcha to'lovlar</div>
+      <span style="font-size: 11px; color: var(--muted); font-weight: 600;">
+        {{ payments|length }} ta yozuv
+      </span>
+    </div>
+    <div class="pay-table-wrap">
+      <table class="pay-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Foydalanuvchi</th>
+            <th>Summa</th>
+            <th>Usul</th>
+            <th>Chek</th>
+            <th>Status</th>
+            <th>Vaqt</th>
+            <th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for p in payments %}
+          <tr>
+            <td><span class="pay-id">#{{ p.id }}</span></td>
+            <td><span class="pay-username">{{ p.username }}</span></td>
+            <td><span class="pay-amount">{{ "{:,.0f}".format(p.amount) }} so'm</span></td>
+            <td><span class="pay-method">{{ p.method }}</span></td>
+            <td>
+              {% if p.check_url %}
+                {% set ext = p.check_url.split('.')[-1].lower() %}
+                {% if ext == 'pdf' %}
+                  <a href="#" class="pay-receipt-thumb"
+                     onclick="showReceipt('{{ p.check_url }}', 'pdf'); return false;"
+                     title="PDF chekni ko'rish">📄</a>
+                {% else %}
+                  <a href="#" class="pay-receipt-thumb"
+                     onclick="showReceipt('{{ p.check_url }}', 'img'); return false;"
+                     title="Chekni ko'rish">
+                    <img src="{{ p.check_url }}" alt="chek">
+                  </a>
+                {% endif %}
+              {% else %}
+                <span class="pay-receipt-none">— Chek yo'q</span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="pay-status {{ p.status }}">{{ p.status }}</span>
+            </td>
+            <td><span class="pay-time">{{ p.created_at[:16] }}</span></td>
+            <td>
+              <div class="pay-actions">
+                {% if p.status == 'pending' %}
+                  <button class="pay-btn approve" onclick="confirmPay({{ p.id }})">
+                    <i class="fas fa-check"></i> Tasdiq
+                  </button>
+                  <button class="pay-btn reject" onclick="rejectPay({{ p.id }})">
+                    <i class="fas fa-times"></i> Rad
+                  </button>
+                {% endif %}
+
+                <button class="pay-btn upload" onclick="document.getElementById('upl-{{ p.id }}').click()">
+                  <i class="fas fa-upload"></i>
+                  {% if p.check_url %}Almashtirish{% else %}Chek+{% endif %}
+                </button>
+                <form method="POST" action="/admin/payments/{{ p.id }}/upload-receipt"
+                      enctype="multipart/form-data" style="display:none;" id="form-upl-{{ p.id }}">
+                  <input type="file" name="receipt" id="upl-{{ p.id }}"
+                         accept=".jpg,.jpeg,.png,.webp,.gif,.pdf"
+                         onchange="document.getElementById('form-upl-{{ p.id }}').submit()">
+                </form>
+
+                {% if p.check_url %}
+                  <button class="pay-btn delete" onclick="deleteReceipt({{ p.id }})" title="Chekni o'chirish">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="8" style="text-align:center; padding: 30px; color: var(--muted);">
+            Hozircha to'lovlar yo'q
+          </td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: chek ko'rish -->
+<div class="pay-modal" id="receiptModal" onclick="if(event.target===this) closeModal()">
+  <div class="pay-modal-content">
+    <button class="pay-modal-close" onclick="closeModal()">×</button>
+    <h3 style="margin: 0 0 4px;">Chek ko'rinishi</h3>
+    <div id="receiptBody"></div>
+  </div>
+</div>
+
+<div class="pay-toast" id="payToast">✓ Saqlandi</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showReceipt(url, type) {
+  const body = document.getElementById('receiptBody');
+  if (type === 'pdf') {
+    body.innerHTML = `<iframe src="${url}"></iframe>`;
+  } else {
+    body.innerHTML = `<img src="${url}" alt="chek">`;
+  }
+  document.getElementById('receiptModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('receiptModal').classList.remove('show');
+}
+
+function toast(msg) {
+  const t = document.getElementById('payToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+async function confirmPay(id) {
+  if (!confirm('Bu to\'lovni tasdiqlaysizmi?')) return;
+  const r = await fetch(`/admin/payments/${id}/confirm`, { method: 'POST' });
+  const d = await r.json();
+  if (d.ok) { toast('✅ Tasdiqlandi'); setTimeout(() => location.reload(), 800); }
+  else toast('❌ ' + (d.message || 'Xato'));
+}
+
+async function rejectPay(id) {
+  if (!confirm('To\'lovni rad etasizmi?')) return;
+  const r = await fetch(`/admin/payments/${id}/reject`, { method: 'POST' });
+  const d = await r.json();
+  if (d.ok) { toast('Rad etildi'); setTimeout(() => location.reload(), 800); }
+}
+
+async function deleteReceipt(id) {
+  if (!confirm('Chekni o\'chirasizmi?')) return;
+  const r = await fetch(`/admin/payments/${id}/delete-receipt`, { method: 'POST' });
+  const d = await r.json();
+  if (d.ok) { toast('🗑 O\'chirildi'); setTimeout(() => location.reload(), 800); }
+}
+</script>
+{% endblock %}
