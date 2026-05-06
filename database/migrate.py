@@ -9,7 +9,7 @@ def migrate():
     with sqlite3.connect(Config.DB_PATH) as db:
         cursor = db.cursor()
 
-        # ── asosiy schema (users, orders, etc.)
+        # ── asosiy schema
         db.executescript(SCHEMA)
 
         # ── seed data
@@ -43,7 +43,7 @@ def migrate():
             except Exception:
                 pass
 
-        # ── ADMIN SEED (faqat 1 marta)
+        # ── ADMIN SEED
         pw = hashlib.sha256(Config.ADMIN_PASS.encode()).hexdigest()
         key = secrets.token_hex(16)
         rc = secrets.token_hex(4).upper()
