@@ -1,4 +1,6 @@
 import sqlite3
+import hashlib
+import secrets
 from config import Config
 from database.models import SCHEMA, SEED
 
@@ -42,10 +44,6 @@ def migrate():
                 pass
 
         # ── ADMIN SEED (faqat 1 marta)
-        import hashlib, secrets
-
-        from config import Config
-
         pw = hashlib.sha256(Config.ADMIN_PASS.encode()).hexdigest()
         key = secrets.token_hex(16)
         rc = secrets.token_hex(4).upper()
