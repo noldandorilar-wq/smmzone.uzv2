@@ -200,5 +200,6 @@ if __name__ == "__main__":
     print(f"  Click:   {'ulangan' if Config.CLICK_MERCHANT else 'YOQ'}")
     print(f"  USDT:    {'ulangan' if Config.USDT_WALLET else 'YOQ'}")
     print("=" * 58)
-
+    with app.app_context():
+        init_db()
     app.run(debug=False, host="0.0.0.0", port=Config.PORT)
