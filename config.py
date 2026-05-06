@@ -1,7 +1,5 @@
 """
 config.py — Environment Variables'dan o'qiydi
-Lokal'da: .env fayl yoki to'g'ridan default qiymatlar
-Render'da: Environment Variables sozlamalaridan
 """
 import os
 
@@ -22,6 +20,9 @@ class Config:
     ADMIN_USER  = env("ADMIN_USER", "admin")
     ADMIN_PASS  = env("ADMIN_PASS", "admin")
     ADMIN_EMAIL = env("ADMIN_EMAIL", "admin@example.com")
+
+    # ── To'lov sozlamalari (SHUNI QO'SHDIK) ──
+    MIN_DEPOSIT = int(env("MIN_DEPOSIT", "5000"))  # Default 5000 so'm
 
     # ── 1xPanel Provider ──
     PROVIDER_URL = env("PROVIDER_URL", "https://1xpanel.com/api/v2")
