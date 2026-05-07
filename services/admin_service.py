@@ -5,6 +5,7 @@ from providers.smm_api1 import get_balance as provider_balance
 from services.order_service import sync_all_active
 from config import Config
 import time
+import os as _os
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -13,6 +14,7 @@ MARKUP        = 1.04
 
 # ── Cache ─────────────────────────────────────────────────────────────────────
 _cache = {}
+
 def cache_get(key):
     item = _cache.get(key)
     if item and time.time() - item["ts"] < 300:
@@ -68,53 +70,44 @@ def services():
     return render_template("admin/services.html", services=svcs, categories=cats)
 
 
-# ── ID BO'YICHA QIDIRISH (AJAX) ───────────────────────────────────────────────
 @admin_bp.route("/services/search-by-id", methods=["GET"])
 @admin_required
 def search_service_by_id():
-    """Provider ID bo'yicha xizmat ma'lumotlarini provayderdan olish"""
     provider_id = request.args.get("provider_id", "").strip()
     if not provider_id:
         return jsonify({"ok": False, "message": "ID kiriting"})
-
     import requests as _req
     try:
-        url  = f"{Config.PROVIDER_URL}?action=services&key={Config.PROVIDER_KEY}"
+        url    = f"{Config.PROVIDER_URL}?action=services&key={Config.PROVIDER_KEY}"
         cached = cache_get("all_services")
         if cached:
             all_svcs = cached
         else:
-            resp = _req.get(url, timeout=15)
+            resp     = _req.get(url, timeout=15)
             all_svcs = resp.json()
             cache_set("all_services", all_svcs)
-
         if not isinstance(all_svcs, list):
             return jsonify({"ok": False, "message": "Provider xatosi"})
-
-        # ID bo'yicha qidirish
         found = None
         for s in all_svcs:
             if str(s.get("service", "")) == str(provider_id):
                 found = s
                 break
-
         if not found:
             return jsonify({"ok": False, "message": f"ID {provider_id} topilmadi"})
-
         raw_rate       = float(found.get("rate", 0))
         price_per_1000 = round(raw_rate * CURRENCY_RATE * MARKUP, 2)
-
         return jsonify({
             "ok": True,
             "data": {
-                "provider_id":   found["service"],
-                "name":          found["name"],
-                "category":      found.get("category", ""),
-                "type":          found.get("type", "Default"),
+                "provider_id":    found["service"],
+                "name":           found["name"],
+                "category":       found.get("category", ""),
+                "type":           found.get("type", "Default"),
                 "price_per_1000": price_per_1000,
-                "min_order":     int(found.get("min", 10)),
-                "max_order":     int(found.get("max", 100000)),
-                "rate_usd":      raw_rate,
+                "min_order":      int(found.get("min", 10)),
+                "max_order":      int(found.get("max", 100000)),
+                "rate_usd":       raw_rate,
             }
         })
     except Exception as e:
@@ -161,7 +154,6 @@ def update_service(sid):
     return jsonify({"ok": True})
 
 
-# ── TAVSIYA ETILGAN XIZMATNI BELGILASH ───────────────────────────────────────
 @admin_bp.route("/services/<int:sid>/recommend", methods=["POST"])
 @admin_required
 def toggle_recommend(sid):
@@ -179,7 +171,6 @@ def toggle_recommend(sid):
 @admin_bp.route("/services/import", methods=["POST"])
 @admin_required
 def import_services():
-    """Provider dan xizmatlarni import qilish — avto ID, narx so'mda, 4% ustama"""
     import requests as _req
     try:
         url  = f"{Config.PROVIDER_URL}?action=services&key={Config.PROVIDER_KEY}"
@@ -188,19 +179,15 @@ def import_services():
     except Exception as e:
         flash(f"API xatosi: {e}", "error")
         return redirect(url_for("admin.services"))
-
     if not isinstance(svcs, list):
         flash("API noto'g'ri format qaytardi", "error")
         return redirect(url_for("admin.services"))
-
-    db    = get_db()
-    count = 0
+    db      = get_db()
+    count   = 0
     updated = 0
-
     for s in svcs:
         raw_rate       = float(s.get("rate", 0))
         price_per_1000 = round(raw_rate * CURRENCY_RATE * MARKUP, 2)
-
         cat_name = s.get("category", "Boshqa")
         cat = db.execute("SELECT id FROM categories WHERE name=?", (cat_name,)).fetchone()
         if not cat:
@@ -208,8 +195,6 @@ def import_services():
             cat_id = cur.lastrowid
         else:
             cat_id = cat["id"]
-
-        # provider_id = provayderning o'z ID si (avto saqlanadi)
         existing = db.execute("SELECT id FROM services WHERE provider_id=?", (str(s["service"]),)).fetchone()
         if existing:
             db.execute(
@@ -227,7 +212,6 @@ def import_services():
                  price_per_1000, int(s.get("min", 10)), int(s.get("max", 100000)))
             )
             count += 1
-
     db.commit()
     cache_clear()
     flash(f"✅ {count} yangi + {updated} yangilandi. Narxlar so'mda (4% ustama)", "success")
@@ -238,22 +222,28 @@ def import_services():
 @admin_bp.route("/users")
 @admin_required
 def users():
-    db = get_db()
-    q  = request.args.get("q", "")
+    db    = get_db()
+    q     = request.args.get("q", "")
     page  = max(1, int(request.args.get("page", 1)))
     limit = 50
     if q:
         rows = r2l(db.execute(
-            "SELECT u.*, (SELECT COUNT(*) FROM orders WHERE user_id=u.id) as order_count "
+            "SELECT u.*, "
+            "(SELECT COUNT(*) FROM orders WHERE user_id=u.id) as order_count, "
+            "(SELECT COALESCE(SUM(price),0) FROM orders WHERE user_id=u.id) as total_spent "
             "FROM users u WHERE username LIKE ? OR email LIKE ? "
             "ORDER BY created_at DESC LIMIT ? OFFSET ?",
             (f"%{q}%", f"%{q}%", limit, (page-1)*limit)
         ).fetchall())
-        total = db.execute("SELECT COUNT(*) FROM users WHERE username LIKE ? OR email LIKE ?",
-                           (f"%{q}%", f"%{q}%")).fetchone()[0]
+        total = db.execute(
+            "SELECT COUNT(*) FROM users WHERE username LIKE ? OR email LIKE ?",
+            (f"%{q}%", f"%{q}%")
+        ).fetchone()[0]
     else:
         rows = r2l(db.execute(
-            "SELECT u.*, (SELECT COUNT(*) FROM orders WHERE user_id=u.id) as order_count "
+            "SELECT u.*, "
+            "(SELECT COUNT(*) FROM orders WHERE user_id=u.id) as order_count, "
+            "(SELECT COALESCE(SUM(price),0) FROM orders WHERE user_id=u.id) as total_spent "
             "FROM users u ORDER BY created_at DESC LIMIT ? OFFSET ?",
             (limit, (page-1)*limit)
         ).fetchall())
@@ -337,13 +327,14 @@ def sync_orders():
     return redirect(url_for("admin.orders"))
 
 
+# ── TO'LOVLAR ─────────────────────────────────────────────────────────────────
 @admin_bp.route("/payments")
 @admin_required
 def payments():
     db    = get_db()
     page  = max(1, int(request.args.get("page", 1)))
     limit = 50
-    rows = r2l(db.execute(
+    rows  = r2l(db.execute(
         "SELECT d.id, d.amount, d.method, d.status, d.tx_hash as check_url, "
         "d.created_at, d.confirmed_at, u.username "
         "FROM deposits d "
@@ -353,12 +344,9 @@ def payments():
     ).fetchall())
     total         = db.execute("SELECT COUNT(*) FROM deposits").fetchone()[0]
     pending_count = db.execute("SELECT COUNT(*) FROM deposits WHERE status='pending'").fetchone()[0]
-    return render_template("admin/payments.html",
-                           payments=rows,
-                           page=page,
-                           total=total,
-                           limit=limit,
-                           pending_count=pending_count)
+    return render_template("admin/payments.html", payments=rows, page=page,
+                           total=total, limit=limit, pending_count=pending_count)
+
 
 @admin_bp.route("/payments/<int:did>/confirm", methods=["POST"])
 @admin_required
@@ -366,9 +354,7 @@ def confirm_payment(did):
     db  = get_db()
     dep = db.execute("SELECT * FROM deposits WHERE id=?", (did,)).fetchone()
     if dep and dep["status"] == "pending":
-        db.execute(
-            "UPDATE deposits SET status='completed', confirmed_at=datetime('now') WHERE id=?", (did,)
-        )
+        db.execute("UPDATE deposits SET status='completed', confirmed_at=datetime('now') WHERE id=?", (did,))
         db.execute("UPDATE users SET balance=balance+? WHERE id=?", (dep["amount"], dep["user_id"]))
         db.execute(
             "INSERT INTO transactions (user_id, type, amount, description) VALUES (?, ?, ?, ?)",
@@ -377,6 +363,73 @@ def confirm_payment(did):
         db.commit()
         return jsonify({"ok": True})
     return jsonify({"ok": False, "message": "Topilmadi yoki allaqachon tasdiqlangan"})
+
+
+ALLOWED_RECEIPT_EXT = {"png", "jpg", "jpeg", "webp", "gif", "pdf"}
+RECEIPT_DIR         = _os.path.join("static", "uploads", "checks")
+
+
+def _allowed_receipt(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_RECEIPT_EXT
+
+
+@admin_bp.route("/payments/<int:did>/upload-receipt", methods=["POST"])
+@admin_required
+def admin_upload_receipt(did):
+    db  = get_db()
+    dep = db.execute("SELECT id, tx_hash FROM deposits WHERE id=?", (did,)).fetchone()
+    if not dep:
+        flash("To'lov topilmadi", "error")
+        return redirect(url_for("admin.payments"))
+    file = request.files.get("receipt")
+    if not file or not file.filename:
+        flash("Fayl tanlanmadi", "error")
+        return redirect(url_for("admin.payments"))
+    if not _allowed_receipt(file.filename):
+        flash("Faqat PNG, JPG, WEBP, GIF, PDF fayllarga ruxsat", "error")
+        return redirect(url_for("admin.payments"))
+    old = dep["tx_hash"]
+    if old and old.startswith("/static/"):
+        old_path = old.lstrip("/")
+        if _os.path.isfile(old_path):
+            try: _os.remove(old_path)
+            except: pass
+    _os.makedirs(RECEIPT_DIR, exist_ok=True)
+    ext      = file.filename.rsplit(".", 1)[1].lower()
+    filename = f"admin_check_{did}_{int(time.time())}.{ext}"
+    filepath = _os.path.join(RECEIPT_DIR, filename)
+    file.save(filepath)
+    db.execute("UPDATE deposits SET tx_hash=? WHERE id=?", (f"/static/uploads/checks/{filename}", did))
+    db.commit()
+    flash("✅ Chek yuklandi", "success")
+    return redirect(url_for("admin.payments"))
+
+
+@admin_bp.route("/payments/<int:did>/delete-receipt", methods=["POST"])
+@admin_required
+def admin_delete_receipt(did):
+    db  = get_db()
+    dep = db.execute("SELECT id, tx_hash FROM deposits WHERE id=?", (did,)).fetchone()
+    if not dep:
+        return jsonify({"ok": False, "message": "Topilmadi"})
+    old = dep["tx_hash"]
+    if old and old.startswith("/static/"):
+        old_path = old.lstrip("/")
+        if _os.path.isfile(old_path):
+            try: _os.remove(old_path)
+            except: pass
+    db.execute("UPDATE deposits SET tx_hash=NULL WHERE id=?", (did,))
+    db.commit()
+    return jsonify({"ok": True})
+
+
+@admin_bp.route("/payments/<int:did>/reject", methods=["POST"])
+@admin_required
+def admin_reject_payment(did):
+    db = get_db()
+    db.execute("UPDATE deposits SET status='rejected' WHERE id=? AND status='pending'", (did,))
+    db.commit()
+    return jsonify({"ok": True})
 
 
 # ── SOZLAMALAR ────────────────────────────────────────────────────────────────
@@ -391,186 +444,4 @@ def settings():
         flash("Saqlandi!", "success")
     cfg      = {r["key"]: r["value"] for r in db.execute("SELECT * FROM settings").fetchall()}
     prov_bal = provider_balance()
-
     return render_template("admin/settings.html", cfg=cfg, provider_balance=prov_bal)
-# ── ADMIN: CHEK YUKLASH/O'CHIRISH ────────────────────────────────────────────
-import os as _os
-
-ALLOWED_RECEIPT_EXT = {"png", "jpg", "jpeg", "webp", "gif", "pdf"}
-RECEIPT_DIR         = _os.path.join("static", "uploads", "checks")
-
-
-def _allowed_receipt(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_RECEIPT_EXT
-
-
-@admin_bp.route("/payments/<int:did>/upload-receipt", methods=["POST"])
-@admin_required
-def admin_upload_receipt(did):
-    """Admin to'lovga qo'lda chek qo'shadi (yoki almashtiradi)"""
-    db  = get_db()
-    dep = db.execute("SELECT id, tx_hash FROM deposits WHERE id=?", (did,)).fetchone()
-    if not dep:
-        flash("To'lov topilmadi", "error")
-        return redirect(url_for("admin.payments"))
-
-    file = request.files.get("receipt")
-    if not file or not file.filename:
-        flash("Fayl tanlanmadi", "error")
-        return redirect(url_for("admin.payments"))
-
-    if not _allowed_receipt(file.filename):
-        flash("Faqat PNG, JPG, WEBP, GIF, PDF fayllarga ruxsat", "error")
-        return redirect(url_for("admin.payments"))
-
-    # Eski chekni o'chirish (agar bor bo'lsa)
-    old = dep["tx_hash"]
-    if old and old.startswith("/static/"):
-        old_path = old.lstrip("/")
-        if _os.path.isfile(old_path):
-            try: _os.remove(old_path)
-            except: pass
-
-    # Yangi faylni saqlash
-    _os.makedirs(RECEIPT_DIR, exist_ok=True)
-    ext      = file.filename.rsplit(".", 1)[1].lower()
-    filename = f"admin_check_{did}_{int(time.time())}.{ext}"
-    filepath = _os.path.join(RECEIPT_DIR, filename)
-    file.save(filepath)
-
-    check_url = f"/static/uploads/checks/{filename}"
-    db.execute("UPDATE deposits SET tx_hash=? WHERE id=?", (check_url, did))
-    db.commit()
-
-    flash("✅ Chek yuklandi", "success")
-    return redirect(url_for("admin.payments"))
-
-
-@admin_bp.route("/payments/<int:did>/delete-receipt", methods=["POST"])
-@admin_required
-def admin_delete_receipt(did):
-    """Admin chekni o'chiradi"""
-    db  = get_db()
-    dep = db.execute("SELECT id, tx_hash FROM deposits WHERE id=?", (did,)).fetchone()
-    if not dep:
-        return jsonify({"ok": False, "message": "Topilmadi"})
-
-    old = dep["tx_hash"]
-    if old and old.startswith("/static/"):
-        old_path = old.lstrip("/")
-        if _os.path.isfile(old_path):
-            try: _os.remove(old_path)
-            except: pass
-
-    db.execute("UPDATE deposits SET tx_hash=NULL WHERE id=?", (did,))
-    db.commit()
-    return jsonify({"ok": True})
-
-
-@admin_bp.route("/payments/<int:did>/reject", methods=["POST"])
-@admin_required
-def admin_reject_payment(did):
-    """To'lovni rad etish"""
-    db = get_db()
-    db.execute(
-        "UPDATE deposits SET status='rejected' WHERE id=? AND status='pending'",
-        (did,)
-    )
-    db.commit()
-    return jsonify({"ok": True})
-
-
-# ── YANGILIKLAR / REKLAMA ────────────────────────────────────────────────────
-NEWS_IMG_DIR = _os.path.join("static", "uploads", "news")
-ALLOWED_NEWS_IMG = {"png", "jpg", "jpeg", "webp", "gif"}
-
-
-def _allowed_news_img(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_NEWS_IMG
-
-
-@admin_bp.route("/news")
-@admin_required
-def news():
-    db = get_db()
-    rows = r2l(db.execute(
-        "SELECT * FROM news ORDER BY created_at DESC"
-    ).fetchall())
-    return render_template("admin/news.html", news_list=rows)
-
-
-@admin_bp.route("/news/add", methods=["POST"])
-@admin_required
-def news_add():
-    d  = request.form
-    db = get_db()
-
-    # Rasm yuklash (ixtiyoriy)
-    image_url = None
-    img = request.files.get("image")
-    if img and img.filename and _allowed_news_img(img.filename):
-        _os.makedirs(NEWS_IMG_DIR, exist_ok=True)
-        ext      = img.filename.rsplit(".", 1)[1].lower()
-        filename = f"news_{int(time.time())}.{ext}"
-        img.save(_os.path.join(NEWS_IMG_DIR, filename))
-        image_url = f"/static/uploads/news/{filename}"
-
-    db.execute(
-        "INSERT INTO news (title, description, image_url, link_url, button_text, show_banner, is_active) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (
-            d["title"].strip(),
-            d["description"].strip(),
-            image_url,
-            d.get("link_url", "").strip() or None,
-            d.get("button_text", "").strip() or None,
-            int(d.get("show_banner", 0)),
-            1,
-        )
-    )
-    db.commit()
-    flash("✅ Yangilik qo'shildi", "success")
-    return redirect(url_for("admin.news"))
-
-
-@admin_bp.route("/news/<int:nid>/toggle", methods=["POST"])
-@admin_required
-def news_toggle(nid):
-    """Aktiv/Noaktiv qilish"""
-    db = get_db()
-    n  = db.execute("SELECT is_active FROM news WHERE id=?", (nid,)).fetchone()
-    if not n:
-        return jsonify({"ok": False})
-    new_val = 0 if n["is_active"] else 1
-    db.execute("UPDATE news SET is_active=? WHERE id=?", (new_val, nid))
-    db.commit()
-    return jsonify({"ok": True, "is_active": new_val})
-
-
-@admin_bp.route("/news/<int:nid>/banner-toggle", methods=["POST"])
-@admin_required
-def news_banner_toggle(nid):
-    """Banner ko'rinishini yoqish/o'chirish"""
-    db = get_db()
-    n  = db.execute("SELECT show_banner FROM news WHERE id=?", (nid,)).fetchone()
-    if not n:
-        return jsonify({"ok": False})
-    new_val = 0 if n["show_banner"] else 1
-    db.execute("UPDATE news SET show_banner=? WHERE id=?", (new_val, nid))
-    db.commit()
-    return jsonify({"ok": True, "show_banner": new_val})
-
-
-@admin_bp.route("/news/<int:nid>/delete", methods=["POST"])
-@admin_required
-def news_delete(nid):
-    db = get_db()
-    n  = db.execute("SELECT image_url FROM news WHERE id=?", (nid,)).fetchone()
-    if n and n["image_url"] and n["image_url"].startswith("/static/"):
-        path = n["image_url"].lstrip("/")
-        if _os.path.isfile(path):
-            try: _os.remove(path)
-            except: pass
-    db.execute("DELETE FROM news WHERE id=?", (nid,))
-    db.commit()
-    return jsonify({"ok": True})

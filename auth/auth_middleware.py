@@ -18,7 +18,7 @@ def admin_required(f):
         if "user_id" not in session:
             return redirect(url_for("auth.login_page"))
         db = get_db()
-        u  = db.execute("SELECT role FROM users WHERE id=?", (session["user_id"],)).fetchone()
+        u = db.execute("SELECT role FROM users WHERE id=?", (session["user_id"],)).fetchone()
         if not u or u["role"] != "admin":
             return jsonify({"ok": False, "message": "Ruxsat yo'q"}), 403
         return f(*a, **kw)
@@ -31,10 +31,10 @@ def api_key_required(f):
         if not key:
             return jsonify({"error": "API key required"})
         db = get_db()
-        u  = db.execute("SELECT * FROM users WHERE api_key=? AND is_active=1", (key,)).fetchone()
+        u = db.execute("SELECT * FROM users WHERE api_key=? AND is_active=1", (key,)).fetchone()
         if not u:
             return jsonify({"error": "Invalid API key"})
         from flask import g
         g.api_user = dict(u)
         return f(*a, **kw)
-    return d
+    return d  # ✅ return d — main.py ga ulanib ketmagan
