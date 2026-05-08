@@ -11,3 +11,4 @@
 # smm_panelv2
 # smmuz
 # smmuz2
+# smmuz2
