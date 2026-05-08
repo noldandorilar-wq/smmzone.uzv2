@@ -9,9 +9,9 @@ def support_page():
         return redirect(url_for("auth.login_page"))
     db = get_db()
     tickets = db.execute(
-        """SELECT t.*, u.username FROM support_tickets t
-           JOIN users u ON u.id = t.user_id
-           WHERE t.user_id = ? ORDER BY t.created_at DESC""",
+        "SELECT t.*, u.username FROM tickets t "
+        "JOIN users u ON u.id=t.user_id "
+        "WHERE t.user_id=? ORDER BY t.created_at DESC",
         (session["user_id"],)
     ).fetchall()
     return render_template("support.html", tickets=tickets)
@@ -20,35 +20,43 @@ def support_page():
 def support_new():
     if "user_id" not in session:
         return redirect(url_for("auth.login_page"))
-    subject  = request.form.get("subject",  "").strip()
-    message  = request.form.get("message",  "").strip()
-    category = request.form.get("category", "other")
-    priority = request.form.get("priority", "medium")
+    subject = request.form.get("subject", "").strip()
+    message = request.form.get("message", "").strip()
     if not subject or not message:
         flash("Mavzu va xabar to'ldirilishi shart", "error")
         return redirect(url_for("support.support_page"))
     db = get_db()
+    cur = db.execute(
+        "INSERT INTO tickets (user_id, subject) VALUES (?, ?)",
+        (session["user_id"], subject)
+    )
+    ticket_id = cur.lastrowid
     db.execute(
-        """INSERT INTO support_tickets (user_id, subject, message, category, priority, status)
-           VALUES (?, ?, ?, ?, ?, 'open')""",
-        (session["user_id"], subject, message, category, priority)
+        "INSERT INTO ticket_messages (ticket_id, user_id, message) VALUES (?, ?, ?)",
+        (ticket_id, session["user_id"], message)
     )
     db.commit()
-    flash("Savolingiz yuborildi! Tez orada javob beramiz.", "success")
+    flash("Savolingiz yuborildi!", "success")
     return redirect(url_for("support.support_page"))
 
 @support_bp.route("/admin/support")
 def admin_support():
     if session.get("role") != "admin":
         return redirect(url_for("user.dashboard"))
-    db = get_db()
+    db     = get_db()
     status = request.args.get("status", "")
-    q = """SELECT t.*, u.username FROM support_tickets t
-           JOIN users u ON u.id = t.user_id {where}
-           ORDER BY CASE t.priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END,
-           t.created_at DESC"""
-    tickets = db.execute(q.format(where="WHERE t.status=?" if status else ""),
-                         (status,) if status else ()).fetchall()
+    if status:
+        tickets = db.execute(
+            "SELECT t.*, u.username FROM tickets t "
+            "JOIN users u ON u.id=t.user_id "
+            "WHERE t.status=? ORDER BY t.created_at DESC", (status,)
+        ).fetchall()
+    else:
+        tickets = db.execute(
+            "SELECT t.*, u.username FROM tickets t "
+            "JOIN users u ON u.id=t.user_id "
+            "ORDER BY t.created_at DESC"
+        ).fetchall()
     return render_template("admin_support.html", tickets=tickets)
 
 @support_bp.route("/admin/support/reply", methods=["POST"])
@@ -62,12 +70,12 @@ def admin_reply():
         return redirect(url_for("support.admin_support"))
     db = get_db()
     db.execute(
-        """UPDATE support_tickets SET reply=?, status='answered',
-           replied_at=CURRENT_TIMESTAMP WHERE id=?""",
-        (reply, ticket_id)
+        "INSERT INTO ticket_messages (ticket_id, user_id, message, is_admin) VALUES (?, ?, ?, 1)",
+        (ticket_id, session["user_id"], reply)
     )
+    db.execute("UPDATE tickets SET status='answered' WHERE id=?", (ticket_id,))
     db.commit()
-    flash("Javob muvaffaqiyatli yuborildi!", "success")
+    flash("Javob yuborildi!", "success")
     return redirect(url_for("support.admin_support"))
 
 @support_bp.route("/admin/support/close/<int:ticket_id>", methods=["POST"])
@@ -75,7 +83,7 @@ def admin_close(ticket_id):
     if session.get("role") != "admin":
         return redirect(url_for("user.dashboard"))
     db = get_db()
-    db.execute("UPDATE support_tickets SET status='closed' WHERE id=?", (ticket_id,))
+    db.execute("UPDATE tickets SET status='closed' WHERE id=?", (ticket_id,))
     db.commit()
     flash("Tiket yopildi", "success")
     return redirect(url_for("support.admin_support"))

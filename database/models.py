@@ -25,35 +25,38 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 CREATE TABLE IF NOT EXISTS services (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    category_id     INTEGER NOT NULL,
-    provider_id     INTEGER,
-    name            TEXT NOT NULL,
-    description     TEXT,
-    type            TEXT DEFAULT 'Default',
-    platform        TEXT,
-    price_per_1000  REAL NOT NULL,
-    min_order       INTEGER DEFAULT 10,
-    max_order       INTEGER DEFAULT 100000,
-    is_active       INTEGER DEFAULT 1,
-    created_at      TEXT DEFAULT (datetime('now')),
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_id    INTEGER NOT NULL,
+    provider_id    TEXT,
+    name           TEXT NOT NULL,
+    name_uz        TEXT DEFAULT '',
+    description    TEXT,
+    description_uz TEXT DEFAULT '',
+    type           TEXT DEFAULT 'Default',
+    platform       TEXT,
+    price_per_1000 REAL NOT NULL,
+    min_order      INTEGER DEFAULT 10,
+    max_order      INTEGER DEFAULT 100000,
+    is_active      INTEGER DEFAULT 1,
+    is_recommended INTEGER DEFAULT 0,
+    created_at     TEXT DEFAULT (datetime('now')),
     FOREIGN KEY(category_id) REFERENCES categories(id)
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id         INTEGER NOT NULL,
-    service_id      INTEGER NOT NULL,
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id           INTEGER NOT NULL,
+    service_id        INTEGER NOT NULL,
     provider_order_id TEXT,
-    link            TEXT NOT NULL,
-    quantity        INTEGER NOT NULL,
-    price           REAL NOT NULL,
-    start_count     INTEGER DEFAULT 0,
-    remains         INTEGER DEFAULT 0,
-    status          TEXT DEFAULT 'Pending',
-    note            TEXT,
-    created_at      TEXT DEFAULT (datetime('now')),
-    updated_at      TEXT DEFAULT (datetime('now')),
+    link              TEXT NOT NULL,
+    quantity          INTEGER NOT NULL,
+    price             REAL NOT NULL,
+    start_count       INTEGER DEFAULT 0,
+    remains           INTEGER DEFAULT 0,
+    status            TEXT DEFAULT 'Pending',
+    note              TEXT,
+    created_at        TEXT DEFAULT (datetime('now')),
+    updated_at        TEXT DEFAULT (datetime('now')),
     FOREIGN KEY(user_id)    REFERENCES users(id),
     FOREIGN KEY(service_id) REFERENCES services(id)
 );
@@ -71,15 +74,15 @@ CREATE TABLE IF NOT EXISTS transactions (
 );
 
 CREATE TABLE IF NOT EXISTS deposits (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id     INTEGER NOT NULL,
-    amount      REAL NOT NULL,
-    method      TEXT NOT NULL,
-    status      TEXT DEFAULT 'pending',
-    external_id TEXT,
-    tx_hash     TEXT,
-    raw_data    TEXT,
-    created_at  TEXT DEFAULT (datetime('now')),
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id      INTEGER NOT NULL,
+    amount       REAL NOT NULL,
+    method       TEXT NOT NULL,
+    status       TEXT DEFAULT 'pending',
+    external_id  TEXT,
+    tx_hash      TEXT,
+    raw_data     TEXT,
+    created_at   TEXT DEFAULT (datetime('now')),
     confirmed_at TEXT,
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
@@ -107,22 +110,23 @@ CREATE TABLE IF NOT EXISTS settings (
     key   TEXT PRIMARY KEY,
     value TEXT
 );
+
+CREATE TABLE IF NOT EXISTS news (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    title       TEXT,
+    description TEXT,
+    image_url   TEXT,
+    link_url    TEXT,
+    button_text TEXT,
+    is_active   INTEGER DEFAULT 1,
+    show_banner INTEGER DEFAULT 0,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 """
 
 SEED = """
-INSERT OR IGNORE INTO categories (name, icon, sort_order) VALUES
-    ('Instagram',  'fab fa-instagram', 1),
-    ('YouTube',    'fab fa-youtube',   2),
-    ('TikTok',     'fab fa-tiktok',    3),
-    ('Telegram',   'fab fa-telegram',  4),
-    ('Twitter/X',  'fab fa-twitter',   5),
-    ('Facebook',   'fab fa-facebook',  6);
-
-INSERT OR IGNORE INTO settings (key, value) VALUES
-    ('site_name',      'SMMPanel.uz'),
-    ('site_desc',      'O''zbekistondagi eng arzon SMM panel'),
-    ('min_deposit',    '5000'),
-    ('currency',       'UZS'),
-    ('maintenance',    '0'),
-    ('reg_bonus',      '0');
+INSERT OR IGNORE INTO settings (key, value) VALUES ('site_name', 'SMM Panel');
+INSERT OR IGNORE INTO settings (key, value) VALUES ('currency', 'UZS');
+INSERT OR IGNORE INTO settings (key, value) VALUES ('min_deposit', '5000');
+INSERT OR IGNORE INTO settings (key, value) VALUES ('reg_bonus', '0');
 """

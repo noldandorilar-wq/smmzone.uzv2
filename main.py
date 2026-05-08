@@ -115,9 +115,11 @@ def start_auto_sync():
     threading.Thread(target=loop, daemon=True).start()
 
 
-# ─── MAIN ───────────────────────────
-if __name__ == "__main__":
-    init_db()
-    start_auto_sync()
 
+
+# ─── MAIN ───────────────────────────
+init_db()        # ← bu qatorni if __name__ DAN TASHQARIGA oling
+start_auto_sync()
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=Config.PORT, debug=False)

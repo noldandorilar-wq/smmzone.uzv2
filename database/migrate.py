@@ -8,26 +8,30 @@ def init_db():
     Database ni yaratadi va schema + seed data yuklaydi
     """
     with sqlite3.connect(Config.DB_PATH) as db:
-        cursor = db.cursor()
-
-        # schema yaratish
         db.executescript(SCHEMA)
+        db.executescript(SEED)
+        db.commit()
 
-        # seed data (boshlang‘ich ma’lumotlar)
+
+from utils.security import hash_pw, gen_key, gen_ref
+from config import Config
+
+
+def init_db():
+    with sqlite3.connect(Config.DB_PATH) as db:
+        db.executescript(SCHEMA)
         db.executescript(SEED)
 
-        # news table (agar SCHEMA ichida bo‘lmasa)
-        db.executescript("""
-        CREATE TABLE IF NOT EXISTS news (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            description TEXT,
-            image_url TEXT,
-            link_url TEXT,
-            button_text TEXT,
-            is_active INTEGER DEFAULT 1,
-            show_banner INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-        """)
-        db.commit()
+        # Admin yaratish
+        existing = db.execute(
+            "SELECT id FROM users WHERE role='admin'"
+        ).fetchone()
+
+        if not existing:
+            db.execute(
+                "INSERT INTO users (username, email, password, role, api_key, ref_code, is_active) "
+                "VALUES (?, ?, ?, 'admin', ?, ?, 1)",
+                (Config.ADMIN_USER, Config.ADMIN_EMAIL,
+                 hash_pw(Config.ADMIN_PASS), gen_key(), gen_ref())
+            )
+            db.commit()
