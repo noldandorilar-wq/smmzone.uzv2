@@ -123,3 +123,16 @@ start_auto_sync()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=Config.PORT, debug=False)
+# Auto create admin
+with app.app_context():
+    from utils.security import hash_pw, gen_key, gen_ref
+    db = get_db()
+    existing = db.execute("SELECT id FROM users WHERE username='admin'").fetchone()
+    if not existing:
+        db.execute(
+            "INSERT INTO users (username, email, password, role, is_active, api_key, ref_code, balance) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            ("admin", "admin@admin.com", hash_pw("admin123"), "admin", 1, gen_key(), gen_ref(), 0)
+        )
+        db.commit()
+        print("Admin yaratildi!")
