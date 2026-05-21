@@ -7,6 +7,16 @@ from database.db import get_db
 
 api_bp = Blueprint("import_api", __name__, url_prefix="/api/v2")
 
+from flask import render_template, request as _req, session
+
+@api_bp.route("/../../api-docs")
+def api_docs():
+    from auth.auth_middleware import login_required
+    from flask import session, redirect, url_for
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    return render_template("api.html")
+
 CURRENCY_RATE = 12500  # 1 USD = 12500 so'm
 MARKUP = 1.04          # 4% ustama
 

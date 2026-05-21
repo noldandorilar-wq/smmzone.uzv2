@@ -20,7 +20,7 @@ def admin_required(f):
         db = get_db()
         u = db.execute("SELECT role FROM users WHERE id=?", (session["user_id"],)).fetchone()
         if not u or u["role"] != "admin":
-            return jsonify({"ok": False, "message": "Ruxsat yo'q"}), 403
+            return redirect(url_for("auth.login_page"))
         return f(*a, **kw)
     return d
 

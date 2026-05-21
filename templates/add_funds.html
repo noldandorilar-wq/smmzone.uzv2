@@ -164,7 +164,7 @@
         </div>
       </div>
 
-      <button class="btn-main" onclick="goStep2()">
+      <button class="btn-main" id="step1-btn" onclick="goStep2()">
         <i class="fas fa-arrow-right" style="margin-right:6px"></i> To'lovni Davom Ettirish
       </button>
     </div>
@@ -236,17 +236,22 @@
     const amount = parseInt(document.getElementById('amount-input').value);
     if (!selectedMethod) { alert("Iltimos, to'lov usulini tanlang!"); return; }
     if (!amount || amount < 5000) { alert("Minimal to'lov 5 000 so'm!"); return; }
-
-    const card = CARDS[selectedMethod];
-    document.getElementById('card-num').textContent   = card.num;
-    document.getElementById('card-owner').textContent = card.owner;
-    document.getElementById('pay-amount-show').textContent = amount.toLocaleString() + ' so\'m';
-    document.getElementById('method-hidden').value = selectedMethod;
-    document.getElementById('amount-hidden').value  = amount;
-
-    document.getElementById('step1').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-    startTimer(600);
+    const btn = document.getElementById('step1-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin" style="margin-right:6px"></i> Ma\'lumotlar tekshirilmoqda...';
+    setTimeout(function() {
+      const card = CARDS[selectedMethod];
+      document.getElementById('card-num').textContent   = card.num;
+      document.getElementById('card-owner').textContent = card.owner;
+      document.getElementById('pay-amount-show').textContent = amount.toLocaleString() + " so'm";
+      document.getElementById('method-hidden').value = selectedMethod;
+      document.getElementById('amount-hidden').value  = amount;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-arrow-right" style="margin-right:6px"></i> To\'lovni Davom Ettirish';
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+      startTimer(600);
+    }, 3000);
   }
 
   function goBack() {

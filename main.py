@@ -1,4 +1,6 @@
 import sys, os
+from dotenv import load_dotenv
+load_dotenv()
 from datetime import timedelta
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -40,6 +42,14 @@ app.register_blueprint(api_bp)
 app.register_blueprint(support_bp)
 app.register_blueprint(balance_bp)
 
+
+@app.route("/api-docs")
+def api_docs():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    db = get_db()
+    user = db.execute("SELECT * FROM users WHERE id=?", (session["user_id"],)).fetchone()
+    return render_template("api.html", user=user)
 
 # ─── WEBHOOKS ───────────────────────
 @app.route("/api/webhook/payme", methods=["POST"])
