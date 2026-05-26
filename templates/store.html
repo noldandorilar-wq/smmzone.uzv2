@@ -1,0 +1,1172 @@
+{% extends "base.html" %}
+{% block title %}Do'kon — Telegram & PUBG{% endblock %}
+{% block content %}
+<style>
+/* ── RESET & BASE ───────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+.store-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px 0 80px;
+  font-family: inherit;
+}
+
+/* ── HEADER ─────────────────────────────────────── */
+.store-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
+}
+.store-title { font-size: 24px; font-weight: 800; color: var(--white); }
+.store-sub   { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* Balance card */
+.balance-card {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, rgba(56,189,248,.12), rgba(56,189,248,.04));
+  border: 1px solid rgba(56,189,248,.25); border-radius: 16px;
+  padding: 14px 22px;
+}
+.balance-card .bc-icon { font-size: 28px; }
+.balance-card .bc-label { font-size: 11px; color: var(--muted); letter-spacing: .5px; }
+.balance-card .bc-val   { font-size: 20px; font-weight: 800; color: var(--white); }
+.balance-card .bc-topup {
+  margin-left: 10px; padding: 7px 14px; border-radius: 8px;
+  border: none; background: var(--accent); color: #002;
+  font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+
+/* ── TABS ────────────────────────────────────────── */
+.store-tabs {
+  display: flex; gap: 6px; margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.store-tab {
+  padding: 9px 18px; border-radius: 100px; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--muted); cursor: pointer; transition: all .2s; font-family: inherit;
+}
+.store-tab.active { background: var(--accent); color: #002; border-color: var(--accent); }
+.store-tab:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+/* ── TAB SECTIONS ───────────────────────────────── */
+.tab-section { display: none; animation: fadeIn .25s ease; }
+.tab-section.show { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── SECTION TITLE ──────────────────────────────── */
+.sec-title {
+  font-size: 14px; font-weight: 700; color: var(--white);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.sec-title::after {
+  content:''; flex:1; height:1px; background: var(--border);
+}
+
+/* ── CARDS ───────────────────────────────────────── */
+.premium-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  gap: 12px; margin-bottom: 20px;
+}
+.plan-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 18px; padding: 22px 16px; text-align: center;
+  cursor: pointer; transition: all .2s; position: relative;
+  user-select: none;
+}
+.plan-card:hover    { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+.plan-card.selected { border-color: var(--accent); background: rgba(56,189,248,.06); }
+.plan-card.popular  { border-color: var(--accent); }
+.popular-badge {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: #002; font-size: 10px; font-weight: 800;
+  padding: 3px 12px; border-radius: 100px; white-space: nowrap;
+}
+.plan-icon   { font-size: 34px; margin-bottom: 10px; }
+.plan-months { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.plan-price  { font-size: 22px; font-weight: 800; color: var(--white); }
+.plan-price-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.plan-per    { font-size: 11px; color: var(--accent); margin-top: 4px; }
+.plan-badge  {
+  display: inline-block; margin-top: 8px; padding: 3px 10px;
+  border-radius: 100px; font-size: 10px; font-weight: 700;
+  background: rgba(34,197,94,.15); color: #22c55e; border: 1px solid rgba(34,197,94,.3);
+}
+
+/* ── DISCOUNT STRIP ─────────────────────────────── */
+.discount-strip {
+  background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2);
+  border-radius: 12px; padding: 10px 16px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: 12px; color: var(--muted);
+}
+.discount-strip strong { color: #22c55e; }
+
+/* ── CALCULATOR BOX ─────────────────────────────── */
+.calc-box {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 18px; padding: 24px; margin-bottom: 20px;
+}
+.calc-title {
+  font-size: 14px; font-weight: 700; color: var(--white);
+  margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+}
+.calc-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.calc-group { flex: 1; min-width: 140px; }
+.calc-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: .5px; }
+.store-input {
+  width: 100%; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--white); font-size: 14px; font-family: inherit;
+  outline: none; transition: border .2s;
+}
+.store-input:focus { border-color: var(--accent); }
+.store-select {
+  width: 100%; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--white); font-size: 14px; font-family: inherit;
+  outline: none; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  padding-right: 34px;
+}
+.calc-result {
+  margin-top: 16px; background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 18px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
+}
+.calc-item .ci-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.calc-item .ci-val   { font-size: 16px; font-weight: 700; color: var(--white); }
+.calc-item .ci-val.green { color: #22c55e; }
+.calc-item .ci-val.accent { color: var(--accent); }
+
+/* ── COMPARE TABLE ───────────────────────────────── */
+.compare-table-wrap {
+  overflow-x: auto; margin-bottom: 20px; border-radius: 14px;
+  border: 1px solid var(--border);
+}
+.compare-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+.compare-table th {
+  background: var(--card2); color: var(--muted); font-weight: 600;
+  padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.compare-table th.highlight { color: var(--accent); }
+.compare-table td {
+  padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,.04);
+  color: var(--white);
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+.compare-table td.green  { color: #22c55e; font-weight: 700; }
+.compare-table td.accent { color: var(--accent); font-weight: 700; }
+.compare-table td.muted  { color: var(--muted); }
+.best-val {
+  background: rgba(56,189,248,.12); border-radius: 6px;
+  padding: 2px 8px; display: inline-block;
+}
+
+/* ── GIFT TOGGLE ─────────────────────────────────── */
+.gift-toggle {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px; cursor: pointer; user-select: none;
+}
+.gift-toggle input[type=checkbox] { display: none; }
+.toggle-track {
+  width: 40px; height: 22px; border-radius: 100px;
+  background: var(--border); position: relative; transition: background .2s;
+}
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--muted); transition: all .2s;
+}
+.gift-toggle input:checked ~ .toggle-track { background: var(--accent); }
+.gift-toggle input:checked ~ .toggle-track .toggle-thumb { left: 21px; background: #002; }
+.gift-toggle-label { font-size: 13px; color: var(--muted); }
+.gift-fields {
+  display: none; background: rgba(56,189,248,.05);
+  border: 1px dashed rgba(56,189,248,.25); border-radius: 12px;
+  padding: 16px; margin-bottom: 16px;
+}
+.gift-fields.show { display: block; }
+.gift-note { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+/* ── ORDER FORM ──────────────────────────────────── */
+.order-form {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 18px; padding: 24px; margin-bottom: 20px;
+}
+.order-form.hidden { display: none; }
+.of-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 18px; }
+.form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.form-group { flex: 1; min-width: 140px; }
+.form-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: .5px; }
+.order-summary {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;
+}
+.os-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; color: var(--muted); }
+.os-row:last-child { margin-bottom: 0; padding-top: 10px; border-top: 1px solid var(--border); }
+.os-row:last-child .os-key { color: var(--white); font-weight: 700; font-size: 15px; }
+.os-row:last-child .os-val { color: var(--accent); font-weight: 800; font-size: 16px; }
+.os-val { color: var(--white); font-weight: 600; }
+.discount-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 100px;
+  background: rgba(34,197,94,.15); color: #22c55e; border: 1px solid rgba(34,197,94,.3);
+  margin-left: 6px;
+}
+
+/* ── BUY BUTTON ──────────────────────────────────── */
+.buy-btn {
+  width: 100%; padding: 15px; border-radius: 14px; border: none;
+  background: var(--accent); color: #002; font-size: 15px;
+  font-weight: 800; cursor: pointer; font-family: inherit;
+  transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.buy-btn:hover    { opacity: .9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56,189,248,.3); }
+.buy-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+.buy-btn.danger   { background: #ef4444; color: #fff; }
+
+/* ── STARS ───────────────────────────────────────── */
+.stars-box {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 18px; padding: 24px; margin-bottom: 20px;
+}
+.stars-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.stars-icon { font-size: 36px; }
+.stars-title { font-size: 17px; font-weight: 700; color: var(--white); }
+.stars-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.stars-price-info {
+  background: rgba(56,189,248,.07); border: 1px solid rgba(56,189,248,.15);
+  border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--accent);
+  margin-bottom: 18px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.quick-stars { display: flex; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
+.quick-star-btn {
+  font-size: 11px; padding: 5px 12px; border-radius: 100px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--muted); cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.quick-star-btn:hover,
+.quick-star-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,.07); }
+.stars-total {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px; font-size: 13px;
+  color: var(--muted); margin-top: 14px;
+}
+.stars-total-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.st-item .st-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.st-item .st-val   { font-size: 15px; font-weight: 700; color: var(--white); }
+.st-item .st-val.accent { color: var(--accent); }
+.st-item .st-val.green  { color: #22c55e; }
+
+/* ── STARS TIERS ─────────────────────────────────── */
+.tiers-strip {
+  display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.tier-btn {
+  flex: 1; min-width: 80px; padding: 10px 8px; text-align: center;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--card); cursor: pointer; transition: all .2s;
+  font-family: inherit;
+}
+.tier-btn:hover { border-color: var(--accent); }
+.tier-btn.active { border-color: var(--accent); background: rgba(56,189,248,.08); }
+.tier-btn .tb-amount { font-size: 14px; font-weight: 700; color: var(--white); }
+.tier-btn .tb-price  { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.tier-btn .tb-disc   { font-size: 10px; color: #22c55e; margin-top: 2px; font-weight: 600; }
+
+/* ── PUBG ─────────────────────────────────────────── */
+.pubg-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+  gap: 10px; margin-bottom: 16px;
+}
+.uc-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 12px; text-align: center;
+  cursor: pointer; transition: all .2s; position: relative;
+}
+.uc-card:hover { border-color: #f59e0b; transform: translateY(-2px); }
+.uc-card.sel   { border-color: #f59e0b; background: rgba(245,158,11,.07); }
+.uc-card .uc-bonus {
+  position: absolute; top: -8px; right: 8px;
+  background: #f59e0b; color: #000; font-size: 9px; font-weight: 800;
+  padding: 2px 8px; border-radius: 100px;
+}
+.uc-icon   { font-size: 26px; margin-bottom: 8px; }
+.uc-amount { font-size: 16px; font-weight: 800; color: var(--white); }
+.uc-label  { font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+.uc-price  { font-size: 13px; font-weight: 700; color: #f59e0b; }
+.uc-per    { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* ── ORDER HISTORY ───────────────────────────────── */
+.history-wrap { }
+.history-filters {
+  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.hf-btn {
+  padding: 7px 14px; border-radius: 100px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--muted); cursor: pointer; transition: all .2s; font-family: inherit;
+}
+.hf-btn.active { background: var(--card2); color: var(--white); border-color: var(--accent); }
+.history-list { display: flex; flex-direction: column; gap: 10px; }
+.hist-item {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.hist-icon { font-size: 28px; flex-shrink: 0; }
+.hist-info { flex: 1; min-width: 160px; }
+.hist-name { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.hist-meta { font-size: 11px; color: var(--muted); }
+.hist-right { text-align: right; }
+.hist-price { font-size: 15px; font-weight: 800; color: var(--white); }
+.hist-status {
+  display: inline-block; margin-top: 4px; padding: 3px 10px;
+  border-radius: 100px; font-size: 10px; font-weight: 700;
+}
+.hist-status.done    { background: rgba(34,197,94,.15); color: #22c55e; border:1px solid rgba(34,197,94,.3); }
+.hist-status.pending { background: rgba(234,179,8,.15);  color: #eab308; border:1px solid rgba(234,179,8,.3); }
+.hist-status.failed  { background: rgba(239,68,68,.15);  color: #ef4444; border:1px solid rgba(239,68,68,.3); }
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted); font-size: 14px;
+}
+.empty-state .es-icon { font-size: 48px; margin-bottom: 12px; }
+
+/* ── NOTIFICATION ─────────────────────────────────── */
+.notif {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 20px; max-width: 320px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  transform: translateY(80px); opacity: 0; transition: all .3s;
+  pointer-events: none;
+}
+.notif.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.notif.success { border-color: rgba(34,197,94,.4); }
+.notif.error   { border-color: rgba(239,68,68,.4); }
+.notif-icon { font-size: 22px; }
+.notif-text { font-size: 13px; color: var(--white); }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media(max-width:600px) {
+  .premium-grid { grid-template-columns: repeat(2, 1fr); }
+  .pubg-grid    { grid-template-columns: repeat(2, 1fr); }
+  .stars-total-grid { grid-template-columns: 1fr 1fr; }
+  .balance-card { width: 100%; }
+  .tiers-strip  { display: grid; grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif">
+  <div class="notif-icon" id="notif-icon"></div>
+  <div class="notif-text" id="notif-text"></div>
+</div>
+
+<div class="store-wrap">
+
+  <!-- HEADER -->
+  <div class="store-header">
+    <div>
+      <div class="store-title">🛍 Do'kon</div>
+      <div class="store-sub">Telegram Premium · Stars · PUBG UC — tez va ishonchli</div>
+    </div>
+    <div class="balance-card">
+      <div class="bc-icon">💳</div>
+      <div>
+        <div class="bc-label">BALANSINGIZ</div>
+        <div class="bc-val" id="live-balance">{{ "{:,.0f}".format(user.balance) }} so'm</div>
+      </div>
+      <button class="bc-topup" onclick="window.location='/add-funds'">+ To'ldirish</button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="store-tabs">
+    <button class="store-tab active" onclick="showTab('premium',this)">⭐ Telegram Premium</button>
+    <button class="store-tab" onclick="showTab('stars',this)">🌟 Telegram Stars</button>
+    <button class="store-tab" onclick="showTab('pubg',this)">🎮 PUBG UC</button>
+    <button class="store-tab" onclick="showTab('history',this)">🕓 Buyurtmalar</button>
+  </div>
+
+  <!-- ═══════════════ PREMIUM ═══════════════ -->
+  <div class="tab-section show" id="tab-premium">
+
+    <!-- Chegirma strip -->
+    <div class="discount-strip">
+      💡 Qanchalik uzoq muddatli tarif tanlasangiz, shunchalik <strong>tejaysiz!</strong>
+      &nbsp;·&nbsp; 3 oy → <strong>10% chegirma</strong>
+      &nbsp;·&nbsp; 6 oy → <strong>18% chegirma</strong>
+      &nbsp;·&nbsp; 12 oy → <strong>28% chegirma</strong>
+    </div>
+
+    <!-- Plan cards -->
+    <div class="sec-title">📦 Tarif tanlang</div>
+    <div class="premium-grid" id="premium-cards">
+      {% for key, plan in plans.items() %}
+      {% set disc = {'premium_1m':0,'premium_3m':10,'premium_6m':18,'premium_12m':28}[key] %}
+      <div class="plan-card {% if key == 'premium_3m' %}popular{% endif %}"
+           onclick="selectPlan('{{ key }}','{{ plan.name }}',{{ plan.price }},{{ plan.months }},{{ disc }})"
+           data-key="{{ key }}">
+        {% if key == 'premium_3m' %}<div class="popular-badge">🔥 Mashhur</div>{% endif %}
+        <div class="plan-icon">⭐</div>
+        <div class="plan-months">{{ plan.months }} Oy</div>
+        <div class="plan-price">{{ "{:,.0f}".format(plan.price) }}</div>
+        <div class="plan-price-sub">so'm</div>
+        <div class="plan-per">≈ {{ "{:,.0f}".format(plan.price // plan.months) }} so'm/oy</div>
+        {% if disc > 0 %}
+        <div class="plan-badge">-{{ disc }}% tejaysiz</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Kalkulyator -->
+    <div class="sec-title" style="margin-top:24px">🧮 Kalkulyator</div>
+    <div class="calc-box">
+      <div class="calc-title">⚡ Narx hisoblagich</div>
+      <div class="calc-row">
+        <div class="calc-group">
+          <div class="calc-label">TARIF</div>
+          <select class="store-select" id="calc-plan" onchange="calcPremium()">
+            {% for key, plan in plans.items() %}
+            <option value="{{ key }}" data-price="{{ plan.price }}" data-months="{{ plan.months }}">
+              {{ plan.name }} — {{ "{:,.0f}".format(plan.price) }} so'm
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="calc-group">
+          <div class="calc-label">HISOBLAR SONI</div>
+          <input type="number" class="store-input" id="calc-qty" value="1" min="1" max="100" oninput="calcPremium()">
+        </div>
+        <div class="calc-group">
+          <div class="calc-label">PROMO KOD</div>
+          <input type="text" class="store-input" id="calc-promo" placeholder="BONUS10" oninput="applyPromo()">
+        </div>
+      </div>
+      <div class="calc-result" id="calc-result">
+        <div class="calc-item">
+          <div class="ci-label">Asosiy narx</div>
+          <div class="ci-val" id="cr-base">—</div>
+        </div>
+        <div class="calc-item">
+          <div class="ci-label">Chegirma</div>
+          <div class="ci-val green" id="cr-disc">—</div>
+        </div>
+        <div class="calc-item">
+          <div class="ci-label">Promo chegirma</div>
+          <div class="ci-val green" id="cr-promo">—</div>
+        </div>
+        <div class="calc-item">
+          <div class="ci-label">JAMI TO'LOV</div>
+          <div class="ci-val accent" id="cr-total">—</div>
+        </div>
+        <div class="calc-item">
+          <div class="ci-label">Bir hisob uchun</div>
+          <div class="ci-val" id="cr-per">—</div>
+        </div>
+        <div class="calc-item">
+          <div class="ci-label">Tejadingiz</div>
+          <div class="ci-val green" id="cr-save">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Taqqoslash jadvali -->
+    <div class="sec-title">📊 Tariflarni taqqoslash</div>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Tarif</th>
+            <th>Narx</th>
+            <th class="highlight">Bir oyga</th>
+            <th>Chegirma</th>
+            <th>Tejash</th>
+            <th>Eng yaxshi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set base_per_month = plans['premium_1m'].price %}
+          {% for key, plan in plans.items() %}
+          {% set disc = {'premium_1m':0,'premium_3m':10,'premium_6m':18,'premium_12m':28}[key] %}
+          {% set per_month = plan.price // plan.months %}
+          {% set save = (base_per_month * plan.months) - plan.price %}
+          <tr>
+            <td><strong>{{ plan.name }}</strong></td>
+            <td>{{ "{:,.0f}".format(plan.price) }} so'm</td>
+            <td class="accent">
+              {% if key == 'premium_3m' %}
+              <span class="best-val">{{ "{:,.0f}".format(per_month) }} so'm</span>
+              {% else %}
+              {{ "{:,.0f}".format(per_month) }} so'm
+              {% endif %}
+            </td>
+            <td class="{% if disc > 0 %}green{% else %}muted{% endif %}">
+              {% if disc > 0 %}-{{ disc }}%{% else %}—{% endif %}
+            </td>
+            <td class="{% if save > 0 %}green{% else %}muted{% endif %}">
+              {% if save > 0 %}+{{ "{:,.0f}".format(save) }}{% else %}—{% endif %}
+            </td>
+            <td>
+              {% if key == 'premium_3m' %}✅ Optimal
+              {% elif key == 'premium_12m' %}💰 Maksimal tejash
+              {% elif key == 'premium_1m' %}🔰 Sinash uchun
+              {% else %}⚖️ Muvozanatli{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Buyurtma formasi -->
+    <div class="order-form hidden" id="prem-order-form">
+      <div class="of-title">🛒 Buyurtma rasmiylashtirilmoqda</div>
+
+      <!-- Sovg'a toggle -->
+      <label class="gift-toggle" onclick="toggleGift()">
+        <input type="checkbox" id="gift-check">
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        <span class="gift-toggle-label">🎁 Boshqaga sovg'a sifatida yuborish</span>
+      </label>
+
+      <div class="gift-fields" id="gift-fields">
+        <div class="form-label" style="margin-bottom:8px">🎁 SOVG'A QABUL QILUVCHI</div>
+        <div class="form-row">
+          <div class="form-group">
+            <div class="form-label">TELEGRAM USERNAME</div>
+            <input type="text" class="store-input" id="gift-username" placeholder="@do'stim" oninput="updateSummary()">
+          </div>
+          <div class="form-group">
+            <div class="form-label">SOVG'A XABARI (ixtiyoriy)</div>
+            <input type="text" class="store-input" id="gift-msg" placeholder="Tug'ilgan kuning bilan! 🎂">
+          </div>
+        </div>
+        <div class="gift-note">⚠️ Sovg'a qilish uchun qabul qiluvchi Telegram'da aktiv bo'lishi kerak</div>
+      </div>
+
+      <div class="form-row" id="own-fields">
+        <div class="form-group">
+          <div class="form-label">TELEGRAM USERNAME (SIZNIKI)</div>
+          <input type="text" class="store-input" id="prem-tg-input" placeholder="@username" oninput="updateSummary()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">HISOBLAR SONI</div>
+          <input type="number" class="store-input" id="prem-qty-input" value="1" min="1" max="50" oninput="updateSummary()">
+        </div>
+      </div>
+
+      <!-- Order summary -->
+      <div class="order-summary" id="prem-summary">
+        <div class="os-row">
+          <span class="os-key">Tarif</span>
+          <span class="os-val" id="sum-plan">—</span>
+        </div>
+        <div class="os-row">
+          <span class="os-key">Miqdori</span>
+          <span class="os-val" id="sum-qty">1 ta</span>
+        </div>
+        <div class="os-row">
+          <span class="os-key">Narx (birlik)</span>
+          <span class="os-val" id="sum-unit">—</span>
+        </div>
+        <div class="os-row">
+          <span class="os-key">Chegirma</span>
+          <span class="os-val green" id="sum-disc">—</span>
+        </div>
+        <div class="os-row">
+          <span class="os-key">Jami</span>
+          <span class="os-val accent" id="sum-total">—</span>
+        </div>
+      </div>
+
+      <button class="buy-btn" onclick="submitPremium()">
+        ⭐ Tasdiqlash va To'lash
+      </button>
+    </div>
+
+    <form id="premium-submit-form" method="POST" action="/store/buy" style="display:none">
+      <input type="hidden" name="item"     id="pf-item">
+      <input type="hidden" name="qty"      id="pf-qty">
+      <input type="hidden" name="tg_user"  id="pf-tg">
+      <input type="hidden" name="gift_to"  id="pf-gift">
+      <input type="hidden" name="gift_msg" id="pf-gift-msg">
+    </form>
+  </div>
+
+  <!-- ═══════════════ STARS ═══════════════ -->
+  <div class="tab-section" id="tab-stars">
+
+    <div class="stars-box">
+      <div class="stars-header">
+        <div class="stars-icon">🌟</div>
+        <div>
+          <div class="stars-title">Telegram Stars</div>
+          <div class="stars-desc">Botlar, kanallar va premium kontentlar uchun rasmiy to'lov</div>
+        </div>
+      </div>
+      <div class="stars-price-info">
+        💡 1 Star = <strong>{{ "{:,.0f}".format(stars_price) }} so'm</strong>
+        &nbsp;|&nbsp; Min: 50 &nbsp;|&nbsp; Max: 100,000
+        &nbsp;|&nbsp; Ko'p olsangiz chegirma!
+      </div>
+
+      <!-- Tez tanlash tierlari -->
+      <div class="sec-title">⚡ Tez tanlash</div>
+      <div class="tiers-strip" id="tiers-strip">
+        {% set tiers = [(50,0),(100,0),(250,3),(500,5),(1000,7),(2000,10),(5000,12),(10000,15)] %}
+        {% for amount, disc in tiers %}
+        <div class="tier-btn" onclick="selectTier({{ amount }},{{ disc }},this)">
+          <div class="tb-amount">{{ amount }}⭐</div>
+          <div class="tb-price">{{ "{:,.0f}".format(amount * stars_price * (100-disc) // 100) }} so'm</div>
+          {% if disc > 0 %}<div class="tb-disc">-{{ disc }}%</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Kalkulyator -->
+      <div class="sec-title" style="margin-top:20px">🧮 Yoki miqdorni kiriting</div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">TELEGRAM USERNAME</div>
+          <input type="text" class="store-input" id="stars-tg" placeholder="@username">
+        </div>
+        <div class="form-group">
+          <div class="form-label">STARS MIQDORI</div>
+          <input type="number" class="store-input" id="stars-qty"
+                 placeholder="500" min="50" max="100000" oninput="calcStars()">
+        </div>
+      </div>
+
+      <!-- Sovg'a -->
+      <label class="gift-toggle" onclick="toggleStarsGift()">
+        <input type="checkbox" id="stars-gift-check">
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        <span class="gift-toggle-label">🎁 Boshqaga sovg'a sifatida yuborish</span>
+      </label>
+      <div class="gift-fields" id="stars-gift-fields">
+        <div class="form-label" style="margin-bottom:6px">SOVG'A OLUVCHI USERNAME</div>
+        <input type="text" class="store-input" id="stars-gift-to" placeholder="@do'stim">
+      </div>
+
+      <!-- Natija -->
+      <div class="stars-total">
+        <div class="stars-total-grid">
+          <div class="st-item">
+            <div class="st-label">MIQDOR</div>
+            <div class="st-val" id="st-qty">—</div>
+          </div>
+          <div class="st-item">
+            <div class="st-label">CHEGIRMA</div>
+            <div class="st-val green" id="st-disc">0%</div>
+          </div>
+          <div class="st-item">
+            <div class="st-label">JAMI TO'LOV</div>
+            <div class="st-val accent" id="st-total">—</div>
+          </div>
+        </div>
+      </div>
+
+      <form method="POST" action="/store/buy" id="stars-form">
+        <input type="hidden" name="item"    value="stars">
+        <input type="hidden" name="qty"     id="stars-qty-h">
+        <input type="hidden" name="tg_user" id="stars-tg-h">
+        <input type="hidden" name="gift_to" id="stars-gift-h">
+        <button type="button" class="buy-btn" style="margin-top:14px" onclick="submitStars()">
+          🌟 Stars Sotib Olish
+        </button>
+      </form>
+    </div>
+
+    <!-- Stars taqqoslash -->
+    <div class="sec-title">📊 Miqdor chegirmalari</div>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Miqdor</th>
+            <th>Asl narx</th>
+            <th class="highlight">Chegirma</th>
+            <th>To'lov</th>
+            <th>1 Star narxi</th>
+            <th>Tejash</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set tiers2 = [(50,0),(100,0),(250,3),(500,5),(1000,7),(2000,10),(5000,12),(10000,15)] %}
+          {% for amount, disc in tiers2 %}
+          {% set orig = amount * stars_price %}
+          {% set final = orig * (100-disc) // 100 %}
+          {% set save = orig - final %}
+          <tr>
+            <td><strong>{{ amount }} ⭐</strong></td>
+            <td class="muted">{{ "{:,.0f}".format(orig) }}</td>
+            <td class="{% if disc > 0 %}green{% else %}muted{% endif %}">
+              {% if disc > 0 %}-{{ disc }}%{% else %}—{% endif %}
+            </td>
+            <td class="accent">
+              {% if amount == 500 %}<span class="best-val">{{ "{:,.0f}".format(final) }} so'm</span>
+              {% else %}{{ "{:,.0f}".format(final) }} so'm{% endif %}
+            </td>
+            <td>{{ "{:,.0f}".format(final // amount) }} so'm</td>
+            <td class="{% if save > 0 %}green{% else %}muted{% endif %}">
+              {% if save > 0 %}+{{ "{:,.0f}".format(save) }}{% else %}—{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PUBG ═══════════════ -->
+  <div class="tab-section" id="tab-pubg">
+
+    <!-- Kalkulyator -->
+    <div class="calc-box" style="margin-bottom:20px">
+      <div class="calc-title">🎮 PUBG UC Kalkulyator</div>
+      <div class="calc-row">
+        <div class="calc-group">
+          <div class="calc-label">PLAYER ID</div>
+          <input type="text" class="store-input" id="pubg-id-calc" placeholder="5123456789">
+        </div>
+        <div class="calc-group">
+          <div class="calc-label">UC MIQDORI (taxminan)</div>
+          <input type="number" class="store-input" id="pubg-uc-calc" placeholder="660" oninput="calcPubg()">
+        </div>
+      </div>
+      <div class="calc-result" id="pubg-calc-result" style="display:none">
+        <div class="calc-item">
+          <div class="ci-label">Eng yaqin paket</div>
+          <div class="ci-val accent" id="pc-pkg">—</div>
+        </div>
+        <div class="calc-item">
+          <div class="ci-label">Narxi</div>
+          <div class="ci-val" id="pc-price">—</div>
+        </div>
+        <div class="calc-item">
+          <div class="ci-label">1 UC narxi</div>
+          <div class="ci-val green" id="pc-per">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">💎 UC Paketlari</div>
+    <div class="pubg-grid">
+      {% for p in pubg_prices %}
+      {% set per = p.price // p.uc %}
+      <div class="uc-card" onclick="selectUC({{ p.uc }},{{ p.price }},this)" data-uc="{{ p.uc }}">
+        {% if p.uc == 660 %}<div class="uc-bonus">🔥 Ommabop</div>{% endif %}
+        {% if p.uc == 8100 %}<div class="uc-bonus">💰 Tejamkor</div>{% endif %}
+        <div class="uc-icon">💎</div>
+        <div class="uc-amount">{{ p.uc }}</div>
+        <div class="uc-label">UC</div>
+        <div class="uc-price">{{ "{:,.0f}".format(p.price) }} so'm</div>
+        <div class="uc-per">≈ {{ per }} so'm/UC</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Taqqoslash -->
+    <div class="sec-title">📊 Paketlarni taqqoslash</div>
+    <div class="compare-table-wrap" style="margin-bottom:20px">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Paket</th>
+            <th>Narxi</th>
+            <th class="highlight">1 UC narxi</th>
+            <th>Tejash (1m ga nisbatan)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set base_per_uc = pubg_prices[0].price / pubg_prices[0].uc %}
+          {% for p in pubg_prices %}
+          {% set per = p.price / p.uc %}
+          {% set save_pct = ((base_per_uc - per) / base_per_uc * 100)|int %}
+          <tr>
+            <td><strong>{{ p.uc }} UC</strong></td>
+            <td>{{ "{:,.0f}".format(p.price) }} so'm</td>
+            <td class="accent">
+              {% if p.uc == 660 %}<span class="best-val">{{ "{:,.0f}".format(per|int) }} so'm</span>
+              {% else %}{{ "{:,.0f}".format(per|int) }} so'm{% endif %}
+            </td>
+            <td class="{% if save_pct > 0 %}green{% else %}muted{% endif %}">
+              {% if save_pct > 0 %}-{{ save_pct }}% arzonroq{% else %}Baza narx{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Buyurtma formasi -->
+    <div class="order-form hidden" id="pubg-order-form">
+      <div class="of-title">🎮 PUBG buyurtmasi</div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">PUBG PLAYER ID</div>
+          <input type="text" class="store-input" id="pubg-pid" placeholder="5123456789" oninput="updatePubgSummary()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">TANLANGAN PAKET</div>
+          <input type="text" class="store-input" id="pubg-pkg-show" readonly style="color:var(--accent);font-weight:700">
+        </div>
+      </div>
+      <div class="order-summary">
+        <div class="os-row"><span class="os-key">UC miqdori</span><span class="os-val" id="ps-uc">—</span></div>
+        <div class="os-row"><span class="os-key">Player ID</span><span class="os-val" id="ps-pid">—</span></div>
+        <div class="os-row"><span class="os-key">Jami</span><span class="os-val accent" id="ps-price">—</span></div>
+      </div>
+      <form method="POST" action="/store/buy" id="pubg-form">
+        <input type="hidden" name="item"      value="pubg">
+        <input type="hidden" name="uc_amount" id="pubg-uc-hidden">
+        <input type="hidden" name="pubg_id"   id="pubg-id-hidden">
+        <input type="hidden" name="qty"       value="1">
+        <button type="button" class="buy-btn" onclick="submitPubg()">
+          💎 UC Sotib Olish
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════ HISTORY ═══════════════ -->
+  <div class="tab-section" id="tab-history">
+    <div class="history-filters">
+      <button class="hf-btn active" onclick="filterHist('all',this)">Hammasi</button>
+      <button class="hf-btn" onclick="filterHist('premium',this)">⭐ Premium</button>
+      <button class="hf-btn" onclick="filterHist('stars',this)">🌟 Stars</button>
+      <button class="hf-btn" onclick="filterHist('pubg',this)">🎮 PUBG</button>
+      <button class="hf-btn" onclick="filterHist('done',this)">✅ Bajarilgan</button>
+      <button class="hf-btn" onclick="filterHist('pending',this)">⏳ Kutilmoqda</button>
+    </div>
+    <div class="history-list" id="history-list">
+      <!-- Dinamik yuklanadi -->
+      <div class="empty-state" id="hist-loading">
+        <div class="es-icon">⏳</div>
+        <div>Buyurtmalar yuklanmoqda...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ────────────────────────────────────────
+const STARS_PRICE = {{ stars_price }};
+const PLANS = {
+  {% for key, plan in plans.items() %}
+  "{{ key }}": {name:"{{ plan.name }}", price:{{ plan.price }}, months:{{ plan.months }},
+                disc: {{ {'premium_1m':0,'premium_3m':10,'premium_6m':18,'premium_12m':28}[key] }} },
+  {% endfor %}
+};
+const PUBG_PRICES = {{ pubg_prices | tojson }};
+const STARS_TIERS = [[50,0],[100,0],[250,3],[500,5],[1000,7],[2000,10],[5000,12],[10000,15]];
+
+let selectedPlanKey  = null;
+let selectedPlanData = null;
+let selectedUCData   = null;
+let currentStarsQty  = 0;
+let currentStarsDisc = 0;
+let orderHistory     = [];
+let histFilter       = 'all';
+
+// ── NOTIFICATIONS ─────────────────────────────────
+function showNotif(msg, type='success') {
+  const el = document.getElementById('notif');
+  document.getElementById('notif-icon').textContent = type === 'success' ? '✅' : '❌';
+  document.getElementById('notif-text').textContent = msg;
+  el.className = 'notif show ' + type;
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── TABS ──────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('show'));
+  document.querySelectorAll('.store-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('show');
+  btn.classList.add('active');
+  if (name === 'history') loadHistory();
+}
+
+// ── PREMIUM ───────────────────────────────────────
+function selectPlan(key, name, price, months, disc) {
+  selectedPlanKey = key;
+  selectedPlanData = {key, name, price, months, disc};
+  document.querySelectorAll('.plan-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.key === key);
+  });
+  document.getElementById('prem-order-form').classList.remove('hidden');
+  document.getElementById('prem-order-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+  updateSummary();
+}
+
+function toggleGift() {
+  const check   = document.getElementById('gift-check');
+  const fields  = document.getElementById('gift-fields');
+  const own     = document.getElementById('own-fields');
+  setTimeout(() => {
+    const on = check.checked;
+    fields.classList.toggle('show', on);
+    own.style.opacity = on ? '.5' : '1';
+  }, 10);
+}
+
+function toggleStarsGift() {
+  const check  = document.getElementById('stars-gift-check');
+  const fields = document.getElementById('stars-gift-fields');
+  setTimeout(() => {
+    fields.classList.toggle('show', check.checked);
+  }, 10);
+}
+
+function updateSummary() {
+  if (!selectedPlanData) return;
+  const qty = parseInt(document.getElementById('prem-qty-input').value) || 1;
+  const {name, price, disc} = selectedPlanData;
+  const base  = price * qty;
+  const saved = Math.round(base * disc / 100);
+  const total = base - saved;
+
+  document.getElementById('sum-plan').textContent  = name;
+  document.getElementById('sum-qty').textContent   = qty + ' ta';
+  document.getElementById('sum-unit').textContent  = fmt(price) + ' so\'m';
+  document.getElementById('sum-disc').textContent  = disc > 0 ? '-' + fmt(saved) + ' so\'m (-' + disc + '%)' : '—';
+  document.getElementById('sum-total').textContent = fmt(total) + ' so\'m';
+  document.getElementById('sum-qty').textContent   = qty + ' ta';
+}
+
+function submitPremium() {
+  if (!selectedPlanKey) { showNotif('Tarif tanlang!', 'error'); return; }
+  const isGift = document.getElementById('gift-check').checked;
+  let tgUser, giftTo = '', giftMsg = '';
+  if (isGift) {
+    giftTo = document.getElementById('gift-username').value.trim();
+    giftMsg = document.getElementById('gift-msg').value.trim();
+    tgUser = document.getElementById('prem-tg-input').value.trim() || '';
+    if (!giftTo) { showNotif('Sovg\'a oluvchi username kiriting!', 'error'); return; }
+  } else {
+    tgUser = document.getElementById('prem-tg-input').value.trim();
+    if (!tgUser) { showNotif('Telegram username kiriting!', 'error'); return; }
+  }
+  const qty = document.getElementById('prem-qty-input').value || 1;
+  document.getElementById('pf-item').value     = selectedPlanKey;
+  document.getElementById('pf-qty').value      = qty;
+  document.getElementById('pf-tg').value       = tgUser;
+  document.getElementById('pf-gift').value     = giftTo;
+  document.getElementById('pf-gift-msg').value = giftMsg;
+  document.getElementById('premium-submit-form').submit();
+}
+
+// ── PREMIUM CALC ──────────────────────────────────
+const PROMO_CODES = { 'BONUS10': 10, 'SAVE5': 5, 'VIP15': 15 };
+let promoDisc = 0;
+
+function calcPremium() {
+  const sel  = document.getElementById('calc-plan');
+  const opt  = sel.options[sel.selectedIndex];
+  const qty  = parseInt(document.getElementById('calc-qty').value) || 1;
+  const price = parseInt(opt.dataset.price);
+  const months = parseInt(opt.dataset.months);
+  const key  = sel.value;
+  const planDisc = PLANS[key]?.disc || 0;
+
+  const base     = price * qty;
+  const planSave = Math.round(base * planDisc / 100);
+  const afterPlan = base - planSave;
+  const promoSave = Math.round(afterPlan * promoDisc / 100);
+  const total    = afterPlan - promoSave;
+
+  document.getElementById('cr-base').textContent  = fmt(base) + ' so\'m';
+  document.getElementById('cr-disc').textContent  = planDisc > 0 ? '-' + fmt(planSave) + ' so\'m' : '—';
+  document.getElementById('cr-promo').textContent = promoDisc > 0 ? '-' + fmt(promoSave) + ' so\'m (' + promoDisc + '%)' : '—';
+  document.getElementById('cr-total').textContent = fmt(total) + ' so\'m';
+  document.getElementById('cr-per').textContent   = fmt(Math.round(total / qty)) + ' so\'m';
+  document.getElementById('cr-save').textContent  = fmt(planSave + promoSave) + ' so\'m';
+}
+
+function applyPromo() {
+  const code = document.getElementById('calc-promo').value.trim().toUpperCase();
+  promoDisc = PROMO_CODES[code] || 0;
+  calcPremium();
+}
+
+// ── STARS ─────────────────────────────────────────
+function selectTier(amount, disc, el) {
+  document.querySelectorAll('.tier-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('stars-qty').value = amount;
+  currentStarsDisc = disc;
+  calcStars();
+}
+
+function calcStars() {
+  const qty = parseInt(document.getElementById('stars-qty').value) || 0;
+  currentStarsQty = qty;
+
+  // Auto-detect discount tier
+  let disc = 0;
+  for (const [min, d] of STARS_TIERS) {
+    if (qty >= min) disc = d;
+  }
+  currentStarsDisc = disc;
+
+  // Update tier buttons
+  document.querySelectorAll('.tier-btn').forEach((b, i) => {
+    b.classList.toggle('active', STARS_TIERS[i][0] === qty);
+  });
+
+  const orig  = qty * STARS_PRICE;
+  const save  = Math.round(orig * disc / 100);
+  const total = orig - save;
+
+  document.getElementById('st-qty').textContent   = qty > 0 ? qty.toLocaleString() + ' ⭐' : '—';
+  document.getElementById('st-disc').textContent  = disc > 0 ? '-' + disc + '%' : '0%';
+  document.getElementById('st-total').textContent = qty > 0 ? fmt(total) + ' so\'m' : '—';
+}
+
+function submitStars() {
+  const tg  = document.getElementById('stars-tg').value.trim();
+  const qty = parseInt(document.getElementById('stars-qty').value);
+  if (!tg)  { showNotif('Telegram username kiriting!', 'error'); return; }
+  if (!qty || qty < 50) { showNotif('Minimum 50 Stars!', 'error'); return; }
+  const isGift = document.getElementById('stars-gift-check').checked;
+  const giftTo = isGift ? document.getElementById('stars-gift-to').value.trim() : '';
+  if (isGift && !giftTo) { showNotif('Sovg\'a oluvchi username kiriting!', 'error'); return; }
+
+  document.getElementById('stars-qty-h').value  = qty;
+  document.getElementById('stars-tg-h').value   = tg;
+  document.getElementById('stars-gift-h').value = giftTo;
+  document.getElementById('stars-form').submit();
+}
+
+// ── PUBG ──────────────────────────────────────────
+function calcPubg() {
+  const uc = parseInt(document.getElementById('pubg-uc-calc').value) || 0;
+  if (!uc) { document.getElementById('pubg-calc-result').style.display = 'none'; return; }
+
+  let best = PUBG_PRICES[0];
+  for (const p of PUBG_PRICES) {
+    if (p.uc >= uc) { best = p; break; }
+  }
+  best = PUBG_PRICES[PUBG_PRICES.length-1];
+  for (const p of PUBG_PRICES) {
+    if (p.uc >= uc) { best = p; break; }
+  }
+
+  document.getElementById('pubg-calc-result').style.display = 'grid';
+  document.getElementById('pc-pkg').textContent   = best.uc + ' UC';
+  document.getElementById('pc-price').textContent = fmt(best.price) + ' so\'m';
+  document.getElementById('pc-per').textContent   = Math.round(best.price / best.uc) + ' so\'m/UC';
+}
+
+function selectUC(uc, price, el) {
+  selectedUCData = {uc, price};
+  document.querySelectorAll('.uc-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('pubg-pkg-show').value = uc + ' UC — ' + fmt(price) + ' so\'m';
+  document.getElementById('pubg-order-form').classList.remove('hidden');
+  document.getElementById('pubg-order-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+  updatePubgSummary();
+}
+
+function updatePubgSummary() {
+  if (!selectedUCData) return;
+  const pid = document.getElementById('pubg-pid').value.trim();
+  document.getElementById('ps-uc').textContent    = selectedUCData.uc + ' UC';
+  document.getElementById('ps-pid').textContent   = pid || '—';
+  document.getElementById('ps-price').textContent = fmt(selectedUCData.price) + ' so\'m';
+}
+
+function submitPubg() {
+  const pid = document.getElementById('pubg-pid').value.trim();
+  if (!pid) { showNotif('PUBG Player ID kiriting!', 'error'); return; }
+  if (!selectedUCData) { showNotif('UC paket tanlang!', 'error'); return; }
+  document.getElementById('pubg-uc-hidden').value = selectedUCData.uc;
+  document.getElementById('pubg-id-hidden').value = pid;
+  document.getElementById('pubg-form').submit();
+}
+
+// ── ORDER HISTORY ─────────────────────────────────
+function loadHistory() {
+  fetch('/api/my-orders')
+    .then(r => r.json())
+    .then(data => {
+      orderHistory = data.orders || [];
+      renderHistory();
+    })
+    .catch(() => {
+      // Demo data agar API yo'q bo'lsa
+      orderHistory = [
+        {type:'premium', name:'Premium 3 Oy', meta:'@aziz_dev', price:230000, status:'done',   date:'2026-05-20'},
+        {type:'stars',   name:'500 Stars',    meta:'@aziz_dev', price:245000, status:'done',   date:'2026-05-18'},
+        {type:'pubg',    name:'660 UC',        meta:'ID: 512345', price:145000, status:'pending',date:'2026-05-26'},
+      ];
+      renderHistory();
+    });
+}
+
+function filterHist(f, btn) {
+  histFilter = f;
+  document.querySelectorAll('.hf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  document.getElementById('hist-loading')?.remove();
+
+  let items = orderHistory;
+  if (histFilter !== 'all') {
+    if (['premium','stars','pubg'].includes(histFilter))
+      items = items.filter(o => o.type === histFilter);
+    else
+      items = items.filter(o => o.status === histFilter);
+  }
+
+  if (!items.length) {
+    list.innerHTML = `<div class="empty-state"><div class="es-icon">📭</div><div>Buyurtmalar topilmadi</div></div>`;
+    return;
+  }
+
+  const icons = {premium:'⭐', stars:'🌟', pubg:'🎮'};
+  list.innerHTML = items.map(o => `
+    <div class="hist-item">
+      <div class="hist-icon">${icons[o.type] || '📦'}</div>
+      <div class="hist-info">
+        <div class="hist-name">${o.name}</div>
+        <div class="hist-meta">${o.meta} · ${o.date}</div>
+      </div>
+      <div class="hist-right">
+        <div class="hist-price">${fmt(o.price)} so'm</div>
+        <span class="hist-status ${o.status}">
+          ${getStatusLabel(o.status)}
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── UTILS ─────────────────────────────────────────
+function fmt(n) { return Math.round(n).toLocaleString('uz'); }
+function getStatusLabel(s) {
+  if (s === 'done')    return '✅ Bajarildi';
+  if (s === 'pending') return '⏳ Kutilmoqda';
+  if (s === 'failed')  return '❌ Rad etildi';
+  return s;
+}
+
+// ── INIT ──────────────────────────────────────────
+calcPremium();
+</script>
+{% endblock %}

@@ -15,6 +15,7 @@
   }
   .warn-box i { font-size: 14px; margin-top: 1px; flex-shrink: 0; }
 
+  /* Methods Grid */
   .methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; }
   .mitem {
     background: var(--card2); border: 1px solid var(--border);
@@ -23,14 +24,23 @@
   }
   .mitem:hover { border-color: var(--border2); }
   .mitem.sel { border-color: var(--accent); background: rgba(56,189,248,.07); }
+  .mitem.popular { border: 1px solid rgba(36, 161, 222, 0.5); background: rgba(36, 161, 222, 0.04); }
+  .mitem.popular:hover { border-color: #24A1DE; }
   .mitem.locked { opacity: .45; cursor: not-allowed; }
   .mitem i { font-size: 20px; color: var(--muted); display: block; margin-bottom: 6px; }
   .mitem.sel i { color: var(--accent); }
   .mitem-label { font-size: 12px; font-weight: 600; color: var(--text); }
+
+  /* Badges */
   .lock-badge {
     font-size: 9px; background: rgba(251,191,36,.12); color: #fbbf24;
     border-radius: 100px; padding: 2px 7px; margin-top: 5px; display: inline-block;
     border: 1px solid rgba(251,191,36,.2);
+  }
+  .pop-badge {
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    font-size: 8px; font-weight: 800; background: #24A1DE; color: #fff;
+    padding: 1px 8px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px;
   }
 
   .amount-row {
@@ -57,7 +67,7 @@
     width: 100%; padding: 16px; border-radius: 14px; border: none;
     background: var(--accent); color: #002; font-size: 15px;
     font-weight: 800; cursor: pointer; font-family: inherit;
-    transition: opacity .2s; margin-top: 4px;
+    transition: opacity .2s; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;
   }
   .btn-main:hover { opacity: .9; }
   .btn-back {
@@ -79,7 +89,7 @@
   }
   .card-header { font-size: 10px; letter-spacing: 2px; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; }
   .card-num-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-  .card-num { font-size: 18px; font-weight: 700; color: var(--white); letter-spacing: 2px; font-family: 'Syne', sans-serif; }
+  .card-num { font-size: 14px; font-weight: 600; color: var(--white); letter-spacing: 3px; font-family: monospace; }
   .copy-btn {
     font-size: 12px; padding: 6px 13px; border-radius: 9px;
     border: 1px solid var(--accent); background: rgba(56,189,248,.08);
@@ -103,8 +113,25 @@
   .file-chosen { font-size: 12px; color: var(--accent3); margin-top: 6px; }
 
   .hidden { display: none; }
+
+  .money-bg {
+    position: fixed; inset: 0; pointer-events: none;
+    overflow: hidden; z-index: 0;
+  }
+  .money-em {
+    position: absolute;
+    animation: floatUp linear infinite;
+    opacity: 0.10; user-select: none; pointer-events: none;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0.10; }
+    80%  { opacity: 0.10; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+  .pf-wrap { position: relative; z-index: 1; }
 </style>
 
+<div class="money-bg" id="moneyBg"></div>
 <div class="pf-wrap">
   <div class="pf-card">
 
@@ -114,24 +141,33 @@
     <div class="warn-box">
       <i class="fas fa-shield-halved"></i>
       <span>
-        <strong>Diqqat!</strong> Firibgarlik to'lov tashlasangiz darhol bloklanasiz.
-        Karta egasi hech qanday javobgar emas. Faqat o'zingizning kartangizdan to'lang.
+        <strong>Diqqat!</strong> Firibgarlik maqsadida soxta to'lov cheki yuborsangiz hisobingiz darhol bloklanadi.
+        Faqat o'zingizga tegishli kartalardan to'lov qiling.
       </span>
     </div>
 
     <!-- STEP 1 -->
     <div id="step1">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:.5px;">TO'LOV USULINI TANLANG</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;letter-spacing:.5px;">TO'LOV USULINI TANLANG</div>
 
       <div class="methods" id="method-grid">
+        <!-- Telegram Bot TUGMASI (Bosilganda darhol botga o'tadi) -->
+        <div class="mitem popular" onclick="redirectToBot()">
+          <span class="pop-badge">Avtomat</span>
+          <i class="fab fa-telegram" style="color: #24A1DE;"></i>
+          <div class="mitem-label">Telegram Bot</div>
+        </div>
+        <!-- Uzcard -->
         <div class="mitem" onclick="selectMethod('uzcard',this)">
           <i class="fas fa-credit-card"></i>
           <div class="mitem-label">Uzcard</div>
         </div>
+        <!-- Visa -->
         <div class="mitem" onclick="selectMethod('visa',this)">
           <i class="fab fa-cc-visa"></i>
           <div class="mitem-label">Visa / Master</div>
         </div>
+        <!-- Locked Methods -->
         <div class="mitem locked">
           <i class="fas fa-credit-card"></i>
           <div class="mitem-label">Humo</div>
@@ -149,8 +185,9 @@
         </div>
       </div>
 
+      <!-- Amount Row -->
       <div class="amount-row">
-        <div class="amount-label">SUMMA KIRITING</div>
+        <div class="amount-label">KARTA ORQALI TO'LOV SUMMASI</div>
         <div class="amount-input-wrap">
           <input type="number" id="amount-input" placeholder="0" min="5000">
           <span class="amount-cur">UZS</span>
@@ -164,22 +201,23 @@
         </div>
       </div>
 
+      <!-- Action Button -->
       <button class="btn-main" id="step1-btn" onclick="goStep2()">
-        <i class="fas fa-arrow-right" style="margin-right:6px"></i> To'lovni Davom Ettirish
+        <i class="fas fa-arrow-right"></i> To'lovni Davom Ettirish
       </button>
     </div>
 
-    <!-- STEP 2 -->
+    <!-- STEP 2 (Faqat Uzcard/Visa cheklari uchun) -->
     <form action="/add-funds" method="POST" enctype="multipart/form-data" id="step2" class="hidden">
       <input type="hidden" name="payment_method" id="method-hidden">
       <input type="hidden" name="amount" id="amount-hidden">
 
       <div class="timer-wrap">
-        <div class="timer-val" id="timer">10:00</div>
-        <div class="timer-lbl">Ushbu vaqt ichida to'lovni amalga oshiring</div>
+        <div class="timer-val" id="timer">5:00</div>
+        <div class="timer-lbl">Ushbu vaqt ichida to'lovni amalga oshiring va chekni yuklang</div>
       </div>
 
-      <div class="card-box">
+      <div class="card-box" id="card-details-box">
         <div class="card-header">Qabul qiluvchi karta</div>
         <div class="card-num-row">
           <div class="card-num" id="card-num">0000 0000 0000 0000</div>
@@ -193,19 +231,20 @@
         </div>
       </div>
 
+      <!-- Receipt Upload Zone -->
       <div class="upload-zone" onclick="document.getElementById('file-input').click()">
         <i class="fas fa-cloud-upload-alt"></i>
-        <p>To'lov chekini yuklang</p>
+        <p>To'lov chekini (skrinshotini) yuklang</p>
         <p style="margin-top:4px;font-size:11px;color:var(--muted)">PNG, JPG, PDF — bosing yoki sudrab tashlang</p>
         <div class="file-chosen" id="file-name"></div>
-        <input type="file" name="check_file" id="file-input" accept="image/*,.pdf" onchange="showFile(this)">
+        <input type="file" name="check_file" id="file-input" accept="image/*,.pdf" onchange="showFile(this)" required>
       </div>
 
       <button type="submit" class="btn-main">
-        <i class="fas fa-check-circle" style="margin-right:6px"></i> Tasdiqlashga Yuborish
+        <i class="fas fa-check-circle"></i> Tasdiqlashga Yuborish
       </button>
       <button type="button" class="btn-back" onclick="goBack()">
-        <i class="fas fa-arrow-left" style="margin-right:6px"></i> Orqaga
+        <i class="fas fa-arrow-left"></i> Orqaga
       </button>
     </form>
 
@@ -221,6 +260,12 @@
   let selectedMethod = '';
   let timerInterval  = null;
 
+  // 1. Telegram bot bosilsa, darhol yangi oynada ochib yuborish funksiyasi
+  function redirectToBot() {
+    window.open('https://t.me/uccenter_bot', '_blank');
+  }
+
+  // 2. Oddiy kartalar tanlangandagi funksiya
   function selectMethod(method, el) {
     if (el.classList.contains('locked')) return;
     selectedMethod = method;
@@ -234,11 +279,13 @@
 
   function goStep2() {
     const amount = parseInt(document.getElementById('amount-input').value);
-    if (!selectedMethod) { alert("Iltimos, to'lov usulini tanlang!"); return; }
+    if (!selectedMethod) { alert("Iltimos, to'lov usulini tanlang (Uzcard yoki Visa)!"); return; }
     if (!amount || amount < 5000) { alert("Minimal to'lov 5 000 so'm!"); return; }
+
     const btn = document.getElementById('step1-btn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin" style="margin-right:6px"></i> Ma\'lumotlar tekshirilmoqda...';
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Iltimos kuting...';
+
     setTimeout(function() {
       const card = CARDS[selectedMethod];
       document.getElementById('card-num').textContent   = card.num;
@@ -246,18 +293,27 @@
       document.getElementById('pay-amount-show').textContent = amount.toLocaleString() + " so'm";
       document.getElementById('method-hidden').value = selectedMethod;
       document.getElementById('amount-hidden').value  = amount;
+
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-arrow-right" style="margin-right:6px"></i> To\'lovni Davom Ettirish';
+      btn.innerHTML = '<i class="fas fa-arrow-right"></i> To\'lovni Davom Ettirish';
+
       document.getElementById('step1').classList.add('hidden');
       document.getElementById('step2').classList.remove('hidden');
-      startTimer(600);
-    }, 3000);
+      startTimer(300);
+    }, 1500);
   }
 
   function goBack() {
-    clearInterval(timerInterval);
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('step1').classList.remove('hidden');
+    const btn = document.querySelector('.btn-back');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Bekor qilinmoqda...';
+    setTimeout(function() {
+      clearInterval(timerInterval);
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step1').classList.remove('hidden');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-arrow-left"></i> Orqaga';
+    }, 1000);
   }
 
   function startTimer(sec) {
@@ -277,6 +333,22 @@
     const txt = document.getElementById('card-num').textContent.replace(/\s/g, '');
     navigator.clipboard.writeText(txt).then(() => alert('✅ Karta raqami nusxalandi!'));
   }
+
+  // Fon animatsiyasi
+  (function() {
+    const emojis = ['💵','💸','💰','💳'];
+    const bg = document.getElementById('moneyBg');
+    for (let i = 0; i < 20; i++) {
+      const el = document.createElement('span');
+      el.className = 'money-em';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.fontSize = (16 + Math.random() * 16) + 'px';
+      el.style.animationDuration = (12 + Math.random() * 12) + 's';
+      el.style.animationDelay = (Math.random() * 10) + 's';
+      bg.appendChild(el);
+    }
+  })();
 
   function showFile(input) {
     const name = input.files[0]?.name || '';

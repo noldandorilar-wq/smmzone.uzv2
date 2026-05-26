@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Biometric Verification — SMMZONE</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: #000;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Fon grid */
+.bg-grid {
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,136,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,136,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+.bg-glow {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,255,136,.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.scan-wrap {
+  text-align: center;
+  width: 100%;
+  max-width: 480px;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.top-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,255,136,.06); border: 1px solid rgba(0,255,136,.15);
+  border-radius: 100px; padding: 6px 16px;
+  font-size: 10px; letter-spacing: 4px; color: #00ff88;
+  text-transform: uppercase; margin-bottom: 20px;
+  animation: fadeIn .5s .2s both;
+}
+.top-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: #00ff88;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+/* Kamera doira */
+.cam-outer {
+  position: relative;
+  width: 280px; height: 280px;
+  margin: 0 auto 28px;
+  animation: fadeIn .6s .5s both;
+}
+
+/* Aylanuvchi ring */
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+.ring1 {
+  inset: -20px;
+  border-top-color: rgba(0,255,136,.6);
+  border-right-color: rgba(0,255,136,.2);
+  animation: spin 3s linear infinite;
+}
+.ring2 {
+  inset: -35px;
+  border-bottom-color: rgba(56,189,248,.4);
+  border-left-color: rgba(56,189,248,.1);
+  animation: spin 5s linear infinite reverse;
+}
+.ring3 {
+  inset: -50px;
+  border-top-color: rgba(0,255,136,.15);
+  animation: spin 8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Kamera */
+.cam-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(0,255,136,.25);
+  box-shadow: 0 0 30px rgba(0,255,136,.1), inset 0 0 30px rgba(0,0,0,.5);
+}
+video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: grayscale(30%) brightness(1.05) contrast(1.1);
+}
+
+/* Scan line */
+.scan-line {
+  position: absolute;
+  left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #00ff88 30%, rgba(0,255,136,.8) 50%, #00ff88 70%, transparent 100%);
+  box-shadow: 0 0 12px #00ff88, 0 0 24px rgba(0,255,136,.4);
+  animation: scanMove 2.5s ease-in-out infinite;
+  top: 0;
+}
+@keyframes scanMove {
+  0%   { top: 0%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Corner brackets */
+.brackets { position: absolute; inset: 0; border-radius: 50%; }
+.brk {
+  position: absolute;
+  width: 22px; height: 22px;
+  border-color: #00ff88;
+  border-style: solid;
+  opacity: .9;
+}
+.brk.tl { top:8px; left:8px; border-width:2px 0 0 2px; }
+.brk.tr { top:8px; right:8px; border-width:2px 2px 0 0; }
+.brk.bl { bottom:8px; left:8px; border-width:0 0 2px 2px; }
+.brk.br { bottom:8px; right:8px; border-width:0 2px 2px 0; }
+
+/* Yuz nuqtalari */
+.dot {
+  position: absolute;
+  width: 5px; height: 5px;
+  background: #00ff88;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #00ff88;
+  animation: dotBlink 2s ease-in-out infinite;
+  opacity: 0;
+}
+.dot.active { opacity: 1; }
+@keyframes dotBlink {
+  0%,100% { opacity:.3; transform:scale(1); }
+  50% { opacity:1; transform:scale(1.8); }
+}
+
+/* Mesh lines */
+.mesh-line {
+  position: absolute;
+  background: rgba(0,255,136,.15);
+  pointer-events: none;
+}
+
+/* Tahlil panel */
+.analysis-panel {
+  background: rgba(0,10,5,.8);
+  border: 1px solid rgba(0,255,136,.12);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  text-align: left;
+  animation: fadeIn .5s 1s both;
+  backdrop-filter: blur(10px);
+}
+.panel-title {
+  font-size: 9px; letter-spacing: 4px;
+  color: rgba(0,255,136,.5); margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.check-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,.03);
+  font-size: 10px; letter-spacing: 1.5px; color: #444;
+}
+.check-row:last-child { border-bottom: none; }
+.check-label { color: #556; text-transform: uppercase; }
+.check-val { font-weight: 700; }
+.check-val.ok { color: #00ff88; }
+.check-val.scanning {
+  color: #fbbf24;
+  animation: blink .8s infinite;
+}
+.check-val.wait { color: #333; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* Progress */
+.prog-wrap {
+  background: rgba(255,255,255,.04);
+  border-radius: 100px; height: 2px;
+  overflow: hidden; margin-bottom: 12px;
+  animation: fadeIn .5s 1.2s both;
+}
+.prog-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #00ff88, #38bdf8, #00ff88);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+  transition: width .08s linear;
+  box-shadow: 0 0 10px #00ff88;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* Foiz */
+.percent-row {
+  display: flex; justify-content: space-between;
+  font-size: 9px; color: #333; letter-spacing: 2px;
+  margin-bottom: 14px;
+  animation: fadeIn .5s 1.3s both;
+}
+.percent-num { color: #00ff88; font-size: 11px; font-weight: 700; }
+
+/* Terminal log */
+.terminal {
+  background: rgba(0,5,2,.9);
+  border: 1px solid rgba(0,255,136,.08);
+  border-radius: 10px; padding: 12px 14px;
+  text-align: left; font-size: 9px;
+  letter-spacing: 1px; color: #1a3a25;
+  height: 72px; overflow: hidden;
+  animation: fadeIn .5s 1.5s both;
+}
+.t-line { margin-bottom: 4px; opacity: 0; transition: opacity .4s; }
+.t-line.show { opacity: 1; }
+.t-line.green { color: #00ff88; }
+.t-line.blue  { color: #38bdf8; }
+.t-line.yellow{ color: #fbbf24; }
+
+/* OK tugma emoji */
+.ok-emoji {
+  font-size: 60px;
+  position: fixed;
+  animation: flyIn 1s ease both;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+}
+@keyframes flyIn {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60%  { transform: scale(1.3) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Flash */
+.flash-overlay {
+  position: fixed; inset: 0;
+  background: #fff; opacity: 0;
+  pointer-events: none; z-index: 9999;
+  transition: opacity .3s;
+}
+.flash-overlay.on { opacity: 1; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="scan-wrap">
+  <div class="top-badge">SMMZONE BIOMETRIC SYSTEM v2.4</div>
+
+  <div class="cam-outer">
+    <div class="ring ring1"></div>
+    <div class="ring ring2"></div>
+    <div class="ring ring3"></div>
+    <div class="cam-circle">
+      <video id="video" autoplay muted playsinline></video>
+      <div class="scan-line"></div>
+      <div class="brackets">
+        <div class="brk tl"></div>
+        <div class="brk tr"></div>
+        <div class="brk bl"></div>
+        <div class="brk br"></div>
+      </div>
+      <div id="dotContainer"></div>
+    </div>
+  </div>
+
+  <div class="analysis-panel">
+    <div class="panel-title">⬡ Real-time Analysis</div>
+    <div class="check-row">
+      <span class="check-label">Yuz Aniqlash</span>
+      <span class="check-val scanning" id="c1">SKANERLAYAPTI</span>
+    </div>
+    <div class="check-row">
+      <span class="check-label">Biometrik Tahlil</span>
+      <span class="check-val wait" id="c2">——</span>
+    </div>
+    <div class="check-row">
+      <span class="check-label">Admin Bazasi</span>
+      <span class="check-val wait" id="c3">——</span>
+    </div>
+    <div class="check-row">
+      <span class="check-label">Ruxsat Darajasi</span>
+      <span class="check-val ok">ADMIN ★★★</span>
+    </div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-fill" id="progFill"></div>
+  </div>
+  <div class="percent-row">
+    <span>TAHLIL JARAYONI</span>
+    <span class="percent-num" id="pct">0%</span>
+  </div>
+
+  <div class="terminal" id="terminal">
+    <div class="t-line green" id="t1">&gt; [OK] Kamera sensori ulandi</div>
+    <div class="t-line blue"  id="t2">&gt; [..] Yuz konturlari skanerlanyapti...</div>
+    <div class="t-line yellow"id="t3">&gt; [..] 68 nuqta biometrik tahlil...</div>
+    <div class="t-line green" id="t4">&gt; [OK] MOS KELDI — Admin: aziz ★</div>
+    <div class="t-line blue"  id="t5">&gt; [OK] Kirish ruxsati berilmoqda...</div>
+  </div>
+</div>
+
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<script>
+// Kamera
+navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false})
+  .then(s => document.getElementById("video").srcObject = s)
+  .catch(() => {});
+
+// Nuqtalar
+const dotPos = [
+  {top:"28%",left:"38%"},{top:"28%",left:"62%"},
+  {top:"38%",left:"28%"},{top:"38%",left:"72%"},
+  {top:"45%",left:"33%"},{top:"45%",left:"67%"},
+  {top:"52%",left:"50%"},{top:"60%",left:"40%"},
+  {top:"60%",left:"60%"},{top:"68%",left:"50%"},
+  {top:"35%",left:"50%"},{top:"72%",left:"44%"},
+  {top:"72%",left:"56%"},{top:"25%",left:"50%"},
+];
+const dc = document.getElementById("dotContainer");
+dotPos.forEach((p,i) => {
+  const d = document.createElement("div");
+  d.className = "dot";
+  d.style.cssText = `top:${p.top};left:${p.left};animation-delay:${i*0.12}s`;
+  dc.appendChild(d);
+  setTimeout(() => d.classList.add("active"), 800 + i*150);
+});
+
+// Progress
+let pct = 0;
+const fill = document.getElementById("progFill");
+const pctEl = document.getElementById("pct");
+const iv = setInterval(() => {
+  pct += pct < 70 ? 0.8 : pct < 90 ? 0.3 : 0.1;
+  if (pct >= 100) { pct = 100; clearInterval(iv); }
+  fill.style.width = pct + "%";
+  pctEl.textContent = Math.floor(pct) + "%";
+}, 55);
+
+// Terminal log
+const tLines = ["t1","t2","t3","t4","t5"];
+tLines.forEach((id,i) => setTimeout(() => document.getElementById(id).classList.add("show"), 800+i*900));
+
+// Status check
+setTimeout(() => {
+  const c1 = document.getElementById("c1");
+  c1.textContent = "ANIQLANDI ✓"; c1.className = "check-val ok";
+}, 2800);
+setTimeout(() => {
+  const c2 = document.getElementById("c2");
+  c2.textContent = "SCANNING..."; c2.className = "check-val scanning";
+}, 3200);
+setTimeout(() => {
+  const c2 = document.getElementById("c2");
+  c2.textContent = "TASDIQLANDI ✓"; c2.className = "check-val ok";
+  const c3 = document.getElementById("c3");
+  c3.textContent = "TEKSHIRILMOQDA"; c3.className = "check-val scanning";
+}, 4500);
+setTimeout(() => {
+  const c3 = document.getElementById("c3");
+  c3.textContent = "MOS KELDI ✓"; c3.className = "check-val ok";
+}, 5500);
+
+// 👌 emoji chiqish + touch/click bilan ham ochilsin
+let unlocked = false;
+function unlock() {
+  if (unlocked) return;
+  unlocked = true;
+  const ov = document.getElementById("flashOverlay");
+  ov.classList.add("on");
+  setTimeout(() => { window.location.href = "/admin/"; }, 500);
+}
+
+setTimeout(() => {
+  const em = document.createElement("div");
+  em.className = "ok-emoji";
+  em.textContent = "👌";
+  em.style.cssText = "top:50%;left:50%;transform:translate(-50%,-50%);position:fixed;cursor:pointer;z-index:200;animation:flyIn 1s .1s ease both;";
+  em.title = "Bosing yoki tegining";
+  document.body.appendChild(em);
+
+  // Bosish yoki tegish bilan ochilsin
+  ["click","touchstart"].forEach(ev => em.addEventListener(ev, unlock));
+
+  // Auto 7 soniyada ham ochiladi
+  setTimeout(unlock, 1200);
+}, 6000);
+</script>
+</body>
+</html>

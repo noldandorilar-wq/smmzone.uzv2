@@ -331,6 +331,7 @@ def sync_orders():
 @admin_bp.route("/payments")
 @admin_required
 def payments():
+    import datetime
     db    = get_db()
     page  = max(1, int(request.args.get("page", 1)))
     limit = 50
@@ -344,8 +345,17 @@ def payments():
     ).fetchall())
     total         = db.execute("SELECT COUNT(*) FROM deposits").fetchone()[0]
     pending_count = db.execute("SELECT COUNT(*) FROM deposits WHERE status='pending'").fetchone()[0]
+    # 24 soat ichida to'lov bormi?
+    now = datetime.datetime.now()
+    cutoff = (now - datetime.timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
+    last_24h = db.execute(
+        "SELECT COUNT(*) FROM deposits WHERE created_at >= ? AND status='completed'",
+        (cutoff,)
+    ).fetchone()[0]
+    has_payment_24h = last_24h > 0
     return render_template("admin/payments.html", payments=rows, page=page,
-                           total=total, limit=limit, pending_count=pending_count)
+                           total=total, limit=limit, pending_count=pending_count,
+                           has_payment_24h=has_payment_24h, last_24h_count=last_24h)
 
 
 @admin_bp.route("/payments/<int:did>/confirm", methods=["POST"])

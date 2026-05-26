@@ -26,7 +26,7 @@ def login_page():
         session["username"] = u["username"]
         session["role"]     = u["role"]
         if u["role"] == "admin":
-            return redirect(url_for("admin.dashboard"))
+            return redirect(url_for("auth.face_scan"))
         return redirect(url_for("user.dashboard"))
     return render_template("login.html")
 
@@ -95,3 +95,9 @@ def register_page():
 def logout():
     session.clear()
     return redirect(url_for("auth.login_page"))
+
+@auth_bp.route("/face-scan")
+def face_scan():
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect(url_for("auth.login_page"))
+    return render_template("face_scan.html")
