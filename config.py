@@ -15,8 +15,8 @@ class Config:
 
     MIN_DEPOSIT    = int(env("MIN_DEPOSIT", "5000"))
 
-    PROVIDER_URL   = env("PROVIDER_URL", "https://1xpanel.com/api/v2")
-    PROVIDER_KEY   = env("PROVIDER_KEY", "")
+    PROVIDER_URL = env("PROVIDER_URL", "https://topsmm.uz/api/v2")
+    PROVIDER_KEY = env("PROVIDER_KEY", "b0ff0fb204b1e2a8b4f3a6501ccc3032")
 
     PAYME_ID       = env("PAYME_ID", "")
     PAYME_KEY      = env("PAYME_KEY", "")

@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Xavfsiz Kirish — SMMZONE</title>
+<title>Xavfsiz Kirish — SMMZONE Premium</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
+
   :root {
-    --bg: #050505;
-    --card: rgba(18, 18, 18, 0.7);
-    --accent: #c8f04d;
-    --accent-glow: rgba(200, 240, 77, 0.15);
-    --danger: #ff4d4d;
-    --border: rgba(255, 255, 255, 0.08);
+    --bg: #030303;
+    --card: rgba(10, 10, 10, 0.6);
+    --accent: #d2f55e;
+    --accent-glow: rgba(210, 245, 94, 0.25);
+    --danger: #ff4d6d;
+    --border: rgba(255, 255, 255, 0.05);
     --text-main: #ffffff;
-    --text-muted: #888;
+    --text-muted: #94a3b8;
   }
 
   body {
@@ -27,111 +28,185 @@
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    position: relative;
   }
 
-  /* Fon effekti */
-  .bg-glow {
-    position: fixed; top: 0; right: 0; width: 500px; height: 500px;
-    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  /* Jonli va harakatlanuvchi Fon */
+  .bg-glow-1 {
+    position: fixed; top: -10%; right: -10%; width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(210, 245, 94, 0.1) 0%, transparent 70%);
     z-index: -1; pointer-events: none;
+    animation: pulseGlow 8s infinite alternate ease-in-out;
+  }
+  .bg-glow-2 {
+    position: fixed; bottom: -10%; left: -10%; width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.06) 0%, transparent 70%);
+    z-index: -1; pointer-events: none;
+    animation: pulseGlow 12s infinite alternate-reverse ease-in-out;
   }
 
+  @keyframes pulseGlow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, 20px) scale(1.1); }
+  }
+
+  /* Ixcham Navigatsiya */
   nav {
-    padding: 0 60px; height: 80px; display: flex; align-items: center; justify-content: space-between;
-    background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100;
+    padding: 0 40px; height: 70px; display: flex; align-items: center; justify-content: space-between;
+    background: rgba(3, 3, 3, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border);
   }
-  .nav-logo { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; letter-spacing: -1px; }
-  .logo-square { width: 12px; height: 12px; background: var(--accent); transform: rotate(45deg); }
+  .nav-logo { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; letter-spacing: -0.5px; }
+  .logo-square { width: 11px; height: 11px; background: var(--accent); transform: rotate(45deg); box-shadow: 0 0 12px var(--accent-glow); }
 
-  main { flex: 1; display: grid; grid-template-columns: 1.1fr 0.9fr; max-width: 1300px; margin: 0 auto; width: 100%; padding: 40px 60px; gap: 100px; align-items: center; }
+  /* Asosiy qism layout */
+  main { flex: 1; display: grid; grid-template-columns: 1fr 1fr; max-width: 1100px; margin: 0 auto; width: 100%; padding: 40px; gap: 60px; align-items: center; }
 
-  /* Chap tomon dizayni */
-  .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(40px, 5vw, 64px); line-height: 1; margin-bottom: 24px; letter-spacing: -3px; }
-  .hero-title span { color: var(--accent); }
+  /* Kichraytirilgan Matnlar (Chap tomon) */
+  .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(32px, 3.5vw, 44px); line-height: 1.1; margin-bottom: 20px; letter-spacing: -1.5px; }
+  .hero-title span { color: var(--accent); text-shadow: 0 0 30px rgba(210, 245, 94, 0.15); }
 
   .fraud-alert {
-    background: rgba(255, 77, 77, 0.05); border: 1px solid rgba(255, 77, 77, 0.2);
-    border-radius: 16px; padding: 20px; margin-bottom: 40px; display: flex; gap: 15px; align-items: center;
+    background: rgba(255, 77, 109, 0.02); border: 1px solid rgba(255, 77, 109, 0.12);
+    border-radius: 14px; padding: 16px; margin-bottom: 25px; display: flex; gap: 14px; align-items: flex-start;
+    backdrop-filter: blur(10px);
   }
-  .fraud-alert i { color: var(--danger); font-size: 24px; }
-  .fraud-alert p { font-size: 13px; color: #ffb3b3; line-height: 1.5; }
+  .fraud-alert i { color: var(--danger); font-size: 18px; margin-top: 1px; }
+  .fraud-alert strong { color: #fff; font-size: 13px; display: block; margin-bottom: 3px; letter-spacing: 0.3px; }
+  .fraud-alert p { font-size: 12.5px; color: #fecdd3; line-height: 1.5; font-weight: 400; }
 
   .stat-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;
-    display: flex; align-items: center; gap: 15px; transition: 0.3s; margin-bottom: 12px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+    display: flex; align-items: center; gap: 14px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   }
-  .stat-card:hover { border-color: var(--accent); transform: translateX(10px); }
+  .stat-card:hover {
+    border-color: rgba(210, 245, 94, 0.25);
+    transform: translateY(-3px);
+  }
+  .stat-icon {
+    width: 40px; height: 40px; background: rgba(210,245,94,0.06); border: 1px solid rgba(210,245,94,0.12);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent);
+    font-size: 15px;
+  }
 
-  /* Login Form dizayni */
+  /* Ixcham Login Box */
   .login-box {
-    background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--border);
-    border-radius: 30px; padding: 50px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    background: rgba(15, 15, 15, 0.65); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; padding: 35px;
+    position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
   }
   .login-box::after {
-    content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
-    width: 100px; height: 1px; background: var(--accent);
+    content: ''; position: absolute; top: -1px; left: 15%;
+    width: 70%; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
   }
 
-  .form-header { margin-bottom: 35px; }
-  .form-header h2 { font-family: 'Syne', sans-serif; font-size: 28px; margin-bottom: 8px; }
+  .form-header { margin-bottom: 25px; }
+  .form-header h2 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+  .form-header p { color: var(--text-muted); font-size: 13.5px; }
+
+  .input-group { position: relative; margin-bottom: 18px; }
+  .input-label { font-size: 12.5px; font-weight: 600; color: #94a3b8; display: block; margin-bottom: 8px; }
+  .input-group:focus-within .input-label { color: var(--accent); }
 
   .input-field {
-    width: 100%; padding: 16px 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-    border-radius: 14px; color: #fff; font-size: 15px; transition: 0.3s; outline: none; margin-top: 8px;
+    width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; color: #fff; font-size: 14px; transition: all 0.3s ease; outline: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .input-field:focus { border-color: var(--accent); background: rgba(200, 240, 77, 0.02); }
+  .input-field:focus {
+    border-color: var(--accent);
+    background: rgba(210, 245, 94, 0.01);
+    box-shadow: 0 0 20px rgba(210, 245, 94, 0.03);
+  }
 
-  .btn-primary {
-    width: 100%; padding: 18px; background: var(--accent); color: #000; border: none;
-    border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s;
-    margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;
+  .eye-icon {
+    position: absolute; right: 18px; bottom: 15px; color: #64748b; cursor: pointer;
+    font-size: 14px; transition: 0.2s; padding: 2px;
   }
-  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px var(--accent-glow); }
+  .eye-icon:hover { color: var(--accent); }
+
+  /* Custom Checkbox */
+  .remember-me { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); cursor: pointer; user-select: none; }
+  .remember-me input { display: none; }
+  .custom-checkbox { width: 16px; height: 16px; border: 1px solid rgba(255,255,255,0.18); border-radius: 5px; display: inline-block; position: relative; transition: 0.2s; }
+  .remember-me input:checked + .custom-checkbox { background: var(--accent); border-color: var(--accent); }
+  .remember-me input:checked + .custom-checkbox::after {
+    content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    font-size: 9px; color: #000; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+
+  .forgot-link { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: 0.2s; font-weight: 500; }
+  .forgot-link:hover { color: var(--accent); }
+
+  /* Ixcham Tugma */
+  .btn-primary {
+    width: 100%; padding: 15px; background: var(--accent); color: #000; border: none;
+    border-radius: 12px; font-weight: 700; font-size: 14.5px; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(210, 245, 94, 0.25);
+  }
+  .btn-primary i { transition: transform 0.3s; font-size: 13px; }
+  .btn-primary:hover i { transform: translateX(4px); }
 
   .security-badge {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    font-size: 11px; color: var(--text-muted); margin-top: 25px; text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 10px; color: #55657e; margin-top: 24px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
   }
 
-  @media (max-width: 1024px) {
-    main { grid-template-columns: 1fr; padding: 40px 30px; gap: 50px; }
-    .hero-section { text-align: center; }
-    .fraud-alert { justify-content: center; }
-    nav { padding: 0 30px; }
+  /* Responsive */
+  @media (max-width: 968px) {
+    main { grid-template-columns: 1fr; padding: 30px 30px; gap: 40px; max-width: 520px; }
+    .hero-section { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .fraud-alert { text-align: left; }
+    .stat-card { text-align: left; width: 100%; }
+    nav { padding: 0 25px; }
+  }
+  @media (max-width: 480px) {
+    nav { padding: 0 16px; height: 65px; }
+    main { padding: 25px 16px; }
+    .login-box { padding: 25px 20px; border-radius: 20px; }
+    .hero-title { letter-spacing: -1px; }
   }
 </style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
 
 <nav>
   <a href="/" class="nav-logo"><div class="logo-square"></div> SMMZONE</a>
-  <div style="font-size: 14px; color: var(--text-muted);">
-    Yangi foydalanuvchi? <a href="/register" style="color: var(--accent); text-decoration: none; font-weight: 600;">Ro'yxatdan o'tish</a>
+  <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+    Yangi foydalanuvchi? <a href="/register" style="color: var(--accent); text-decoration: none; font-weight: 700; margin-left: 3px;">Ro'yxatdan o'tish</a>
   </div>
 </nav>
 
 <main>
   <section class="hero-section">
-    <div style="font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 15px;">Xavfsiz Platforma</div>
+    <div style="font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px; background: rgba(210,245,94,0.04); padding: 4px 12px; border-radius: 100px; display: inline-block; border: 1px solid rgba(210,245,94,0.12);">
+      <i class="fas fa-shield" style="margin-right: 4px; font-size: 9px;"></i> Xavfsiz Platforma
+    </div>
     <h1 class="hero-title">Shaxsiy kabinetga <span>kirish.</span></h1>
 
-    <!-- Firibgarlik haqida ogohlantirish -->
     <div class="fraud-alert">
       <i class="fas fa-shield-halved"></i>
       <div>
-        <strong>XAVFSIZLIK OGOHLANTIRISHI:</strong>
-        <p>SMMZONE hech qachon sizdan telefon orqali SMS kod yoki parolingizni so'ramaydi. Shubhali havolalarga kirmang va hisobingizni begonalarga bermang!</p>
+        <strong>XAVFSIZLIK OGOHLANTIRISHI</strong>
+        <p>SMMZONE hech qachon sizdan telefon orqali SMS kod yoki parolingizni so'ramaydi. Shubhali havolalarga kirmang.</p>
       </div>
     </div>
 
     <div class="stat-card">
-      <div style="width: 45px; height: 45px; background: rgba(200,240,77,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent);">
+      <div class="stat-icon">
         <i class="fas fa-bolt"></i>
       </div>
       <div>
-        <div style="font-weight: 700; font-size: 18px;">Tezkor Panel</div>
+        <div style="font-weight: 700; font-size: 15px; margin-bottom: 1px;">Tezkor Panel</div>
         <div style="font-size: 13px; color: var(--text-muted);">Buyurtmalar 0.1 soniyada qabul qilinadi.</div>
       </div>
     </div>
@@ -140,37 +215,39 @@
   <section class="login-box">
     <div class="form-header">
       <h2>Xush kelibsiz</h2>
-      <p style="color: var(--text-muted); font-size: 14px;">Ma'lumotlaringizni kiriting</p>
+      <p>Tizimga kirish uchun ma'lumotlaringizni kiriting</p>
     </div>
 
     <form method="POST" action="/login">
-      <div style="margin-bottom: 20px;">
-        <label style="font-size: 13px; font-weight: 600; color: #ccc;">Login yoki Email</label>
-        <input type="text" name="login" class="input-field" placeholder="Username" required>
+      <div class="input-group">
+        <label class="input-label">Login yoki Email</label>
+        <input type="text" name="login" class="input-field" placeholder="Username yoki email" required>
       </div>
 
-      <div style="margin-bottom: 20px;">
-        <label style="font-size: 13px; font-weight: 600; color: #ccc;">Parol</label>
+      <div class="input-group">
+        <label class="input-label">Parol</label>
         <div style="position: relative;">
           <input type="password" name="password" id="pwd" class="input-field" placeholder="••••••••" required>
-          <i class="fas fa-eye" id="eye" style="position: absolute; right: 20px; top: 28px; color: #555; cursor: pointer;" onclick="toggle()"></i>
+          <i class="fas fa-eye eye-icon" id="eye" onclick="toggle()"></i>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); cursor: pointer;">
-          <input type="checkbox" style="accent-color: var(--accent);"> Eslab qolish
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <label class="remember-me">
+          <input type="checkbox">
+          <span class="custom-checkbox"></span>
+          Eslab qolish
         </label>
-        <a href="#" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Parolni unutdingizmi?</a>
+        <a href="#" class="forgot-link">Parolni unutdingizmi?</a>
       </div>
 
       <button type="submit" class="btn-primary">
-        Tizimga kirish <i class="fas fa-arrow-right-long"></i>
+        Tizimga kirish <i class="fas fa-arrow-right"></i>
       </button>
     </form>
 
     <div class="security-badge">
-      <i class="fas fa-lock" style="font-size: 10px;"></i> 256-bit SSL himoyalangan ulanish
+      <i class="fas fa-lock" style="font-size: 9px; color: var(--accent);"></i> 256-bit SSL himoya
     </div>
   </section>
 </main>

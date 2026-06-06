@@ -78,12 +78,11 @@ def search_service_by_id():
         return jsonify({"ok": False, "message": "ID kiriting"})
     import requests as _req
     try:
-        url    = f"{Config.PROVIDER_URL}?action=services&key={Config.PROVIDER_KEY}"
         cached = cache_get("all_services")
         if cached:
             all_svcs = cached
         else:
-            resp     = _req.get(url, timeout=15)
+            resp     = _req.post(Config.PROVIDER_URL, data={"key": Config.PROVIDER_KEY, "action": "services"}, timeout=15)
             all_svcs = resp.json()
             cache_set("all_services", all_svcs)
         if not isinstance(all_svcs, list):
@@ -173,14 +172,13 @@ def toggle_recommend(sid):
 def import_services():
     import requests as _req
     try:
-        url  = f"{Config.PROVIDER_URL}?action=services&key={Config.PROVIDER_KEY}"
-        resp = _req.get(url, timeout=15)
+        resp = _req.post(Config.PROVIDER_URL, data={"key": Config.PROVIDER_KEY, "action": "services"}, timeout=15)
         svcs = resp.json()
     except Exception as e:
         flash(f"API xatosi: {e}", "error")
         return redirect(url_for("admin.services"))
     if not isinstance(svcs, list):
-        flash("API noto'g'ri format qaytardi", "error")
+        flash(f"API noto'g'ri format qaytardi: {type(svcs)} — {str(svcs)[:200]}", "error")
         return redirect(url_for("admin.services"))
     db      = get_db()
     count   = 0
