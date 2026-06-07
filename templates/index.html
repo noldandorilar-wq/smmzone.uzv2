@@ -325,6 +325,8 @@ footer{border-top:1px solid var(--border);padding:64px 48px 30px;position:relati
   .modal-box{padding:32px 26px;}
   .cookie-banner{left:16px;right:16px;bottom:16px;padding:18px 20px;}
 }
+
+
 </style>
 </head>
 <body>
@@ -385,7 +387,20 @@ footer{border-top:1px solid var(--border);padding:64px 48px 30px;position:relati
   </div>
 </section>
 </div>
-
+<!-- IMPORTANT NOTICE BANNER -->
+<div id="notice-banner" style="background:linear-gradient(90deg,#1a1a00,#2a2800,#1a1a00);border-bottom:2px solid #c8f04d;padding:12px 48px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:200;">
+  <div style="display:flex;align-items:center;gap:12px;flex:1;justify-content:center;">
+    <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#c8f04d;border-radius:50%;flex-shrink:0;">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v5M6 9.5v.5" stroke="#000" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </span>
+    <p style="margin:0;font-size:13.5px;font-family:'Inter',sans-serif;color:#f5f5f0;line-height:1.5;">
+      <strong style="color:#c8f04d;margin-right:6px;">⚠ E'tibor!</strong>
+      <strong style="color:#fff;">Telegram Premium olish xizmati vaqtincha ishlamaydi.</strong>
+      <span style="color:#aaa;margin-left:6px;">Noqulaylik uchun uzr so'raymiz.</span>
+    </p>
+  </div>
+  <button onclick="document.getElementById('notice-banner').style.display='none'" style="background:transparent;border:1px solid #3a3a3a;color:#888;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-family:'Inter',sans-serif;" onmouseover="this.style.borderColor='#c8f04d';this.style.color='#c8f04d'" onmouseout="this.style.borderColor='#3a3a3a';this.style.color='#888'">×</button>
+</div>
 <!-- LIVE ORDERS -->
 <div class="live-orders">
   <div class="live-orders-label">
@@ -448,6 +463,8 @@ footer{border-top:1px solid var(--border);padding:64px 48px 30px;position:relati
   </div>
 </section>
 </div>
+
+
 
 <!-- PARTNERS -->
 <div class="wrap">
@@ -1013,6 +1030,9 @@ setTimeout(() => {
   try { ok = localStorage.getItem('cookie_ok') === '1'; } catch(e){}
   if(!ok) document.getElementById('cookieBanner').classList.add('show');
 }, 1500);
+
+
+
 </script>
 </body>
 </html>
