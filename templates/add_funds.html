@@ -15,7 +15,6 @@
   }
   .warn-box i { font-size: 14px; margin-top: 1px; flex-shrink: 0; }
 
-  /* Methods Grid */
   .methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; }
   .mitem {
     background: var(--card2); border: 1px solid var(--border);
@@ -31,7 +30,6 @@
   .mitem.sel i { color: var(--accent); }
   .mitem-label { font-size: 12px; font-weight: 600; color: var(--text); }
 
-  /* Badges */
   .lock-badge {
     font-size: 9px; background: rgba(251,191,36,.12); color: #fbbf24;
     border-radius: 100px; padding: 2px 7px; margin-top: 5px; display: inline-block;
@@ -78,39 +76,145 @@
   }
   .btn-back:hover { border-color: var(--border2); color: var(--text); }
 
-  .timer-wrap { text-align: center; margin: 4px 0 18px; }
-  .timer-val { font-size: 30px; font-weight: 800; color: var(--accent); font-family: 'Syne', sans-serif; }
-  .timer-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  /* ── Timer (rasmiy ko'rinish) ── */
+  .timer-wrap {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px 16px; margin-bottom: 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .timer-top { display: flex; align-items: center; gap: 8px; }
+  .timer-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 1s infinite; }
+  .timer-dot.danger { background: #f87171; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.2)} }
+  .timer-status { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; }
+  .timer-ring {
+    position: relative; width: 80px; height: 80px;
+  }
+  .timer-ring svg { transform: rotate(-90deg); }
+  .timer-ring-bg { fill: none; stroke: var(--border); stroke-width: 5; }
+  .timer-ring-fg { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset .9s linear, stroke .3s; }
+  .timer-ring-fg.danger { stroke: #f87171; }
+  .timer-center {
+    position: absolute; inset: 0; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+  }
+  .timer-val { font-size: 18px; font-weight: 800; color: var(--white); font-family: 'Syne', sans-serif; line-height: 1; }
   .timer-val.danger { color: #f87171; }
+  .timer-lbl { font-size: 11px; color: var(--muted); text-align: center; max-width: 220px; line-height: 1.4; }
+
+  /* ── Step indicators ── */
+  .steps-bar {
+    display: flex; align-items: center; gap: 0; margin-bottom: 24px;
+  }
+  .step-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .step-item.active { color: var(--accent); }
+  .step-item.done { color: #22c55e; }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+  }
+  .step-item.active .step-num { border-color: var(--accent); color: var(--accent); }
+  .step-item.done .step-num { border-color: #22c55e; background: rgba(34,197,94,.1); color: #22c55e; }
+  .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 8px; }
 
   .card-box {
     background: var(--card2); border: 1px solid var(--border);
     border-radius: 14px; padding: 18px; margin-bottom: 14px;
   }
   .card-header { font-size: 10px; letter-spacing: 2px; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; }
-  .card-num-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-  .card-num { font-size: 14px; font-weight: 600; color: var(--white); letter-spacing: 3px; font-family: monospace; }
+
+  /* ── Karta raqami rasmiy ko'rinish ── */
+  .card-num-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .card-num-display {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .card-num-group {
+    font-size: 17px; font-weight: 700; color: var(--white);
+    letter-spacing: 3px; font-family: monospace;
+    background: rgba(255,255,255,.05); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 10px;
+  }
+  .card-num-sep { color: var(--muted); font-size: 14px; }
   .copy-btn {
-    font-size: 12px; padding: 6px 13px; border-radius: 9px;
+    font-size: 12px; padding: 8px 14px; border-radius: 9px;
     border: 1px solid var(--accent); background: rgba(56,189,248,.08);
     color: var(--accent); cursor: pointer; display: flex; align-items: center;
     gap: 5px; font-family: inherit; transition: background .15s; white-space: nowrap;
+    font-weight: 600;
   }
   .copy-btn:hover { background: rgba(56,189,248,.18); }
-  .card-owner { font-size: 13px; color: var(--accent3); font-weight: 600; }
-  .pay-amount { font-size: 13px; color: var(--muted); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
-  .pay-amount span { color: var(--white); font-weight: 700; }
+  .copy-btn.copied { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,.08); }
+
+  /* Bank brand bar */
+  .bank-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-radius: 10px; margin-bottom: 10px;
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+  }
+  .bank-name { font-size: 13px; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 8px; }
+  .bank-logo-humo {
+    width: 46px; height: 22px; border-radius: 5px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 900; color: #FFD700; letter-spacing: 1px;
+    border: 1px solid rgba(255,215,0,.3);
+  }
+  .bank-logo-visa {
+    width: 46px; height: 22px; border-radius: 5px;
+    background: #1A1F71;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 900; font-style: italic; color: #fff;
+  }
+  .bank-logo-uzcard {
+    width: 46px; height: 22px; border-radius: 5px;
+    background: #003087;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 900; color: #fff; letter-spacing: 0.5px;
+  }
+  .card-owner-row { display: flex; align-items: center; gap: 8px; }
+  .card-owner-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(56,189,248,.15); border: 1px solid rgba(56,189,248,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--accent);
+  }
+  .card-owner { font-size: 13px; color: var(--white); font-weight: 600; }
+  .pay-amount { font-size: 13px; color: var(--muted); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .pay-amount-val { color: var(--white); font-weight: 700; font-size: 16px; }
+
+  /* ── Instruction steps ── */
+  .instr-box {
+    background: rgba(56,189,248,.04); border: 1px solid rgba(56,189,248,.15);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .instr-title { font-size: 11px; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; font-weight: 700; }
+  .instr-step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .instr-step:last-child { margin-bottom: 0; }
+  .instr-n {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 800; color: var(--accent); flex-shrink: 0;
+  }
 
   .upload-zone {
-    border: 1px dashed var(--border2); border-radius: 14px;
-    padding: 20px; text-align: center; margin-bottom: 14px;
-    cursor: pointer; transition: background .15s;
+    border: 1.5px dashed var(--border2); border-radius: 14px;
+    padding: 22px; text-align: center; margin-bottom: 14px;
+    cursor: pointer; transition: all .2s;
   }
-  .upload-zone:hover { background: rgba(56,189,248,.04); }
-  .upload-zone i { font-size: 24px; color: var(--muted); display: block; margin-bottom: 8px; }
+  .upload-zone:hover { background: rgba(56,189,248,.04); border-color: var(--accent); }
+  .upload-zone i { font-size: 28px; color: var(--muted); display: block; margin-bottom: 8px; }
   .upload-zone p { font-size: 12px; color: var(--muted); margin: 0; }
   .upload-zone input { display: none; }
-  .file-chosen { font-size: 12px; color: var(--accent3); margin-top: 6px; }
+  .file-chosen {
+    font-size: 12px; color: #22c55e; margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .upload-preview {
+    width: 100%; max-height: 140px; object-fit: cover;
+    border-radius: 10px; margin-top: 10px; display: none;
+    border: 1px solid var(--border);
+  }
 
   .hidden { display: none; }
 
@@ -121,14 +225,21 @@
   .money-em {
     position: absolute;
     animation: floatUp linear infinite;
-    opacity: 0.10; user-select: none; pointer-events: none;
+    opacity: 0.07; user-select: none; pointer-events: none;
   }
   @keyframes floatUp {
-    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0.10; }
-    80%  { opacity: 0.10; }
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0.07; }
+    80%  { opacity: 0.07; }
     100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
   }
   .pf-wrap { position: relative; z-index: 1; }
+
+  /* Security badge */
+  .secure-badge {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 11px; color: var(--muted); margin-top: 16px;
+  }
+  .secure-badge i { font-size: 13px; color: #22c55e; }
 </style>
 
 <div class="money-bg" id="moneyBg"></div>
@@ -137,6 +248,24 @@
 
     <div class="pf-title">Balans To'ldirish</div>
     <div class="pf-sub">Xavfsiz to'lov tizimi orqali hisobingizni to'ldiring</div>
+
+    <!-- Step bar -->
+    <div class="steps-bar" id="steps-bar">
+      <div class="step-item active" id="sb1">
+        <div class="step-num">1</div>
+        <span>Usul</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" id="sb2">
+        <div class="step-num">2</div>
+        <span>To'lov</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" id="sb3">
+        <div class="step-num">3</div>
+        <span>Tasdiqlash</span>
+      </div>
+    </div>
 
     <div class="warn-box">
       <i class="fas fa-shield-halved"></i>
@@ -151,27 +280,22 @@
       <div style="font-size:12px;color:var(--muted);margin-bottom:12px;letter-spacing:.5px;">TO'LOV USULINI TANLANG</div>
 
       <div class="methods" id="method-grid">
-        <!-- Telegram Bot TUGMASI (Bosilganda darhol botga o'tadi) -->
         <div class="mitem popular" onclick="redirectToBot()">
           <span class="pop-badge">Avtomat</span>
           <i class="fab fa-telegram" style="color: #24A1DE;"></i>
           <div class="mitem-label">Telegram Bot</div>
         </div>
-        <!-- Uzcard -->
         <div class="mitem" onclick="selectMethod('uzcard',this)">
           <i class="fas fa-credit-card"></i>
           <div class="mitem-label">Uzcard</div>
         </div>
-        <!-- Visa -->
         <div class="mitem" onclick="selectMethod('visa',this)">
           <i class="fab fa-cc-visa"></i>
           <div class="mitem-label">Visa / Master</div>
         </div>
-        <!-- Locked Methods -->
-        <div class="mitem locked">
-          <i class="fas fa-credit-card"></i>
+        <div class="mitem" onclick="selectMethod('humo',this)">
+          <i class="fas fa-credit-card" style="color:#FFD700"></i>
           <div class="mitem-label">Humo</div>
-          <div class="lock-badge"><i class="fas fa-lock" style="font-size:8px"></i> Tez kunda</div>
         </div>
         <div class="mitem locked">
           <i class="fas fa-gem"></i>
@@ -185,9 +309,8 @@
         </div>
       </div>
 
-      <!-- Amount Row -->
       <div class="amount-row">
-        <div class="amount-label">KARTA ORQALI TO'LOV SUMMASI</div>
+        <div class="amount-label">TO'LOV SUMMASI</div>
         <div class="amount-input-wrap">
           <input type="number" id="amount-input" placeholder="0" min="5000">
           <span class="amount-cur">UZS</span>
@@ -201,42 +324,97 @@
         </div>
       </div>
 
-      <!-- Action Button -->
       <button class="btn-main" id="step1-btn" onclick="goStep2()">
         <i class="fas fa-arrow-right"></i> To'lovni Davom Ettirish
       </button>
+
+      <div class="secure-badge">
+        <i class="fas fa-lock"></i> SSL shifrlangan xavfsiz to'lov
+      </div>
     </div>
 
-    <!-- STEP 2 (Faqat Uzcard/Visa cheklari uchun) -->
+    <!-- STEP 2 -->
     <form action="/add-funds" method="POST" enctype="multipart/form-data" id="step2" class="hidden">
       <input type="hidden" name="payment_method" id="method-hidden">
       <input type="hidden" name="amount" id="amount-hidden">
 
+      <!-- Timer -->
       <div class="timer-wrap">
-        <div class="timer-val" id="timer">5:00</div>
+        <div class="timer-top">
+          <div class="timer-dot" id="timer-dot"></div>
+          <div class="timer-status">To'lov kutilmoqda</div>
+        </div>
+        <div class="timer-ring">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle class="timer-ring-bg" cx="40" cy="40" r="35"/>
+            <circle class="timer-ring-fg" id="ring-fg" cx="40" cy="40" r="35"
+              stroke-dasharray="219.9" stroke-dashoffset="0"/>
+          </svg>
+          <div class="timer-center">
+            <div class="timer-val" id="timer">5:00</div>
+          </div>
+        </div>
         <div class="timer-lbl">Ushbu vaqt ichida to'lovni amalga oshiring va chekni yuklang</div>
       </div>
 
+      <!-- Card details -->
       <div class="card-box" id="card-details-box">
-        <div class="card-header">Qabul qiluvchi karta</div>
+        <div class="card-header">Qabul qiluvchi karta ma'lumotlari</div>
+
+        <div class="bank-bar" id="bank-bar">
+          <div class="bank-name">
+            <div id="bank-logo-el"></div>
+            <span id="bank-name-txt"></span>
+          </div>
+          <span style="font-size:11px;color:var(--muted)">O'zbekiston</span>
+        </div>
+
         <div class="card-num-row">
-          <div class="card-num" id="card-num">0000 0000 0000 0000</div>
-          <button type="button" class="copy-btn" onclick="copyCard()">
+          <div class="card-num-display" id="card-num-display"></div>
+          <button type="button" class="copy-btn" id="copy-btn" onclick="copyCard()">
             <i class="fas fa-copy"></i> Nusxa
           </button>
         </div>
-        <div class="card-owner" id="card-owner">ISM SHARIF</div>
+
+        <div class="card-owner-row">
+          <div class="card-owner-avatar" id="card-avatar"></div>
+          <div class="card-owner" id="card-owner">ISM SHARIF</div>
+        </div>
+
         <div class="pay-amount">
-          To'lov summasi: <span id="pay-amount-show">0 so'm</span>
+          <span>To'lov summasi</span>
+          <span class="pay-amount-val" id="pay-amount-show">0 so'm</span>
         </div>
       </div>
 
-      <!-- Receipt Upload Zone -->
+      <!-- Instruction -->
+      <div class="instr-box">
+        <div class="instr-title"><i class="fas fa-list-ol" style="margin-right:5px"></i>Qo'llanma</div>
+        <div class="instr-step">
+          <div class="instr-n">1</div>
+          <span>Yuqoridagi karta raqamini <strong>nusxalang</strong> va bank ilovangizni oching.</span>
+        </div>
+        <div class="instr-step">
+          <div class="instr-n">2</div>
+          <span>"Pul o'tkazish" bo'limiga o'ting va karta raqamini kiriting.</span>
+        </div>
+        <div class="instr-step">
+          <div class="instr-n">3</div>
+          <span>Ko'rsatilgan summani (<strong id="instr-amount-val">—</strong>) to'lang.</span>
+        </div>
+        <div class="instr-step">
+          <div class="instr-n">4</div>
+          <span>To'lov cheki (screenshot)ni quyida yuklang va tasdiqlashga yuboring.</span>
+        </div>
+      </div>
+
+      <!-- Upload -->
       <div class="upload-zone" onclick="document.getElementById('file-input').click()">
         <i class="fas fa-cloud-upload-alt"></i>
         <p>To'lov chekini (skrinshotini) yuklang</p>
         <p style="margin-top:4px;font-size:11px;color:var(--muted)">PNG, JPG, PDF — bosing yoki sudrab tashlang</p>
         <div class="file-chosen" id="file-name"></div>
+        <img class="upload-preview" id="upload-preview" alt="Chek preview">
         <input type="file" name="check_file" id="file-input" accept="image/*,.pdf" onchange="showFile(this)" required>
       </div>
 
@@ -246,6 +424,10 @@
       <button type="button" class="btn-back" onclick="goBack()">
         <i class="fas fa-arrow-left"></i> Orqaga
       </button>
+
+      <div class="secure-badge">
+        <i class="fas fa-lock"></i> SSL shifrlangan xavfsiz to'lov
+      </div>
     </form>
 
   </div>
@@ -253,19 +435,19 @@
 
 <script>
   const CARDS = {
-    uzcard: { num: '5614 6835 8365 4223', owner: 'Iskandarov Azizbek' },
-    visa:   { num: '4916 9903 1159 8418', owner: 'Zubayda Aliyeva' },
+    uzcard: { num: '5614 6835 8365 4223', owner: 'Iskandarov Azizbek', bank: 'UzCard', type: 'uzcard' },
+    visa:   { num: '4916 9903 1159 8418', owner: 'Zubayda Aliyeva',    bank: 'Visa',   type: 'visa'   },
+    humo:   { num: '9860 0966 0108 4120', owner: 'Zubayda Aliyeva',    bank: 'Humo',   type: 'humo'   },
   };
 
   let selectedMethod = '';
   let timerInterval  = null;
+  const TOTAL_SEC    = 300;
 
-  // 1. Telegram bot bosilsa, darhol yangi oynada ochib yuborish funksiyasi
   function redirectToBot() {
     window.open('https://t.me/uccenter_bot', '_blank');
   }
 
-  // 2. Oddiy kartalar tanlangandagi funksiya
   function selectMethod(method, el) {
     if (el.classList.contains('locked')) return;
     selectedMethod = method;
@@ -277,9 +459,33 @@
     document.getElementById('amount-input').value = val;
   }
 
+  function getInitials(name) {
+    return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  }
+
+  function renderCardNum(numStr) {
+    const groups = numStr.split(' ');
+    const wrap = document.getElementById('card-num-display');
+    wrap.innerHTML = '';
+    groups.forEach((g, i) => {
+      const span = document.createElement('span');
+      span.className = 'card-num-group';
+      span.textContent = g;
+      wrap.appendChild(span);
+    });
+  }
+
+  function renderBankLogo(type, bankName) {
+    const el = document.getElementById('bank-logo-el');
+    const cls = type === 'humo' ? 'bank-logo-humo' : type === 'visa' ? 'bank-logo-visa' : 'bank-logo-uzcard';
+    const txt = type === 'humo' ? 'HUMO' : type === 'visa' ? 'VISA' : 'UZCARD';
+    el.innerHTML = `<div class="${cls}">${txt}</div>`;
+    document.getElementById('bank-name-txt').textContent = bankName;
+  }
+
   function goStep2() {
     const amount = parseInt(document.getElementById('amount-input').value);
-    if (!selectedMethod) { alert("Iltimos, to'lov usulini tanlang (Uzcard yoki Visa)!"); return; }
+    if (!selectedMethod) { alert("Iltimos, to'lov usulini tanlang!"); return; }
     if (!amount || amount < 5000) { alert("Minimal to'lov 5 000 so'm!"); return; }
 
     const btn = document.getElementById('step1-btn');
@@ -288,9 +494,12 @@
 
     setTimeout(function() {
       const card = CARDS[selectedMethod];
-      document.getElementById('card-num').textContent   = card.num;
-      document.getElementById('card-owner').textContent = card.owner;
-      document.getElementById('pay-amount-show').textContent = amount.toLocaleString() + " so'm";
+      renderCardNum(card.num);
+      renderBankLogo(card.type, card.bank);
+      document.getElementById('card-owner').textContent   = card.owner;
+      document.getElementById('card-avatar').textContent  = getInitials(card.owner);
+      document.getElementById('pay-amount-show').textContent = amount.toLocaleString('uz-UZ') + " so'm";
+      document.getElementById('instr-amount-val').textContent = amount.toLocaleString('uz-UZ') + " so'm";
       document.getElementById('method-hidden').value = selectedMethod;
       document.getElementById('amount-hidden').value  = amount;
 
@@ -299,8 +508,14 @@
 
       document.getElementById('step1').classList.add('hidden');
       document.getElementById('step2').classList.remove('hidden');
-      startTimer(300);
-    }, 1500);
+
+      document.getElementById('sb1').classList.remove('active');
+      document.getElementById('sb1').classList.add('done');
+      document.getElementById('sb1').querySelector('.step-num').innerHTML = '<i class="fas fa-check" style="font-size:9px"></i>';
+      document.getElementById('sb2').classList.add('active');
+
+      startTimer(TOTAL_SEC);
+    }, 1200);
   }
 
   function goBack() {
@@ -311,48 +526,86 @@
       clearInterval(timerInterval);
       document.getElementById('step2').classList.add('hidden');
       document.getElementById('step1').classList.remove('hidden');
+      document.getElementById('sb1').classList.remove('done');
+      document.getElementById('sb1').classList.add('active');
+      document.getElementById('sb1').querySelector('.step-num').textContent = '1';
+      document.getElementById('sb2').classList.remove('active');
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-arrow-left"></i> Orqaga';
-    }, 1000);
+    }, 900);
   }
 
   function startTimer(sec) {
     clearInterval(timerInterval);
     let t = sec;
-    const el = document.getElementById('timer');
-    timerInterval = setInterval(() => {
+    const el    = document.getElementById('timer');
+    const ring  = document.getElementById('ring-fg');
+    const dot   = document.getElementById('timer-dot');
+    const circ  = 2 * Math.PI * 35;
+
+    function tick() {
       let m = Math.floor(t / 60);
       let s = t % 60;
       el.textContent = m + ':' + (s < 10 ? '0' : '') + s;
-      el.classList.toggle('danger', t <= 60);
-      if (--t < 0) { clearInterval(timerInterval); el.textContent = 'VAQT TUGADI'; }
-    }, 1000);
+      const pct = t / TOTAL_SEC;
+      ring.style.strokeDashoffset = circ * (1 - pct);
+      const danger = t <= 60;
+      el.classList.toggle('danger', danger);
+      ring.classList.toggle('danger', danger);
+      dot.classList.toggle('danger', danger);
+      if (--t < 0) {
+        clearInterval(timerInterval);
+        el.textContent = 'VAQT TUGADI';
+        el.classList.add('danger');
+        ring.style.strokeDashoffset = circ;
+      }
+    }
+    tick();
+    timerInterval = setInterval(tick, 1000);
   }
 
   function copyCard() {
-    const txt = document.getElementById('card-num').textContent.replace(/\s/g, '');
-    navigator.clipboard.writeText(txt).then(() => alert('✅ Karta raqami nusxalandi!'));
+    const groups = document.querySelectorAll('.card-num-group');
+    const txt = Array.from(groups).map(g => g.textContent).join('');
+    const btn = document.getElementById('copy-btn');
+    navigator.clipboard.writeText(txt).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<i class="fas fa-check"></i> Nusxalandi';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<i class="fas fa-copy"></i> Nusxa';
+      }, 2500);
+    });
   }
 
-  // Fon animatsiyasi
+  function showFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    document.getElementById('file-name').innerHTML = '<i class="fas fa-check-circle"></i> ' + file.name;
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const prev = document.getElementById('upload-preview');
+        prev.src = e.target.result;
+        prev.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   (function() {
     const emojis = ['💵','💸','💰','💳'];
     const bg = document.getElementById('moneyBg');
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 18; i++) {
       const el = document.createElement('span');
       el.className = 'money-em';
       el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
       el.style.left = Math.random() * 100 + 'vw';
-      el.style.fontSize = (16 + Math.random() * 16) + 'px';
-      el.style.animationDuration = (12 + Math.random() * 12) + 's';
-      el.style.animationDelay = (Math.random() * 10) + 's';
+      el.style.fontSize = (14 + Math.random() * 14) + 'px';
+      el.style.animationDuration = (14 + Math.random() * 12) + 's';
+      el.style.animationDelay = (Math.random() * 12) + 's';
       bg.appendChild(el);
     }
   })();
-
-  function showFile(input) {
-    const name = input.files[0]?.name || '';
-    document.getElementById('file-name').textContent = name ? '✅ ' + name : '';
-  }
 </script>
 {% endblock %}
