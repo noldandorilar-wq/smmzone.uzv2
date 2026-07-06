@@ -88,6 +88,18 @@
   }
   .quick-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+  /* ── Fee breakdown ── */
+  .fee-box {
+    background: rgba(52,211,153,.05); border: 1px solid rgba(52,211,153,.18);
+    border-radius: 12px; padding: 12px 14px; margin-top: 12px; font-size: 12.5px;
+  }
+  .fee-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; color: var(--muted); }
+  .fee-row.total { border-top: 1px dashed rgba(52,211,153,.25); margin-top: 6px; padding-top: 8px; }
+  .fee-row .val { color: var(--text); font-weight: 700; }
+  .fee-row.total .val { color: #34d399; font-size: 15px; }
+  .fee-row .val.neg { color: #fca5a5; }
+  .fee-hint { font-size: 10.5px; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
+
   .btn-main {
     width: 100%; padding: 16px; border-radius: 14px; border: none;
     background: var(--accent); color: #002; font-size: 15px;
@@ -150,20 +162,30 @@
   }
   .card-header { font-size: 10px; letter-spacing: 2px; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; }
 
-  /* ── Karta raqami rasmiy ko'rinish ── */
+  /* ── Payment ID row ── */
+  .txn-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; color: var(--muted); margin-bottom: 12px;
+    padding-bottom: 10px; border-bottom: 1px dashed var(--border);
+  }
+  .txn-row .txn-id {
+    font-family: monospace; font-size: 11.5px; color: var(--text);
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 8px; letter-spacing: .5px;
+  }
+
+  /* ── Karta raqami — endi ixcham ko'rinish ── */
   .card-num-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-  .card-num-display {
-    display: flex; gap: 6px; align-items: center;
-  }
+  .card-num-display { display: flex; gap: 4px; align-items: center; }
   .card-num-group {
-    font-size: 17px; font-weight: 700; color: var(--white);
-    letter-spacing: 3px; font-family: monospace;
+    font-size: 13px; font-weight: 700; color: var(--white);
+    letter-spacing: 1px; font-family: monospace;
     background: rgba(255,255,255,.05); border: 1px solid var(--border);
-    border-radius: 8px; padding: 6px 10px;
+    border-radius: 6px; padding: 4px 7px;
   }
-  .card-num-sep { color: var(--muted); font-size: 14px; }
+  .card-num-sep { color: var(--muted); font-size: 12px; }
   .copy-btn {
-    font-size: 12px; padding: 8px 14px; border-radius: 9px;
+    font-size: 11.5px; padding: 6px 12px; border-radius: 8px;
     border: 1px solid var(--accent); background: rgba(56,189,248,.08);
     color: var(--accent); cursor: pointer; display: flex; align-items: center;
     gap: 5px; font-family: inherit; transition: background .15s; white-space: nowrap;
@@ -180,32 +202,33 @@
   }
   .bank-name { font-size: 13px; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 8px; }
   .bank-logo-humo {
-    width: 46px; height: 22px; border-radius: 5px;
+    width: 40px; height: 20px; border-radius: 5px;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     display: flex; align-items: center; justify-content: center;
-    font-size: 9px; font-weight: 900; color: #FFD700; letter-spacing: 1px;
+    font-size: 8px; font-weight: 900; color: #FFD700; letter-spacing: 1px;
     border: 1px solid rgba(255,215,0,.3);
   }
   .bank-logo-visa {
-    width: 46px; height: 22px; border-radius: 5px;
+    width: 40px; height: 20px; border-radius: 5px;
     background: #1A1F71;
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 900; font-style: italic; color: #fff;
+    font-size: 10px; font-weight: 900; font-style: italic; color: #fff;
   }
   .bank-logo-uzcard {
-    width: 46px; height: 22px; border-radius: 5px;
+    width: 40px; height: 20px; border-radius: 5px;
     background: #003087;
     display: flex; align-items: center; justify-content: center;
-    font-size: 9px; font-weight: 900; color: #fff; letter-spacing: 0.5px;
+    font-size: 8px; font-weight: 900; color: #fff; letter-spacing: 0.5px;
   }
   .card-owner-row { display: flex; align-items: center; gap: 8px; }
   .card-owner-avatar {
-    width: 28px; height: 28px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: rgba(56,189,248,.15); border: 1px solid rgba(56,189,248,.3);
     display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 700; color: var(--accent);
+    font-size: 9px; font-weight: 700; color: var(--accent);
   }
-  .card-owner { font-size: 13px; color: var(--white); font-weight: 600; }
+  .card-owner { font-size: 12.5px; color: var(--white); font-weight: 600; }
+
   .pay-amount { font-size: 13px; color: var(--muted); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
   .pay-amount-val { color: var(--white); font-weight: 700; font-size: 16px; }
 
@@ -354,7 +377,7 @@
       <div class="amount-row">
         <div class="amount-label">TO'LOV SUMMASI</div>
         <div class="amount-input-wrap">
-          <input type="number" id="amount-input" placeholder="0" min="5000">
+          <input type="number" id="amount-input" placeholder="0" min="5000" oninput="updateFeePreview()">
           <span class="amount-cur">UZS</span>
         </div>
         <div class="quick-btns">
@@ -363,6 +386,13 @@
           <button class="quick-btn" onclick="setAmount(50000)">50 000</button>
           <button class="quick-btn" onclick="setAmount(100000)">100 000</button>
           <button class="quick-btn" onclick="setAmount(250000)">250 000</button>
+        </div>
+
+        <div class="fee-box" id="fee-box" style="display:none">
+          <div class="fee-row"><span>To'lov summasi</span><span class="val" id="fee-base">0 so'm</span></div>
+          <div class="fee-row"><span>Xizmat haqi (2%)</span><span class="val neg" id="fee-amount">-0 so'm</span></div>
+          <div class="fee-row total"><span>Hisobingizga tushadi</span><span class="val" id="fee-credited">0 so'm</span></div>
+          <div class="fee-hint"><i class="fas fa-circle-info"></i> To'lov tizimi xizmat haqi sifatida 2% ushlab qolinadi</div>
         </div>
       </div>
 
@@ -379,6 +409,9 @@
     <form action="/add-funds" method="POST" enctype="multipart/form-data" id="step2" class="hidden">
       <input type="hidden" name="payment_method" id="method-hidden">
       <input type="hidden" name="amount" id="amount-hidden">
+      <input type="hidden" name="fee_amount" id="fee-hidden">
+      <input type="hidden" name="credited_amount" id="credited-hidden">
+      <input type="hidden" name="txn_id" id="txn-hidden">
 
       <!-- Timer -->
       <div class="timer-wrap">
@@ -403,6 +436,11 @@
       <div class="card-box" id="card-details-box">
         <div class="card-header">Qabul qiluvchi karta ma'lumotlari</div>
 
+        <div class="txn-row">
+          <span><i class="fas fa-hashtag" style="margin-right:4px"></i>To'lov ID</span>
+          <span class="txn-id" id="txn-id-txt">—</span>
+        </div>
+
         <div class="bank-bar" id="bank-bar">
           <div class="bank-name">
             <div id="bank-logo-el"></div>
@@ -424,8 +462,12 @@
         </div>
 
         <div class="pay-amount">
-          <span>To'lov summasi</span>
+          <span>To'lov qilinadigan summa</span>
           <span class="pay-amount-val" id="pay-amount-show">0 so'm</span>
+        </div>
+        <div class="pay-amount" style="border-top:none;padding-top:2px;margin-top:2px">
+          <span>Hisobga tushadi (2% xizmat haqidan so'ng)</span>
+          <span class="pay-amount-val" id="pay-credited-show" style="color:#34d399">0 so'm</span>
         </div>
       </div>
 
@@ -482,6 +524,8 @@
     humo:   { num: '9860 0966 0108 4120', owner: 'Zubayda Aliyeva',    bank: 'Humo',   type: 'humo'   },
   };
 
+  const FEE_PERCENT = 2; // xizmat haqi foizi — to'lov summasidan ushlab qolinadi
+
   let selectedMethod = '';
   let timerInterval  = null;
   const TOTAL_SEC    = 300;
@@ -499,6 +543,40 @@
 
   function setAmount(val) {
     document.getElementById('amount-input').value = val;
+    updateFeePreview();
+  }
+
+  // 2% xizmat haqini hisoblab, hisobga tushadigan yakuniy summani qaytaradi
+  // Masalan: 100 000 so'm kiritilsa -> xizmat haqi 2 000, hisobga 98 000 so'm tushadi
+  function calcFee(amount) {
+    const fee = Math.round(amount * FEE_PERCENT / 100);
+    const credited = amount - fee;
+    return { fee, credited };
+  }
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('uz-UZ') + " so'm";
+  }
+
+  function updateFeePreview() {
+    const raw = parseInt(document.getElementById('amount-input').value);
+    const box = document.getElementById('fee-box');
+    if (!raw || raw <= 0) { box.style.display = 'none'; return; }
+    const { fee, credited } = calcFee(raw);
+    document.getElementById('fee-base').textContent = fmt(raw);
+    document.getElementById('fee-amount').textContent = '-' + fmt(fee);
+    document.getElementById('fee-credited').textContent = fmt(credited);
+    box.style.display = 'block';
+  }
+
+  // Tasodifiy to'lov ID generatsiya qilish (faqat vizual — chiroyli chek ko'rinishi uchun)
+  function generateTxnId() {
+    const now = new Date();
+    const y = now.getFullYear().toString().slice(-2);
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const rand = Math.floor(100000 + Math.random() * 900000); // 6 xonali random
+    return `TXN-${y}${m}${d}-${rand}`;
   }
 
   function getInitials(name) {
@@ -536,14 +614,24 @@
 
     setTimeout(function() {
       const card = CARDS[selectedMethod];
+      const { fee, credited } = calcFee(amount);
+      const txnId = generateTxnId();
+
       renderCardNum(card.num);
       renderBankLogo(card.type, card.bank);
       document.getElementById('card-owner').textContent   = card.owner;
       document.getElementById('card-avatar').textContent  = getInitials(card.owner);
-      document.getElementById('pay-amount-show').textContent = amount.toLocaleString('uz-UZ') + " so'm";
-      document.getElementById('instr-amount-val').textContent = amount.toLocaleString('uz-UZ') + " so'm";
-      document.getElementById('method-hidden').value = selectedMethod;
-      document.getElementById('amount-hidden').value  = amount;
+      document.getElementById('txn-id-txt').textContent   = txnId;
+
+      document.getElementById('pay-amount-show').textContent   = fmt(amount);
+      document.getElementById('pay-credited-show').textContent = fmt(credited);
+      document.getElementById('instr-amount-val').textContent  = fmt(amount);
+
+      document.getElementById('method-hidden').value    = selectedMethod;
+      document.getElementById('amount-hidden').value    = amount;
+      document.getElementById('fee-hidden').value       = fee;
+      document.getElementById('credited-hidden').value  = credited;
+      document.getElementById('txn-hidden').value        = txnId;
 
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-arrow-right"></i> To\'lovni Davom Ettirish';

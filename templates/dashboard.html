@@ -6,166 +6,204 @@
   *, *::before, *::after { box-sizing: border-box; }
 
   :root {
-    --bg:      #050a14;
-    --card:    #0d1628;
-    --card2:   #111d35;
-    --border:  rgba(99,179,237,0.12);
-    --border2: rgba(99,179,237,0.22);
-    --accent:  #38bdf8;
-    --accent2: #818cf8;
-    --accent3: #34d399;
-    --text:    #e2eaf8;
-    --muted:   #7a8fad;
-    --white:   #ffffff;
-    --grad:    linear-gradient(135deg, #38bdf8, #818cf8);
-    --grad-g:  linear-gradient(135deg, #34d399, #059669);
+    --bg:       #050a14;
+    --card:     #0d1628;
+    --card2:    #111d35;
+    --border:   rgba(99,179,237,0.12);
+    --border2:  rgba(99,179,237,0.22);
+    --accent:   #38bdf8;   /* sky   */
+    --accent2:  #818cf8;   /* indigo */
+    --accent3:  #34d399;   /* emerald */
+    --accent4:  #fb923c;   /* orange */
+    --gold:     #fbbf24;   /* premium/gold */
+    --gold2:    #f59e0b;
+    --danger:   #f87171;
+    --text:     #e2eaf8;
+    --muted:    #7a8fad;
+    --white:    #ffffff;
+    --grad:     linear-gradient(135deg, #38bdf8, #818cf8);
+    --grad-g:   linear-gradient(135deg, #34d399, #059669);
+    --grad-gold:linear-gradient(135deg, #fde68a, #f59e0b);
+    --glass-bg:     rgba(13,22,40,0.55);
+    --glass-border: rgba(255,255,255,0.07);
+    --blur: 16px;
   }
 
-  @keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.4} }
-  @keyframes spin    { to{transform:rotate(360deg)} }
-  @keyframes shimmer {
-    0%   { background-position: -400px 0; }
-    100% { background-position:  400px 0; }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes spin     { to{transform:rotate(360deg)} }
+  @keyframes shimmer  { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+  @keyframes countUp  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes glowPulse{ 0%,100%{box-shadow:0 0 18px rgba(56,189,248,.25)} 50%{box-shadow:0 0 32px rgba(56,189,248,.5)} }
+  @keyframes floatOrb { 0%,100%{transform:translate(0,0)} 50%{transform:translate(10px,-14px)} }
+  @keyframes ring     { 0%,100%{transform:rotate(0)} 20%{transform:rotate(14deg)} 40%{transform:rotate(-10deg)} 60%{transform:rotate(6deg)} 80%{transform:rotate(-4deg)} }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
   }
-  @keyframes countUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── AMBIENT BACKGROUND ORBS ── */
+  .db-orb {
+    position: fixed; border-radius: 50%; filter: blur(70px);
+    pointer-events: none; z-index: 0; opacity: .35;
+    animation: floatOrb 9s ease-in-out infinite;
+  }
+  .db-orb-1 { width:340px; height:340px; top:-80px; right:6%; background:radial-gradient(circle,var(--accent),transparent 70%); }
+  .db-orb-2 { width:280px; height:280px; bottom:10%; left:-60px; background:radial-gradient(circle,var(--accent2),transparent 70%); animation-delay:2.4s; }
+  .db-page { position: relative; z-index: 1; }
+
+  /* ── GLASS UTILITY ── */
+  .glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--blur));
+    backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-border);
+  }
+
+  /* ── SKELETON ── */
+  .skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,.04) 25%, rgba(255,255,255,.09) 37%, rgba(255,255,255,.04) 63%);
+    background-size: 400px 100%;
+    animation: shimmer 1.3s ease-in-out infinite;
+    border-radius: 6px; color: transparent !important;
+  }
 
   /* ── HEADER ── */
   .db-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 28px; flex-wrap: wrap; gap: 14px;
-    animation: fadeUp .45s ease both;
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:22px; flex-wrap:wrap; gap:14px;
+    animation:fadeUp .45s ease both;
   }
-  .db-header-left { display: flex; align-items: center; gap: 16px; }
+  .db-header-left { display:flex; align-items:center; gap:16px; }
   .db-header-icon {
-    width: 48px; height: 48px; background: var(--grad);
-    border-radius: 15px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; color: #fff;
-    box-shadow: 0 0 24px rgba(56,189,248,.35); flex-shrink: 0;
+    width:50px; height:50px; background:var(--grad); border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; color:#fff; box-shadow:0 0 24px rgba(56,189,248,.35); flex-shrink:0;
   }
-  .db-title    { font-family:'Syne',sans-serif; font-size:24px; font-weight:800; color:var(--white); letter-spacing:-.5px; }
-  .db-greeting { font-size:13px; color:var(--muted); margin-top:3px; }
+  .db-title-row { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .db-title    { font-family:'Syne',sans-serif; font-size:23px; font-weight:800; color:var(--white); letter-spacing:-.5px; }
+  .db-greeting { font-size:12.5px; color:var(--muted); margin-top:4px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .db-greeting strong { color:var(--white); }
+  .db-greeting .dot { width:3px; height:3px; border-radius:50%; background:var(--muted); }
+
+  /* level badge */
+  .lvl-badge {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:3px 10px 3px 8px; border-radius:100px;
+    font-size:10.5px; font-weight:800; letter-spacing:.3px;
+  }
+  .lvl-standard { background:rgba(122,143,173,.12); color:var(--muted); border:1px solid rgba(122,143,173,.2); }
+  .lvl-pro      { background:rgba(56,189,248,.12); color:var(--accent); border:1px solid rgba(56,189,248,.25); }
+  .lvl-premium  { background:rgba(129,140,248,.14); color:#a5b4fc; border:1px solid rgba(129,140,248,.28); }
+  .lvl-vip      { background:var(--grad-gold); color:#3a2a02; border:1px solid rgba(251,191,36,.4); box-shadow:0 0 14px rgba(251,191,36,.3); }
 
   .db-header-right { display:flex; align-items:center; gap:10px; }
   .db-time {
-    font-family:'Courier New',monospace;
-    font-size:13px; color:var(--muted);
+    font-family:'Courier New',monospace; font-size:13px; color:var(--muted);
     background:var(--card2); border:1px solid var(--border);
-    padding:8px 14px; border-radius:100px;
-    display:flex; align-items:center; gap:7px;
+    padding:8px 14px; border-radius:100px; display:flex; align-items:center; gap:7px;
   }
   .db-time-dot { width:6px; height:6px; background:var(--accent3); border-radius:50%; animation:pulse 2s infinite; }
 
+  .db-btn-primary {
+    display:inline-flex; align-items:center; gap:8px; padding:9px 18px;
+    background:var(--grad); border-radius:100px; color:#fff; font-size:13px; font-weight:700;
+    text-decoration:none; box-shadow:0 0 18px rgba(56,189,248,.25); transition:all .2s; border:none; cursor:pointer;
+  }
+  .db-btn-primary:hover { opacity:.88; transform:translateY(-1px); }
+
+  /* notification bell */
+  .notif-wrap { position:relative; }
+  .notif-bell {
+    width:38px; height:38px; border-radius:100px; background:var(--card2); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; color:var(--text); cursor:pointer;
+    position:relative; transition:border-color .2s, color .2s;
+  }
+  .notif-bell:hover { border-color:var(--border2); color:var(--white); }
+  .notif-bell:hover i { animation: ring .6s ease; }
+  .notif-dot {
+    position:absolute; top:6px; right:7px; width:8px; height:8px; border-radius:50%;
+    background:var(--danger); border:2px solid var(--card2);
+  }
+  .notif-panel {
+    position:absolute; top:48px; right:0; width:320px; max-height:380px; overflow-y:auto;
+    border-radius:16px; padding:8px; z-index:40; display:none;
+    box-shadow:0 20px 50px rgba(0,0,0,.5); animation:fadeUp .25s ease both;
+  }
+  .notif-panel.open { display:block; }
+  .notif-panel-head { padding:10px 12px 8px; font-size:12px; font-weight:700; color:var(--white); border-bottom:1px solid var(--border); margin-bottom:6px; }
+  .notif-item { display:flex; gap:10px; padding:9px 10px; border-radius:10px; transition:background .15s; }
+  .notif-item:hover { background:rgba(56,189,248,.05); }
+  .notif-item-icon { width:30px; height:30px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; }
+  .notif-item-title { font-size:12.5px; color:var(--text); font-weight:600; }
+  .notif-item-time { font-size:10.5px; color:var(--muted); margin-top:2px; }
+  .notif-empty { text-align:center; padding:26px 10px; color:var(--muted); font-size:12.5px; }
+
   /* ── STAT CARDS ── */
-  .db-stats {
-    display: grid; grid-template-columns: repeat(5,1fr);
-    gap: 14px; margin-bottom: 24px;
-    animation: fadeUp .45s .06s ease both;
-  }
+  .db-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; animation:fadeUp .45s .06s ease both; }
   .db-stat {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 18px; padding: 20px 18px;
-    position: relative; overflow: hidden;
-    transition: transform .25s, border-color .25s, box-shadow .25s;
-    cursor: default;
+    background:var(--card); border:1px solid var(--border); border-radius:18px; padding:19px 18px;
+    position:relative; overflow:hidden; transition:transform .25s,border-color .25s,box-shadow .25s; cursor:default;
   }
-  .db-stat:hover {
-    transform: translateY(-3px);
-    border-color: var(--border2);
-    box-shadow: 0 12px 32px rgba(0,0,0,.3);
-  }
-  .db-stat::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:2px;
-    opacity:.7; transition:opacity .25s;
-  }
+  .db-stat:hover { transform:translateY(-3px); border-color:var(--border2); box-shadow:0 12px 32px rgba(0,0,0,.3); }
+  .db-stat::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; opacity:.7; transition:opacity .25s; }
   .db-stat:hover::before { opacity:1; }
   .db-stat.c-purple::before { background:linear-gradient(90deg,#a78bfa,transparent); }
   .db-stat.c-teal::before   { background:linear-gradient(90deg,#2dd4bf,transparent); }
+  .db-stat.c-blue::before   { background:linear-gradient(90deg,#818cf8,transparent); }
   .db-stat.c-green::before  { background:linear-gradient(90deg,#34d399,transparent); }
-  .db-stat.c-yellow::before { background:linear-gradient(90deg,#fbbf24,transparent); }
   .db-stat.c-red::before    { background:linear-gradient(90deg,#f87171,transparent); }
+  .db-stat.c-orange::before { background:linear-gradient(90deg,#fb923c,transparent); }
+  .db-stat.c-sky::before    { background:linear-gradient(90deg,#38bdf8,transparent); }
+  .db-stat.c-gold::before   { background:linear-gradient(90deg,#fbbf24,transparent); }
 
   .db-stat-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
-  .db-stat-icon {
-    width:40px; height:40px; border-radius:11px;
-    display:flex; align-items:center; justify-content:center; font-size:17px;
-  }
+  .db-stat-icon { width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:17px; }
   .db-stat.c-purple .db-stat-icon { background:rgba(167,139,250,.12); color:#a78bfa; }
   .db-stat.c-teal   .db-stat-icon { background:rgba(45,212,191,.12);  color:#2dd4bf; }
+  .db-stat.c-blue   .db-stat-icon { background:rgba(129,140,248,.12); color:#818cf8; }
   .db-stat.c-green  .db-stat-icon { background:rgba(52,211,153,.12);  color:#34d399; }
-  .db-stat.c-yellow .db-stat-icon { background:rgba(251,191,36,.12);  color:#fbbf24; }
   .db-stat.c-red    .db-stat-icon { background:rgba(248,113,113,.12); color:#f87171; }
+  .db-stat.c-orange .db-stat-icon { background:rgba(251,146,60,.12);  color:#fb923c; }
+  .db-stat.c-sky    .db-stat-icon { background:rgba(56,189,248,.12);  color:#38bdf8; }
+  .db-stat.c-gold   .db-stat-icon { background:rgba(251,191,36,.14);  color:#fbbf24; }
 
-  .db-stat-trend {
-    font-size:10px; font-weight:700; padding:3px 7px;
-    border-radius:100px; display:flex; align-items:center; gap:3px;
-  }
+  .db-stat-trend { font-size:10px; font-weight:700; padding:3px 7px; border-radius:100px; display:flex; align-items:center; gap:3px; }
   .trend-up   { background:rgba(52,211,153,.1);  color:#34d399; }
   .trend-down { background:rgba(248,113,113,.1); color:#f87171; }
   .trend-neu  { background:rgba(122,143,173,.1); color:var(--muted); }
 
-  .db-stat-val {
-    font-family:'Syne',sans-serif;
-    font-size:26px; font-weight:800; color:var(--white);
-    letter-spacing:-1px; line-height:1; margin-bottom:5px;
-    animation: countUp .5s ease both;
-  }
+  .db-stat-val { font-family:'Syne',sans-serif; font-size:25px; font-weight:800; color:var(--white); letter-spacing:-1px; line-height:1; margin-bottom:5px; min-height:25px; }
   .db-stat-lbl { font-size:11px; color:var(--muted); letter-spacing:.2px; }
 
+  /* ── SECTION HEADINGS ── */
+  .db-section-head { display:flex; align-items:center; justify-content:space-between; margin:26px 0 14px; }
+  .db-section-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:800; color:var(--white); display:flex; align-items:center; gap:9px; }
+  .db-section-title i { color:var(--accent); font-size:13px; }
+
+  /* ── CHARTS GRID ── */
+  .db-charts { display:grid; grid-template-columns:1fr 1fr; gap:16px; animation:fadeUp .45s .1s ease both; }
+
   /* ── MAIN GRID ── */
-  .db-main {
-    display: grid; grid-template-columns: 1fr 300px;
-    gap: 20px; animation: fadeUp .45s .12s ease both;
-  }
+  .db-main { display:grid; grid-template-columns:1fr 320px; gap:20px; animation:fadeUp .45s .12s ease both; }
   .db-left  { display:flex; flex-direction:column; gap:18px; }
   .db-right { display:flex; flex-direction:column; gap:18px; }
 
   /* ── CARD ── */
-  .db-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; padding: 24px;
-    position: relative; overflow: hidden;
-  }
-  .db-card::before {
-    content:''; position:absolute; top:0; left:0; right:0;
-    height:1px; background:var(--grad); opacity:.35;
-  }
-  .db-card-head {
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:20px;
-  }
-  .db-card-title {
-    font-family:'Syne',sans-serif;
-    font-size:14px; font-weight:700; color:var(--white);
-    display:flex; align-items:center; gap:9px;
-  }
-  .db-card-title-icon {
-    width:28px; height:28px; border-radius:8px;
-    display:flex; align-items:center; justify-content:center; font-size:12px;
-  }
-  .db-card-link {
-    font-size:12px; color:var(--accent); text-decoration:none;
-    font-weight:600; transition:opacity .2s;
-    display:flex; align-items:center; gap:5px;
-  }
+  .db-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:22px; position:relative; overflow:hidden; }
+  .db-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:var(--grad); opacity:.35; }
+  .db-card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; gap:10px; flex-wrap:wrap; }
+  .db-card-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; color:var(--white); display:flex; align-items:center; gap:9px; }
+  .db-card-title-icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; }
+  .db-card-link { font-size:12px; color:var(--accent); text-decoration:none; font-weight:600; transition:opacity .2s; display:flex; align-items:center; gap:5px; white-space:nowrap; }
   .db-card-link:hover { opacity:.7; }
+  .db-card-sub { font-size:11px; color:var(--muted); margin-top:2px; }
 
   /* ── TABLE ── */
   .db-table-wrap { overflow-x:auto; margin:0 -4px; }
   .db-table { width:100%; border-collapse:collapse; min-width:520px; }
-  .db-table thead th {
-    font-size:10px; font-weight:700; text-transform:uppercase;
-    letter-spacing:.8px; color:var(--muted);
-    padding:0 12px 13px; text-align:left;
-    border-bottom:1px solid var(--border); white-space:nowrap;
-  }
-  .db-table tbody tr {
-    border-bottom:1px solid rgba(99,179,237,.05);
-    transition:background .15s;
-    animation:fadeUp .4s ease both;
-  }
+  .db-table thead th { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); padding:0 12px 13px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+  .db-table tbody tr { border-bottom:1px solid rgba(99,179,237,.05); transition:background .15s; animation:fadeUp .4s ease both; }
   .db-table tbody tr:last-child { border-bottom:none; }
   .db-table tbody tr:hover { background:rgba(56,189,248,.03); }
   .db-table tbody td { padding:12px 12px; font-size:13px; color:var(--text); vertical-align:middle; }
@@ -177,11 +215,7 @@
   .td-price { font-weight:700; color:var(--accent3); white-space:nowrap; }
 
   /* ── BADGES ── */
-  .badge {
-    display:inline-flex; align-items:center; gap:5px;
-    padding:4px 10px; border-radius:100px;
-    font-size:11px; font-weight:700; white-space:nowrap;
-  }
+  .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:100px; font-size:11px; font-weight:700; white-space:nowrap; }
   .badge i { font-size:9px; }
   .badge-green  { background:rgba(52,211,153,.1);  color:#34d399; border:1px solid rgba(52,211,153,.2); }
   .badge-blue   { background:rgba(129,140,248,.1); color:#818cf8; border:1px solid rgba(129,140,248,.2); }
@@ -191,141 +225,165 @@
   .badge-blue i { animation:spin 1.4s linear infinite; }
 
   /* ── EMPTY ── */
-  .db-empty { text-align:center; padding:52px 20px; }
-  .db-empty-icon {
-    width:64px; height:64px;
-    background:rgba(56,189,248,.06); border:1px solid rgba(56,189,248,.12);
-    border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-size:26px; color:var(--muted); margin:0 auto 18px;
-  }
-  .db-empty h3 { font-size:15px; font-weight:700; color:var(--white); margin-bottom:7px; }
-  .db-empty p  { font-size:13px; color:var(--muted); margin-bottom:20px; }
-  .db-empty-cta {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:10px 22px; border-radius:10px;
-    background:var(--grad); color:#fff;
-    font-size:13px; font-weight:700; text-decoration:none;
-    transition:all .2s;
-  }
+  .db-empty { text-align:center; padding:44px 20px; }
+  .db-empty-icon { width:58px; height:58px; background:rgba(56,189,248,.06); border:1px solid rgba(56,189,248,.12); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:23px; color:var(--muted); margin:0 auto 16px; }
+  .db-empty h3 { font-size:14px; font-weight:700; color:var(--white); margin-bottom:6px; }
+  .db-empty p  { font-size:12.5px; color:var(--muted); margin-bottom:18px; }
+  .db-empty-cta { display:inline-flex; align-items:center; gap:8px; padding:9px 20px; border-radius:10px; background:var(--grad); color:#fff; font-size:12.5px; font-weight:700; text-decoration:none; transition:all .2s; }
   .db-empty-cta:hover { opacity:.88; transform:translateY(-1px); }
 
   /* ── BALANCE CARD ── */
-  .db-balance-card {
-    background: linear-gradient(135deg, #0d1f3c, #0a1628);
-    border: 1px solid rgba(56,189,248,.18);
-    border-radius: 18px; padding: 22px;
-    position: relative; overflow: hidden;
-  }
-  .db-balance-card::before {
-    content:''; position:absolute; top:0; left:0; right:0;
-    height:2px; background:var(--grad);
-  }
-  .db-bal-glow {
-    position:absolute; top:-40px; right:-40px; width:160px; height:160px;
-    background:radial-gradient(circle, rgba(56,189,248,.1), transparent 70%);
-    pointer-events:none;
-  }
+  .db-balance-card { background:linear-gradient(135deg,#0d1f3c,#0a1628); border:1px solid rgba(56,189,248,.18); border-radius:18px; padding:22px; position:relative; overflow:hidden; animation:glowPulse 5s ease-in-out infinite; }
+  .db-balance-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--grad); }
+  .db-bal-glow { position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:radial-gradient(circle,rgba(56,189,248,.1),transparent 70%); pointer-events:none; }
   .db-bal-label { font-size:11px; color:var(--muted); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px; }
-  .db-bal-amount {
-    font-family:'Syne',sans-serif;
-    font-size:34px; font-weight:800; letter-spacing:-1.5px;
-    background:var(--grad-g); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    line-height:1; margin-bottom:4px;
-  }
+  .db-bal-amount { font-family:'Syne',sans-serif; font-size:33px; font-weight:800; letter-spacing:-1.5px; background:var(--grad-g); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; margin-bottom:4px; }
   .db-bal-cur { font-size:14px; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-left:4px; }
-  .db-bal-sub { font-size:12px; color:var(--muted); margin-bottom:18px; }
-  .db-bal-btn {
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    padding:12px; border-radius:11px;
-    background:var(--grad); color:#fff;
-    font-size:13px; font-weight:700; text-decoration:none;
-    box-shadow:0 0 20px rgba(56,189,248,.2);
-    transition:all .2s;
-  }
+  .db-bal-sub { font-size:12px; color:var(--muted); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+  .db-bal-cashback { font-size:11.5px; color:var(--gold); background:rgba(251,191,36,.1); border:1px solid rgba(251,191,36,.22); padding:6px 10px; border-radius:10px; margin-bottom:14px; display:flex; align-items:center; gap:7px; }
+  .db-bal-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-radius:11px; background:var(--grad); color:#fff; font-size:13px; font-weight:700; text-decoration:none; box-shadow:0 0 20px rgba(56,189,248,.2); transition:all .2s; }
   .db-bal-btn:hover { opacity:.9; transform:translateY(-1px); box-shadow:0 4px 24px rgba(56,189,248,.35); }
 
   /* ── QUICK LINKS ── */
-  .ql-list { display:flex; flex-direction:column; gap:9px; }
-  .ql-item {
-    display:flex; align-items:center; gap:12px;
-    padding:12px 16px; border-radius:12px;
-    font-size:13px; font-weight:600; text-decoration:none;
-    border:1px solid var(--border); color:var(--text);
-    background:var(--card2); transition:all .2s;
-  }
-  .ql-item:hover { border-color:var(--border2); color:var(--white); transform:translateX(3px); }
-  .ql-item-icon {
-    width:32px; height:32px; border-radius:9px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:13px; flex-shrink:0;
-  }
-  .ql-item .ql-arrow { margin-left:auto; color:var(--muted); font-size:11px; transition:transform .2s; }
-  .ql-item:hover .ql-arrow { color:var(--accent); transform:translateX(3px); }
+  .ql-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .ql-item { display:flex; flex-direction:column; align-items:flex-start; gap:10px; padding:14px 14px; border-radius:14px; font-size:12.5px; font-weight:600; text-decoration:none; border:1px solid var(--border); color:var(--text); background:var(--card2); transition:all .2s; }
+  .ql-item:hover { border-color:var(--border2); color:var(--white); transform:translateY(-2px); }
+  .ql-item-icon { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
 
-  /* ── API KEY ── */
-  .db-api-box {
-    background:var(--bg); border:1px solid rgba(52,211,153,.15);
-    border-radius:11px; padding:13px 14px;
-    font-family:'Courier New',monospace;
-    font-size:11px; color:#34d399;
-    word-break:break-all; letter-spacing:.5px;
-    margin-bottom:12px; line-height:1.6;
-    user-select:all; cursor:text;
-  }
-  .db-copy-btn {
-    display:flex; align-items:center; justify-content:center; gap:7px;
-    padding:9px; border-radius:10px;
-    background:var(--card2); color:var(--text);
-    border:1px solid var(--border);
-    font-size:12px; font-weight:600;
-    cursor:pointer; transition:all .2s; width:100%;
-    font-family:'DM Sans',sans-serif;
-  }
+  /* ── ACTIVITY FEED ── */
+  .activity-list { display:flex; flex-direction:column; gap:2px; }
+  .activity-item { display:flex; gap:12px; padding:12px 4px; border-bottom:1px solid rgba(99,179,237,.05); }
+  .activity-item:last-child { border-bottom:none; }
+  .activity-icon { width:34px; height:34px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; }
+  .activity-body { flex:1; min-width:0; }
+  .activity-title { font-size:13px; color:var(--text); font-weight:600; }
+  .activity-title b { color:var(--white); }
+  .activity-time { font-size:11px; color:var(--muted); margin-top:2px; }
+
+  /* ── ACCOUNT STATUS ── */
+  .status-list { display:flex; flex-direction:column; gap:10px; }
+  .status-row { display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:12px; background:var(--card2); border:1px solid var(--border); }
+  .status-row-icon { width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+  .status-row.ok .status-row-icon      { background:rgba(52,211,153,.12); color:#34d399; }
+  .status-row.warn .status-row-icon    { background:rgba(251,191,36,.12); color:#fbbf24; }
+  .status-row-title { font-size:12.5px; font-weight:600; color:var(--text); }
+  .status-row-sub { font-size:10.5px; color:var(--muted); }
+  .status-row-action { margin-left:auto; }
+  .status-chip { font-size:10px; font-weight:700; padding:3px 9px; border-radius:100px; }
+  .status-chip.ok   { background:rgba(52,211,153,.12); color:#34d399; }
+  .status-chip.warn { background:rgba(251,191,36,.12); color:#fbbf24; }
+  .status-link { font-size:11px; font-weight:700; color:var(--accent); text-decoration:none; }
+  .status-link:hover { opacity:.75; }
+
+  /* ── FAVORITES / TOP SERVICES ── */
+  .fav-item, .top-item { display:flex; align-items:center; gap:12px; padding:11px 4px; border-bottom:1px solid rgba(99,179,237,.05); }
+  .fav-item:last-child, .top-item:last-child { border-bottom:none; }
+  .fav-icon { width:34px; height:34px; border-radius:10px; background:rgba(56,189,248,.1); color:var(--accent); display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+  .fav-name, .top-name { font-size:13px; font-weight:600; color:var(--text); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .top-rank { width:22px; height:22px; border-radius:7px; background:var(--card2); color:var(--muted); font-size:10.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .top-count { font-size:11px; color:var(--muted); white-space:nowrap; }
+  .top-bar-wrap { flex:1; height:5px; border-radius:100px; background:rgba(99,179,237,.08); overflow:hidden; margin:0 10px; }
+  .top-bar-fill { height:100%; background:var(--grad); border-radius:100px; }
+
+  /* ── ACHIEVEMENTS ── */
+  .ach-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .ach-card { border-radius:16px; padding:16px 14px; text-align:center; border:1px solid var(--border); background:var(--card2); transition:transform .25s, box-shadow .25s; position:relative; }
+  .ach-card.unlocked { border-color:rgba(251,191,36,.3); box-shadow:0 0 22px rgba(251,191,36,.12); }
+  .ach-card.unlocked:hover { transform:translateY(-3px); box-shadow:0 0 30px rgba(251,191,36,.22); }
+  .ach-icon { width:46px; height:46px; margin:0 auto 10px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:19px; }
+  .ach-card.unlocked .ach-icon { background:var(--grad-gold); color:#3a2a02; }
+  .ach-card.locked   .ach-icon { background:rgba(122,143,173,.1); color:var(--muted); }
+  .ach-card.locked   { opacity:.65; }
+  .ach-title { font-size:12px; font-weight:700; color:var(--white); margin-bottom:3px; }
+  .ach-card.locked .ach-title { color:var(--muted); }
+  .ach-desc  { font-size:10.5px; color:var(--muted); margin-bottom:9px; min-height:26px; }
+  .ach-progress { height:4px; border-radius:100px; background:rgba(99,179,237,.08); overflow:hidden; }
+  .ach-progress-fill { height:100%; background:var(--grad-gold); border-radius:100px; }
+  .ach-check { position:absolute; top:10px; right:10px; color:var(--gold); font-size:13px; }
+
+  /* ── API / QR ── */
+  .api-qr-grid { display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center; }
+  .db-api-box { background:var(--bg); border:1px solid rgba(52,211,153,.15); border-radius:11px; padding:13px 14px; font-family:'Courier New',monospace; font-size:11px; color:#34d399; word-break:break-all; letter-spacing:.5px; margin-bottom:12px; line-height:1.6; user-select:all; cursor:text; }
+  .db-copy-btn { display:flex; align-items:center; justify-content:center; gap:7px; padding:9px; border-radius:10px; background:var(--card2); color:var(--text); border:1px solid var(--border); font-size:12px; font-weight:600; cursor:pointer; transition:all .2s; width:100%; font-family:'DM Sans',sans-serif; }
   .db-copy-btn:hover { border-color:rgba(56,189,248,.3); color:var(--white); }
   .db-copy-btn.copied { color:#34d399; border-color:rgba(52,211,153,.3); background:rgba(52,211,153,.07); }
+  .qr-box { background:#fff; padding:8px; border-radius:12px; line-height:0; box-shadow:0 0 24px rgba(56,189,248,.15); }
+  .qr-box img { display:block; width:104px; height:104px; border-radius:6px; }
+  .qr-label { text-align:center; font-size:10px; color:var(--muted); margin-top:8px; max-width:120px; }
 
-  /* ── ACTIVITY CHART ── */
-  .db-chart-wrap {
-    display: flex; align-items: flex-end; gap: 6px;
-    height: 60px; padding-top: 8px;
-  }
-  .db-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .db-bar {
-    width: 100%; border-radius: 4px 4px 0 0;
-    background: linear-gradient(to top, rgba(56,189,248,.3), rgba(56,189,248,.7));
-    transition: background .2s;
-    min-height: 4px;
-  }
-  .db-bar:hover { background: linear-gradient(to top, #38bdf8, #818cf8); }
-  .db-bar-lbl { font-size: 9px; color: var(--muted); }
+  /* ── CHART SKELETON ── */
+  .chart-holder { position:relative; min-height:200px; }
+  .chart-skel { position:absolute; inset:0; border-radius:12px; }
 
-  @media (max-width:1100px) { .db-stats { grid-template-columns:repeat(3,1fr); } }
-  @media (max-width:900px)  { .db-main  { grid-template-columns:1fr; } }
-  @media (max-width:600px)  { .db-stats { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:1200px) { .db-stats { grid-template-columns:repeat(3,1fr); } .db-charts { grid-template-columns:1fr; } }
+  @media (max-width:1100px) { .ach-grid { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:900px)  { .db-main { grid-template-columns:1fr; } .api-qr-grid { grid-template-columns:1fr; justify-items:center; text-align:center; } }
+  @media (max-width:600px)  { .db-stats { grid-template-columns:repeat(2,1fr); } .ql-grid { grid-template-columns:1fr; } }
 </style>
+
+<div class="db-orb db-orb-1"></div>
+<div class="db-orb db-orb-2"></div>
+
+<div class="db-page">
 
 <!-- HEADER -->
 <div class="db-header">
   <div class="db-header-left">
     <div class="db-header-icon"><i class="fas fa-chart-line"></i></div>
     <div>
-      <div class="db-title">Dashboard</div>
+      <div class="db-title-row">
+        <span class="db-title">Dashboard</span>
+        {% set lvl = (user.level|default('Standard', true)) %}
+        {% if lvl|lower == 'vip' %}
+          <span class="lvl-badge lvl-vip"><i class="fas fa-crown"></i> VIP</span>
+        {% elif lvl|lower == 'premium' %}
+          <span class="lvl-badge lvl-premium"><i class="fas fa-gem"></i> Premium</span>
+        {% elif lvl|lower == 'pro' %}
+          <span class="lvl-badge lvl-pro"><i class="fas fa-bolt"></i> Pro</span>
+        {% else %}
+          <span class="lvl-badge lvl-standard"><i class="fas fa-user"></i> Standard</span>
+        {% endif %}
+      </div>
       <div class="db-greeting">
-        Salom, <strong>{{ user.username }}</strong> 👋 — bugun ham muvaffaqiyatli kun!
+        Salom, <strong>{{ user.username }}</strong> 👋
+        <span class="dot"></span>
+        {% if user.last_login %}
+          So'nggi kirish: {{ user.last_login.strftime('%d.%m.%Y, %H:%M') }}
+        {% else %}
+          Xush kelibsiz, bu birinchi tashrifingiz!
+        {% endif %}
       </div>
     </div>
   </div>
   <div class="db-header-right">
-    <div class="db-time">
-      <span class="db-time-dot"></span>
-      <span id="db-clock">--:--:--</span>
+    <div class="db-time"><span class="db-time-dot"></span><span id="db-clock">--:--:--</span></div>
+
+    <div class="notif-wrap">
+      <div class="notif-bell" id="notif-bell" onclick="toggleNotifs()">
+        <i class="fas fa-bell"></i>
+        {% if notifications|default([], true) %}<span class="notif-dot"></span>{% endif %}
+      </div>
+      <div class="notif-panel glass" id="notif-panel">
+        <div class="notif-panel-head">🔔 Bildirishnomalar</div>
+        {% if notifications|default([], true) %}
+          {% for n in notifications %}
+          <div class="notif-item">
+            <div class="notif-item-icon" style="background:rgba(56,189,248,.1);color:var(--accent)">
+              <i class="fas fa-{{ n.icon|default('circle-info', true) }}"></i>
+            </div>
+            <div>
+              <div class="notif-item-title">{{ n.title }}</div>
+              <div class="notif-item-time">{{ n.time|default('', true) }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="notif-empty"><i class="fas fa-bell-slash" style="font-size:20px;display:block;margin-bottom:8px;opacity:.5"></i>Yangi bildirishnoma yo'q</div>
+        {% endif %}
+      </div>
     </div>
-    <a href="/new-order"
-       style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:var(--grad);border-radius:100px;color:#fff;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 0 18px rgba(56,189,248,.25);transition:all .2s"
-       onmouseover="this.style.opacity='.88';this.style.transform='translateY(-1px)'"
-       onmouseout="this.style.opacity='1';this.style.transform='none'">
-      <i class="fas fa-plus"></i> Yangi Order
-    </a>
+
+    <a href="/new-order" class="db-btn-primary"><i class="fas fa-plus"></i> Yangi Order</a>
   </div>
 </div>
 
@@ -336,56 +394,139 @@
       <div class="db-stat-icon"><i class="fas fa-wallet"></i></div>
       <span class="db-stat-trend trend-up"><i class="fas fa-arrow-up"></i></span>
     </div>
-    <div class="db-stat-val">{{ "{:,.0f}".format(user.balance) }}</div>
-    <div class="db-stat-lbl">Balans (so'm)</div>
+    <div class="db-stat-val skeleton" data-count="{{ user.balance|default(0, true) }}" data-suffix=" so'm">0</div>
+    <div class="db-stat-lbl">Balans</div>
   </div>
+
   <div class="db-stat c-teal">
     <div class="db-stat-top">
       <div class="db-stat-icon"><i class="fas fa-cart-shopping"></i></div>
       <span class="db-stat-trend trend-neu"><i class="fas fa-minus"></i></span>
     </div>
-    <div class="db-stat-val">{{ stats.total_orders }}</div>
-    <div class="db-stat-lbl">Jami Orderlar</div>
+    <div class="db-stat-val skeleton" data-count="{{ stats.total_orders|default(0, true) }}">0</div>
+    <div class="db-stat-lbl">Jami buyurtmalar</div>
   </div>
+
+  <div class="db-stat c-blue">
+    <div class="db-stat-top">
+      <div class="db-stat-icon"><i class="fas fa-hourglass-half"></i></div>
+      <span class="db-stat-trend trend-neu"><i class="fas fa-minus"></i></span>
+    </div>
+    <div class="db-stat-val skeleton" data-count="{{ stats.pending|default(0, true) }}">0</div>
+    <div class="db-stat-lbl">Faol buyurtmalar</div>
+  </div>
+
   <div class="db-stat c-green">
     <div class="db-stat-top">
       <div class="db-stat-icon"><i class="fas fa-circle-check"></i></div>
       <span class="db-stat-trend trend-up"><i class="fas fa-arrow-up"></i></span>
     </div>
-    <div class="db-stat-val">{{ stats.completed }}</div>
-    <div class="db-stat-lbl">Bajarilgan</div>
+    <div class="db-stat-val skeleton" data-count="{{ stats.completed|default(0, true) }}">0</div>
+    <div class="db-stat-lbl">Tugallangan</div>
   </div>
-  <div class="db-stat c-yellow">
-    <div class="db-stat-top">
-      <div class="db-stat-icon"><i class="fas fa-clock"></i></div>
-      <span class="db-stat-trend trend-neu"><i class="fas fa-minus"></i></span>
-    </div>
-    <div class="db-stat-val">{{ stats.pending }}</div>
-    <div class="db-stat-lbl">Jarayonda</div>
-  </div>
+
   <div class="db-stat c-red">
+    <div class="db-stat-top">
+      <div class="db-stat-icon"><i class="fas fa-ban"></i></div>
+      {% if stats.cancelled|default(0, true) > 0 %}
+        <span class="db-stat-trend trend-down"><i class="fas fa-arrow-down"></i></span>
+      {% else %}
+        <span class="db-stat-trend trend-neu"><i class="fas fa-minus"></i></span>
+      {% endif %}
+    </div>
+    <div class="db-stat-val skeleton" data-count="{{ stats.cancelled|default(0, true) }}">0</div>
+    <div class="db-stat-lbl">Bekor qilingan</div>
+  </div>
+
+  <div class="db-stat c-orange">
     <div class="db-stat-top">
       <div class="db-stat-icon"><i class="fas fa-coins"></i></div>
       <span class="db-stat-trend trend-down"><i class="fas fa-arrow-down"></i></span>
     </div>
-    <div class="db-stat-val">{{ "{:,.0f}".format(stats.total_spent) }}</div>
-    <div class="db-stat-lbl">Sarflangan so'm</div>
+    <div class="db-stat-val skeleton" data-count="{{ stats.total_spent|default(0, true) }}" data-suffix=" so'm">0</div>
+    <div class="db-stat-lbl">Jami sarflangan</div>
+  </div>
+
+  <div class="db-stat c-sky">
+    <div class="db-stat-top">
+      <div class="db-stat-icon"><i class="fas fa-calendar-day"></i></div>
+      {% if stats.today_orders|default(0, true) > 0 %}
+        <span class="db-stat-trend trend-up"><i class="fas fa-arrow-up"></i></span>
+      {% else %}
+        <span class="db-stat-trend trend-neu"><i class="fas fa-minus"></i></span>
+      {% endif %}
+    </div>
+    <div class="db-stat-val skeleton" data-count="{{ stats.today_orders|default(0, true) }}">0</div>
+    <div class="db-stat-lbl">Bugungi buyurtmalar</div>
+  </div>
+
+  <div class="db-stat c-gold">
+    <div class="db-stat-top">
+      <div class="db-stat-icon"><i class="fas fa-gift"></i></div>
+      <span class="db-stat-trend trend-up"><i class="fas fa-arrow-up"></i></span>
+    </div>
+    <div class="db-stat-val skeleton" data-count="{{ user.cashback|default(0, true) }}" data-suffix=" so'm">0</div>
+    <div class="db-stat-lbl">Cashback</div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="db-section-head">
+  <div class="db-section-title"><i class="fas fa-chart-area"></i> Analitika</div>
+</div>
+<div class="db-charts">
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">
+        <div class="db-card-title-icon" style="background:rgba(56,189,248,.1);color:var(--accent)"><i class="fas fa-chart-bar"></i></div>
+        Haftalik buyurtmalar
+      </div>
+    </div>
+    <div class="chart-holder"><div id="chart-weekly"></div></div>
+  </div>
+
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">
+        <div class="db-card-title-icon" style="background:rgba(251,146,60,.1);color:#fb923c"><i class="fas fa-chart-area"></i></div>
+        30 kunlik xarajatlar
+      </div>
+    </div>
+    <div class="chart-holder"><div id="chart-monthly"></div></div>
+  </div>
+
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">
+        <div class="db-card-title-icon" style="background:rgba(52,211,153,.1);color:#34d399"><i class="fas fa-chart-line"></i></div>
+        Balans o'zgarishi
+      </div>
+    </div>
+    <div class="chart-holder"><div id="chart-balance"></div></div>
+  </div>
+
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">
+        <div class="db-card-title-icon" style="background:rgba(129,140,248,.1);color:#818cf8"><i class="fas fa-chart-pie"></i></div>
+        Buyurtmalar statistikasi
+      </div>
+    </div>
+    <div class="chart-holder"><div id="chart-donut"></div></div>
   </div>
 </div>
 
 <!-- MAIN -->
-<div class="db-main">
+<div class="db-main" style="margin-top:22px">
 
   <!-- LEFT -->
   <div class="db-left">
 
-    <!-- RECENT ORDERS TABLE -->
+    <!-- RECENT ORDERS -->
     <div class="db-card">
       <div class="db-card-head">
         <div class="db-card-title">
-          <div class="db-card-title-icon" style="background:rgba(56,189,248,.1);color:var(--accent)">
-            <i class="fas fa-receipt"></i>
-          </div>
+          <div class="db-card-title-icon" style="background:rgba(56,189,248,.1);color:var(--accent)"><i class="fas fa-receipt"></i></div>
           So'nggi Orderlar
         </div>
         <a href="/orders" class="db-card-link">Barchasi <i class="fas fa-arrow-right" style="font-size:10px"></i></a>
@@ -394,19 +535,12 @@
       {% if recent %}
       <div class="db-table-wrap">
         <table class="db-table">
-          <thead>
-            <tr>
-              <th>#ID</th><th>Xizmat</th><th>Link</th>
-              <th>Miqdor</th><th>Narx</th><th>Status</th>
-            </tr>
-          </thead>
+          <thead><tr><th>#ID</th><th>Xizmat</th><th>Link</th><th>Miqdor</th><th>Narx</th><th>Status</th></tr></thead>
           <tbody>
             {% for o in recent %}
             <tr style="animation-delay:{{ loop.index0 * 0.05 }}s">
               <td class="td-id">#{{ o.id }}</td>
-              <td class="td-svc" title="{{ o.svc_name }}">
-                {{ o.svc_name[:28] }}{% if o.svc_name|length > 28 %}…{% endif %}
-              </td>
+              <td class="td-svc" title="{{ o.svc_name }}">{{ o.svc_name[:28] }}{% if o.svc_name|length > 28 %}…{% endif %}</td>
               <td class="td-link" title="{{ o.link }}">{{ o.link }}</td>
               <td class="td-qty">{{ "{:,}".format(o.quantity) }}</td>
               <td class="td-price">{{ "{:,.0f}".format(o.price) }} so'm</td>
@@ -438,17 +572,48 @@
       {% endif %}
     </div>
 
-    <!-- MINI CHART -->
+    <!-- ACTIVITY FEED -->
     <div class="db-card">
       <div class="db-card-head">
         <div class="db-card-title">
-          <div class="db-card-title-icon" style="background:rgba(129,140,248,.1);color:#818cf8">
-            <i class="fas fa-chart-bar"></i>
-          </div>
-          Haftalik Faollik
+          <div class="db-card-title-icon" style="background:rgba(129,140,248,.1);color:#818cf8"><i class="fas fa-timeline"></i></div>
+          Faoliyat
         </div>
       </div>
-      <div class="db-chart-wrap" id="db-chart"></div>
+      {% set feed = activity_feed|default([], true) %}
+      {% if feed %}
+        <div class="activity-list">
+          {% for a in feed %}
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba({{ a.color|default('56,189,248', true) }},.12); color:rgb({{ a.color|default('56,189,248', true) }})">
+              <i class="fas fa-{{ a.icon|default('circle-info', true) }}"></i>
+            </div>
+            <div class="activity-body">
+              <div class="activity-title">{{ a.text|safe }}</div>
+              <div class="activity-time">{{ a.time|default('', true) }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% elif recent %}
+        <div class="activity-list">
+          {% for o in recent[:6] %}
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(56,189,248,.12);color:var(--accent)"><i class="fas fa-cart-shopping"></i></div>
+            <div class="activity-body">
+              <div class="activity-title"><b>#{{ o.id }}</b> — {{ o.svc_name[:34] }}{% if o.svc_name|length > 34 %}…{% endif %}</div>
+              <div class="activity-time">{{ "{:,.0f}".format(o.price) }} so'm · {{ o.status }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+      <div class="db-empty">
+        <div class="db-empty-icon"><i class="fas fa-timeline"></i></div>
+        <h3>Faoliyat hali yo'q</h3>
+        <p>Buyurtma bergach, so'nggi harakatlaringiz shu yerda ko'rinadi</p>
+      </div>
+      {% endif %}
     </div>
 
   </div>
@@ -465,107 +630,410 @@
         <span class="db-bal-cur">so'm</span>
       </div>
       <div class="db-bal-sub">Mavjud mablag'ingiz</div>
-      <a href="/add-funds" class="db-bal-btn">
-        <i class="fas fa-plus"></i> Balansni To'ldirish
-      </a>
+      {% if user.cashback|default(0, true) > 0 %}
+      <div class="db-bal-cashback"><i class="fas fa-gift"></i> Cashback: {{ "{:,.0f}".format(user.cashback) }} so'm</div>
+      {% endif %}
+      <a href="/add-funds" class="db-bal-btn"><i class="fas fa-plus"></i> Balansni To'ldirish</a>
     </div>
 
-    <!-- QUICK LINKS -->
+    <!-- QUICK ACTIONS -->
     <div class="db-card">
       <div class="db-card-head">
         <div class="db-card-title">
-          <div class="db-card-title-icon" style="background:rgba(56,189,248,.1);color:var(--accent)">
-            <i class="fas fa-bolt"></i>
-          </div>
-          Tezkor Havolalar
+          <div class="db-card-title-icon" style="background:rgba(56,189,248,.1);color:var(--accent)"><i class="fas fa-bolt"></i></div>
+          Tezkor amallar
         </div>
       </div>
-      <div class="ql-list">
+      <div class="ql-grid">
         <a href="/new-order" class="ql-item">
           <div class="ql-item-icon" style="background:rgba(56,189,248,.1);color:var(--accent)"><i class="fas fa-plus"></i></div>
-          Yangi Order
-          <i class="fas fa-chevron-right ql-arrow"></i>
+          Yangi buyurtma
+        </a>
+        <a href="/add-funds" class="ql-item">
+          <div class="ql-item-icon" style="background:rgba(52,211,153,.1);color:#34d399"><i class="fas fa-credit-card"></i></div>
+          Balans to'ldirish
         </a>
         <a href="/orders" class="ql-item">
-          <div class="ql-item-icon" style="background:rgba(129,140,248,.1);color:#818cf8"><i class="fas fa-list"></i></div>
-          Barcha Orderlar
-          <i class="fas fa-chevron-right ql-arrow"></i>
+          <div class="ql-item-icon" style="background:rgba(129,140,248,.1);color:#818cf8"><i class="fas fa-clock-rotate-left"></i></div>
+          Buyurtmalar tarixi
         </a>
-        <a href="/profile" class="ql-item">
-          <div class="ql-item-icon" style="background:rgba(52,211,153,.1);color:#34d399"><i class="fas fa-user"></i></div>
-          Profil
-          <i class="fas fa-chevron-right ql-arrow"></i>
+        <a href="/favorites" class="ql-item">
+          <div class="ql-item-icon" style="background:rgba(248,113,113,.1);color:#f87171"><i class="fas fa-heart"></i></div>
+          Sevimli xizmatlar
+        </a>
+        <a href="/support" class="ql-item">
+          <div class="ql-item-icon" style="background:rgba(251,191,36,.1);color:#fbbf24"><i class="fas fa-headset"></i></div>
+          Support
         </a>
         <a href="/api-docs" class="ql-item">
           <div class="ql-item-icon" style="background:rgba(251,146,60,.1);color:#fb923c"><i class="fas fa-code"></i></div>
-          API Hujjatlari
-          <i class="fas fa-chevron-right ql-arrow"></i>
+          API
         </a>
       </div>
     </div>
 
-    <!-- API KEY -->
+    <!-- ACCOUNT STATUS -->
     <div class="db-card">
       <div class="db-card-head">
         <div class="db-card-title">
-          <div class="db-card-title-icon" style="background:rgba(52,211,153,.1);color:#34d399">
-            <i class="fas fa-terminal"></i>
-          </div>
-          API Kalit
+          <div class="db-card-title-icon" style="background:rgba(251,191,36,.1);color:var(--gold)"><i class="fas fa-shield-halved"></i></div>
+          Akkaunt holati
         </div>
       </div>
-      <div class="db-api-box" id="api-key-box">{{ user.api_key }}</div>
-      <button class="db-copy-btn" id="copy-btn" onclick="copyKey()">
-        <i class="fas fa-copy"></i> Nusxalash
-      </button>
+      <div class="status-list">
+
+        <div class="status-row {{ 'ok' if lvl|lower in ['pro','premium','vip'] else 'warn' }}">
+          <div class="status-row-icon"><i class="fas fa-star"></i></div>
+          <div>
+            <div class="status-row-title">Tarif darajasi</div>
+            <div class="status-row-sub">{{ lvl }}</div>
+          </div>
+          <div class="status-row-action"><span class="status-chip {{ 'ok' if lvl|lower in ['pro','premium','vip'] else 'warn' }}">{{ lvl }}</span></div>
+        </div>
+
+        <div class="status-row {{ 'ok' if user.api_key else 'warn' }}">
+          <div class="status-row-icon"><i class="fas fa-plug"></i></div>
+          <div>
+            <div class="status-row-title">API</div>
+            <div class="status-row-sub">{{ 'Faol' if user.api_key else 'Ulanmagan' }}</div>
+          </div>
+          <div class="status-row-action">
+            {% if user.api_key %}<span class="status-chip ok">Faol</span>{% else %}<a href="/api-docs" class="status-link">Ulash</a>{% endif %}
+          </div>
+        </div>
+
+        <div class="status-row {{ 'ok' if user.email_verified|default(false, true) else 'warn' }}">
+          <div class="status-row-icon"><i class="fas fa-envelope-circle-check"></i></div>
+          <div>
+            <div class="status-row-title">Email</div>
+            <div class="status-row-sub">{{ 'Tasdiqlangan' if user.email_verified|default(false, true) else 'Tasdiqlanmagan' }}</div>
+          </div>
+          <div class="status-row-action">
+            {% if user.email_verified|default(false, true) %}<span class="status-chip ok">✓</span>{% else %}<a href="/profile" class="status-link">Tasdiqlash</a>{% endif %}
+          </div>
+        </div>
+
+        <div class="status-row {{ 'ok' if user.telegram_connected|default(false, true) else 'warn' }}">
+          <div class="status-row-icon"><i class="fab fa-telegram"></i></div>
+          <div>
+            <div class="status-row-title">Telegram</div>
+            <div class="status-row-sub">{{ 'Ulangan' if user.telegram_connected|default(false, true) else 'Ulanmagan' }}</div>
+          </div>
+          <div class="status-row-action">
+            {% if user.telegram_connected|default(false, true) %}<span class="status-chip ok">✓</span>{% else %}<a href="/profile" class="status-link">Ulash</a>{% endif %}
+          </div>
+        </div>
+
+        <div class="status-row {{ 'ok' if user.two_fa_enabled|default(false, true) else 'warn' }}">
+          <div class="status-row-icon"><i class="fas fa-lock"></i></div>
+          <div>
+            <div class="status-row-title">2FA himoya</div>
+            <div class="status-row-sub">{{ 'Yoqilgan' if user.two_fa_enabled|default(false, true) else 'O\'chirilgan' }}</div>
+          </div>
+          <div class="status-row-action">
+            {% if user.two_fa_enabled|default(false, true) %}<span class="status-chip ok">✓</span>{% else %}<a href="/profile" class="status-link">Yoqish</a>{% endif %}
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </div>
 </div>
 
+<!-- FAVORITES & TOP SERVICES -->
+<div class="db-section-head">
+  <div class="db-section-title"><i class="fas fa-star"></i> Xizmatlar</div>
+</div>
+<div class="db-charts">
+
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">
+        <div class="db-card-title-icon" style="background:rgba(248,113,113,.1);color:#f87171"><i class="fas fa-heart"></i></div>
+        Sevimli xizmatlar
+      </div>
+      <a href="/favorites" class="db-card-link">Barchasi <i class="fas fa-arrow-right" style="font-size:10px"></i></a>
+    </div>
+    {% set favs = favorites|default([], true) %}
+    {% if favs %}
+      <div>
+        {% for f in favs[:5] %}
+        <div class="fav-item">
+          <div class="fav-icon"><i class="fas fa-{{ f.icon|default('heart', true) }}"></i></div>
+          <div class="fav-name">{{ f.name }}</div>
+          <a href="/new-order?service={{ f.id }}" class="db-card-link">Buyurtma <i class="fas fa-arrow-right" style="font-size:9px"></i></a>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="db-empty">
+        <div class="db-empty-icon"><i class="fas fa-heart"></i></div>
+        <h3>Sevimlilar bo'sh</h3>
+        <p>Tez-tez ishlatadigan xizmatlaringizni bu yerga qo'shing</p>
+        <a href="/services" class="db-empty-cta"><i class="fas fa-compass"></i> Xizmatlarni ko'rish</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">
+        <div class="db-card-title-icon" style="background:rgba(52,211,153,.1);color:#34d399"><i class="fas fa-ranking-star"></i></div>
+        Top ishlatiladigan xizmatlar
+      </div>
+    </div>
+    {% set tops = top_services|default([], true) %}
+    {% if not tops and recent %}
+      {% set tops = [] %}
+      {% for name, grp in recent|sort(attribute='svc_name')|groupby('svc_name') %}
+        {% set _ = tops.append({'name': name, 'count': grp|list|length}) %}
+      {% endfor %}
+      {% set tops = tops|sort(attribute='count', reverse=true) %}
+    {% endif %}
+    {% if tops %}
+      {% set maxcount = tops[0].count %}
+      <div>
+        {% for t in tops[:5] %}
+        <div class="top-item">
+          <div class="top-rank">{{ loop.index }}</div>
+          <div class="top-name">{{ t.name }}</div>
+          <div class="top-bar-wrap"><div class="top-bar-fill" style="width:{{ (t.count / maxcount * 100)|round(0,'floor') }}%"></div></div>
+          <div class="top-count">{{ t.count }} marta</div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="db-empty">
+        <div class="db-empty-icon"><i class="fas fa-ranking-star"></i></div>
+        <h3>Statistika hali yo'q</h3>
+        <p>Buyurtmalar berilgach eng ko'p ishlatilgan xizmatlar shu yerda chiqadi</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- ACHIEVEMENTS -->
+<div class="db-section-head">
+  <div class="db-section-title"><i class="fas fa-trophy"></i> Yutuqlar</div>
+  <div class="db-card-sub">Jami buyurtma: {{ stats.total_orders|default(0, true) }} · Jami sarflangan: {{ "{:,.0f}".format(stats.total_spent|default(0, true)) }} so'm</div>
+</div>
+<div class="db-card">
+  {% set achievements = [
+    {'icon': 'seedling',     'title': 'Birinchi qadam',   'desc': '1-buyurtma bering',              'type': 'orders', 'value': 1},
+    {'icon': 'fire',         'title': 'Faol xaridor',     'desc': '10 ta buyurtma yakunlang',        'type': 'orders', 'value': 10},
+    {'icon': 'medal',        'title': 'Sodiq mijoz',      'desc': '50 ta buyurtma yakunlang',         'type': 'orders', 'value': 50},
+    {'icon': 'crown',        'title': 'VIP mijoz',        'desc': '100 ta buyurtma yakunlang',        'type': 'orders', 'value': 100},
+    {'icon': 'coins',        'title': 'Birinchi qadam',   'desc': "100,000 so'm sarflang",            'type': 'spent',  'value': 100000},
+    {'icon': 'sack-dollar',  'title': 'Katta xaridor',    'desc': "1,000,000 so'm sarflang",          'type': 'spent',  'value': 1000000},
+    {'icon': 'gem',          'title': 'Investor',         'desc': "3,000,000 so'm sarflang",          'type': 'spent',  'value': 3000000},
+    {'icon': 'trophy',       'title': 'Afsonaviy mijoz',  'desc': "5,000,000 so'm sarflang",          'type': 'spent',  'value': 5000000},
+  ] %}
+  <div class="ach-grid">
+    {% for a in achievements %}
+      {% set current = stats.total_orders|default(0, true) if a.type == 'orders' else stats.total_spent|default(0, true) %}
+      {% set unlocked = current >= a.value %}
+      {% set progress = 100 if unlocked else ((current / a.value * 100)|round(0,'floor')) %}
+      <div class="ach-card {{ 'unlocked' if unlocked else 'locked' }}">
+        {% if unlocked %}<i class="fas fa-circle-check ach-check"></i>{% endif %}
+        <div class="ach-icon"><i class="fas fa-{{ a.icon }}"></i></div>
+        <div class="ach-title">{{ a.title }}</div>
+        <div class="ach-desc">{{ a.desc }}</div>
+        <div class="ach-progress"><div class="ach-progress-fill" style="width:{{ progress }}%"></div></div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- API KEY & QR / MONTHLY REPORT -->
+<div class="db-charts" style="margin-top:16px">
+
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">
+        <div class="db-card-title-icon" style="background:rgba(52,211,153,.1);color:#34d399"><i class="fas fa-terminal"></i></div>
+        API Kalit
+      </div>
+    </div>
+    <div class="api-qr-grid">
+      <div>
+        <div class="db-api-box" id="api-key-box">{{ user.api_key }}</div>
+        <button class="db-copy-btn" id="copy-btn" onclick="copyKey()"><i class="fas fa-copy"></i> Nusxalash</button>
+      </div>
+      <div style="text-align:center">
+        <div class="qr-box">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&margin=4&data={{ user.api_key|urlencode }}" alt="API QR kod" loading="lazy">
+        </div>
+        <div class="qr-label"><i class="fas fa-mobile-screen" style="margin-right:4px"></i> QR orqali mobil ilovaga ulang</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">
+        <div class="db-card-title-icon" style="background:rgba(129,140,248,.1);color:#818cf8"><i class="fas fa-file-invoice-dollar"></i></div>
+        Oylik hisobot
+      </div>
+      <a href="/reports/monthly" class="db-card-link">Batafsil <i class="fas fa-arrow-right" style="font-size:10px"></i></a>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">
+        <div class="db-stat-lbl" style="margin-bottom:6px">Shu oy sarflangan</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--white)">{{ "{:,.0f}".format(stats.month_spent|default(0, true)) }} <span style="font-size:12px;color:var(--muted);font-weight:600">so'm</span></div>
+      </div>
+      <div style="flex:1;min-width:120px">
+        <div class="db-stat-lbl" style="margin-bottom:6px">Shu oy buyurtmalar</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--white)">{{ stats.month_orders|default(0, true) }}</div>
+      </div>
+    </div>
+    <a href="/reports/monthly" class="db-empty-cta" style="margin-top:16px;width:100%;justify-content:center"><i class="fas fa-chart-simple"></i> To'liq hisobotni ko'rish</a>
+  </div>
+
+</div>
+
+</div><!-- /.db-page -->
+
 {% endblock %}
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.1/apexcharts.min.js"></script>
 <script>
-  // Live clock
+  // ── Live clock ──
   function tick() {
     const now = new Date();
     const pad = n => String(n).padStart(2,'0');
-    document.getElementById('db-clock').textContent =
-      pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+    document.getElementById('db-clock').textContent = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
   }
   tick(); setInterval(tick, 1000);
 
-  // Copy API key
+  // ── Copy API key ──
   function copyKey() {
     const key = document.getElementById('api-key-box').textContent.trim();
     const btn = document.getElementById('copy-btn');
     navigator.clipboard.writeText(key).then(() => {
       btn.classList.add('copied');
       btn.innerHTML = '<i class="fas fa-check"></i> Nusxalandi!';
-      setTimeout(() => {
-        btn.classList.remove('copied');
-        btn.innerHTML = '<i class="fas fa-copy"></i> Nusxalash';
-      }, 2200);
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="fas fa-copy"></i> Nusxalash'; }, 2200);
     });
   }
 
-  // Mini chart — random demo bars (replace with real data if available)
-  const days  = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
-  const chart = document.getElementById('db-chart');
-  const maxH  = 52;
-  const vals  = [
-    {{ stats.total_orders or 0 }},
-    {% for _ in range(6) %}Math.floor(Math.random()*10+2),{% endfor %}
-  ];
-  // normalize
-  const peak = Math.max(...vals, 1);
-  days.forEach((d, i) => {
-    const h = Math.max(4, Math.round((vals[i] / peak) * maxH));
-    chart.innerHTML += `
-      <div class="db-bar-col">
-        <div class="db-bar" style="height:${h}px;animation:fadeUp .4s ${i*0.06}s ease both"></div>
-        <div class="db-bar-lbl">${d}</div>
-      </div>`;
+  // ── Notifications dropdown ──
+  function toggleNotifs() {
+    document.getElementById('notif-panel').classList.toggle('open');
+  }
+  document.addEventListener('click', (e) => {
+    const wrap = document.querySelector('.notif-wrap');
+    if (wrap && !wrap.contains(e.target)) document.getElementById('notif-panel').classList.remove('open');
   });
+
+  // ── Count-up animation for stat cards (also removes skeleton state) ──
+  function animateCount(el) {
+    const target = parseFloat(el.dataset.count || '0');
+    const suffix = el.dataset.suffix || '';
+    const duration = 900;
+    const start = performance.now();
+    el.classList.remove('skeleton');
+    function frame(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = target * eased;
+      el.textContent = (Number.isInteger(target) ? Math.round(val) : val.toFixed(0)).toLocaleString('en-US') + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+      else el.textContent = Math.round(target).toLocaleString('en-US') + suffix;
+    }
+    requestAnimationFrame(frame);
+  }
+  document.querySelectorAll('.db-stat-val[data-count]').forEach((el, i) => {
+    setTimeout(() => animateCount(el), 150 + i * 90);
+  });
+
+  // ── shared chart theme ──
+  const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const baseChartOptions = {
+    chart: { toolbar: { show: false }, background: 'transparent', fontFamily: "'DM Sans', sans-serif", animations: { easing: 'easeinout', speed: 500 } },
+    grid: { borderColor: 'rgba(99,179,237,0.08)', strokeDashArray: 4 },
+    tooltip: { theme: 'dark' },
+    legend: { labels: { colors: cssVar('--muted') } },
+    dataLabels: { enabled: false },
+  };
+
+  // ── 1) Haftalik buyurtmalar (bar) ──
+  {% set c7 = stats.chart_7d|default(none, true) %}
+  const weeklyDays = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
+  let weeklyData = {{ (c7|tojson) if c7 else 'null' }};
+  if (!weeklyData) {
+    // Real ma'lumot bo'lmasa demo qator (backendda stats.chart_7d massivini bering)
+    weeklyData = weeklyDays.map(() => Math.floor(Math.random()*10)+1);
+  }
+  new ApexCharts(document.querySelector('#chart-weekly'), {
+    ...baseChartOptions,
+    chart: { ...baseChartOptions.chart, type:'bar', height:200 },
+    series: [{ name:'Buyurtmalar', data: weeklyData }],
+    xaxis: { categories: weeklyDays, labels:{ style:{ colors: cssVar('--muted'), fontSize:'10px' } }, axisBorder:{show:false}, axisTicks:{show:false} },
+    yaxis: { labels:{ style:{ colors: cssVar('--muted'), fontSize:'10px' } } },
+    plotOptions: { bar: { columnWidth:'46%', borderRadius:5 } },
+    colors: [cssVar('--accent')],
+    fill: { type:'gradient', gradient:{ shade:'dark', type:'vertical', shadeIntensity:1, gradientToColors:[cssVar('--accent2')], opacityFrom:.95, opacityTo:.5 } },
+  }).render();
+
+  // ── 2) 30 kunlik xarajatlar (area) ──
+  {% set c30 = stats.chart_30d|default(none, true) %}
+  let monthlyData = {{ (c30|tojson) if c30 else 'null' }};
+  const monthlyDays = Array.from({length:30}, (_,i) => i+1);
+  if (!monthlyData) {
+    // Demo qator — backendda stats.chart_30d (30 ta son) bering
+    let v = Math.max(1, Math.round(({{ stats.total_spent|default(0, true) }})/60));
+    monthlyData = monthlyDays.map(() => { v = Math.max(0, v + (Math.random()*v*0.4 - v*0.2)); return Math.round(v); });
+  }
+  new ApexCharts(document.querySelector('#chart-monthly'), {
+    ...baseChartOptions,
+    chart: { ...baseChartOptions.chart, type:'area', height:200 },
+    series: [{ name:"Xarajat (so'm)", data: monthlyData }],
+    xaxis: { categories: monthlyDays, labels:{ style:{ colors: cssVar('--muted'), fontSize:'9px' }, rotate:0 }, tickAmount:6, axisBorder:{show:false}, axisTicks:{show:false} },
+    yaxis: { labels:{ style:{ colors: cssVar('--muted'), fontSize:'10px' }, formatter:(v)=> (v/1000).toFixed(0)+'k' } },
+    stroke: { curve:'smooth', width:2 },
+    colors: [cssVar('--accent4')],
+    fill: { type:'gradient', gradient:{ shadeIntensity:1, opacityFrom:.45, opacityTo:0 } },
+  }).render();
+
+  // ── 3) Balans o'zgarishi (line) ──
+  {% set cb = stats.balance_trend|default(none, true) %}
+  let balanceData = {{ (cb|tojson) if cb else 'null' }};
+  if (!balanceData) {
+    // Demo qator — backendda stats.balance_trend (masalan oxirgi 14 nuqta) bering
+    let v = Math.max(0, ({{ user.balance|default(0, true) }}) * 0.6);
+    const target = {{ user.balance|default(0, true) }};
+    balanceData = Array.from({length:14}, (_,i) => Math.round(v + (target - v) * (i/13) + (Math.random()*target*0.03)));
+  }
+  new ApexCharts(document.querySelector('#chart-balance'), {
+    ...baseChartOptions,
+    chart: { ...baseChartOptions.chart, type:'line', height:200 },
+    series: [{ name:"Balans (so'm)", data: balanceData }],
+    xaxis: { categories: balanceData.map((_,i)=>i+1), labels:{ show:false }, axisBorder:{show:false}, axisTicks:{show:false} },
+    yaxis: { labels:{ style:{ colors: cssVar('--muted'), fontSize:'10px' }, formatter:(v)=> (v/1000).toFixed(0)+'k' } },
+    stroke: { curve:'smooth', width:3 },
+    markers: { size:0 },
+    colors: [cssVar('--accent3')],
+  }).render();
+
+  // ── 4) Buyurtmalar statistikasi (donut) — real ma'lumotdan ──
+  const donutLabels = ['Tugallangan','Faol','Bekor qilingan'];
+  const donutData   = [{{ stats.completed|default(0, true) }}, {{ stats.pending|default(0, true) }}, {{ stats.cancelled|default(0, true) }}];
+  new ApexCharts(document.querySelector('#chart-donut'), {
+    ...baseChartOptions,
+    chart: { ...baseChartOptions.chart, type:'donut', height:200 },
+    series: donutData,
+    labels: donutLabels,
+    colors: [cssVar('--accent3'), cssVar('--accent2'), cssVar('--danger')],
+    stroke: { show:false },
+    legend: { position:'bottom', labels:{ colors: cssVar('--muted') }, fontSize:'11px', markers:{ radius:4 } },
+    plotOptions: { pie: { donut: { size:'68%', labels: {
+      show:true,
+      total:{ show:true, label:'Jami', color: cssVar('--muted'),
+        formatter: (w) => w.globals.seriesTotals.reduce((a,b)=>a+b,0) },
+      value:{ color: cssVar('--white'), fontSize:'18px', fontWeight:800 }
+    } } } },
+  }).render();
 </script>
 {% endblock %}
