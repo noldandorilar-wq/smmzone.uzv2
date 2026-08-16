@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SMMZONE — Digital Marketing Agency | Toshkent</title>
 <meta name="description" content="O'zbekistondagi #1 SMM panel. Instagram, Telegram, TikTok xizmatlari.">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 
@@ -17,6 +17,13 @@ body{background:var(--black);color:var(--white);font-family:'Inter',system-ui,sa
 
 /* ANIMATED BACKGROUND GRID */
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,240,77,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,77,0.025) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;mask-image:radial-gradient(ellipse at center,black 30%,transparent 70%);}
+
+/* LOGO MARK — bitta izchil logotip (nav / footer / signature bo'limida) */
+.logo-mark{display:flex;align-items:center;gap:10px;}
+.logo-badge{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#0a0a0a;flex-shrink:0;box-shadow:0 0 16px var(--glow);}
+.logo-badge.lg{width:64px;height:64px;border-radius:18px;font-size:30px;box-shadow:0 0 34px var(--glow);}
+.logo-wordmark{font-size:18px;font-weight:700;letter-spacing:-.5px;color:var(--white);}
+.logo-wordmark.lg{font-size:30px;}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(10,10,10,0.85);backdrop-filter:blur(16px);transition:border-color .3s;}
@@ -251,6 +258,32 @@ h1{font-size:clamp(44px,5.4vw,74px);font-weight:700;line-height:1.02;letter-spac
 .btn-dark{padding:16px 36px;background:#000;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;border:none;border-radius:9px;white-space:nowrap;font-family:'Inter',sans-serif;transition:all .25s;flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center;gap:8px;position:relative;z-index:1;}
 .btn-dark:hover{transform:scale(1.05);box-shadow:0 12px 30px rgba(0,0,0,.3);}
 
+/* SCAN / QR + SIGNATURE SECTION */
+.scan-section{margin:0 48px 90px;background:linear-gradient(135deg,var(--gray),var(--gray2));border:1px solid var(--border);border-radius:22px;padding:64px;display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center;position:relative;overflow:hidden;}
+.scan-section::before{content:'';position:absolute;top:-60px;left:-60px;width:260px;height:260px;background:radial-gradient(circle,var(--glow),transparent 70%);pointer-events:none;}
+.scan-left .logo-mark{margin-bottom:22px;}
+.scan-title{font-size:clamp(26px,3vw,36px);font-weight:700;letter-spacing:-1.4px;line-height:1.15;margin-bottom:14px;}
+.scan-title span{color:var(--accent);}
+.scan-desc{font-size:14px;color:var(--muted);line-height:1.75;max-width:420px;margin-bottom:28px;}
+.scan-bot-line{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border:1px solid var(--border);border-radius:100px;font-size:13px;color:var(--white);background:rgba(0,0,0,.3);margin-bottom:34px;}
+.scan-bot-line i{color:var(--accent);}
+.signature-block{display:flex;align-items:flex-end;gap:16px;border-top:1px dashed var(--border);padding-top:22px;margin-top:6px;}
+.signature-name{font-family:'Dancing Script',cursive;font-size:38px;font-weight:600;color:var(--white);line-height:1;}
+.signature-meta{display:flex;flex-direction:column;gap:2px;}
+.signature-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;}
+.signature-sub{font-size:11px;color:var(--muted);}
+.scan-right{display:flex;flex-direction:column;align-items:center;gap:16px;}
+.qr-frame{background:#fff;padding:16px;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.4);border:3px solid var(--accent);}
+.qr-frame img{display:block;width:150px;height:150px;}
+.qr-caption{font-size:12px;color:var(--muted);text-align:center;max-width:180px;line-height:1.6;}
+.qr-caption strong{color:var(--accent);}
+@media(max-width:900px){
+  .scan-section{grid-template-columns:1fr;padding:40px 26px;text-align:center;}
+  .scan-left{display:flex;flex-direction:column;align-items:center;}
+  .signature-block{justify-content:center;}
+  .scan-desc{max-width:100%;}
+}
+
 /* FOOTER */
 footer{border-top:1px solid var(--border);padding:64px 48px 30px;position:relative;z-index:1;background:linear-gradient(180deg,var(--black),#050505);}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1280px;margin:0 auto 40px;}
@@ -282,9 +315,13 @@ footer{border-top:1px solid var(--border);padding:64px 48px 30px;position:relati
 .modal-box h2{font-size:28px;font-weight:700;letter-spacing:-1.2px;margin-bottom:8px;}
 .modal-date{font-size:12px;color:var(--muted);margin-bottom:26px;}
 .modal-box h3{font-size:17px;font-weight:600;margin:26px 0 12px;color:var(--white);}
+.modal-box h4{font-size:14.5px;font-weight:600;margin:18px 0 8px;color:var(--white);}
 .modal-box p, .modal-box li{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:10px;}
 .modal-box ul{margin-left:22px;margin-bottom:16px;}
 .modal-box strong{color:var(--white);}
+.modal-sign{margin-top:30px;padding-top:20px;border-top:1px dashed var(--border);display:flex;align-items:center;gap:14px;}
+.modal-sign .signature-name{font-size:28px;}
+.modal-sign .signature-title{font-size:10px;}
 
 /* COOKIE */
 .cookie-banner{position:fixed;bottom:24px;left:24px;right:24px;max-width:520px;background:linear-gradient(135deg,var(--gray),var(--gray2));border:1px solid rgba(200,240,77,.35);border-radius:16px;padding:22px 26px;z-index:998;box-shadow:0 12px 50px rgba(0,0,0,0.6);transform:translateY(150%);transition:transform .4s cubic-bezier(.2,1,.3,1);}
@@ -334,7 +371,7 @@ footer{border-top:1px solid var(--border);padding:64px 48px 30px;position:relati
 <body>
 
 <nav id="main-nav">
-  <a href="/" class="nav-logo"><div class="logo-dot"></div>SMMZONE</a>
+  <a href="/" class="nav-logo logo-mark"><div class="logo-badge">S</div>SMMZONE</a>
   <div class="nav-links">
     <a href="#services">Xizmatlar</a>
     <a href="#pricing">Narxlar</a>
@@ -665,10 +702,36 @@ footer{border-top:1px solid var(--border);padding:64px 48px 30px;position:relati
   <a href="/register" class="btn-dark"><i class="fas fa-bolt"></i> Hoziroq boshlash</a>
 </div>
 
+<!-- SCAN / QR + SIGNATURE -->
+<div class="scan-section reveal">
+  <div class="scan-left">
+    <a href="/" class="logo-mark">
+      <div class="logo-badge lg">S</div>
+      <div class="logo-wordmark lg">SMMZONE</div>
+    </a>
+    <div class="scan-title">Botimiz orqali <span>tezroq</span> buyurtma bering</div>
+    <p class="scan-desc">QR-kodni skanerlang yoki tugmani bosing — Telegram botimiz orqali xizmatlarni buyurtma qilish, balansni to'ldirish va yordam olish yanada tezroq bo'ladi.</p>
+    <a href="https://t.me/uccenter_bot" target="_blank" class="scan-bot-line"><i class="fab fa-telegram"></i> @uccenter_bot — rasmiy Telegram bot</a>
+    <div class="signature-block">
+      <div class="signature-name">Iskandarov Azizbek</div>
+      <div class="signature-meta">
+        <div class="signature-title">Asoschi &amp; Vakolatli shaxs</div>
+        <div class="signature-sub">SMMZONE — rasmiy tasdiqlangan</div>
+      </div>
+    </div>
+  </div>
+  <div class="scan-right">
+    <div class="qr-frame">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=https://t.me/uccenter_bot" alt="Telegram bot QR kod" width="150" height="150" loading="lazy">
+    </div>
+    <div class="qr-caption">Skanerlang → <strong>@uccenter_bot</strong> ga o'tasiz</div>
+  </div>
+</div>
+
 <footer>
   <div class="footer-grid">
     <div class="footer-col">
-      <div class="footer-brand"><span style="color:var(--accent)">●</span> SMMZONE</div>
+      <div class="footer-brand logo-mark"><div class="logo-badge">S</div>SMMZONE</div>
       <p class="footer-bio">O'zbekistondagi #1 SMM panel. Instagram, Telegram va TikTok'da biznesingizni rivojlantiring.</p>
       <div class="f-socials">
         <a class="soc" href="#"><i class="fab fa-instagram"></i></a>
@@ -837,19 +900,44 @@ const MODAL_CONTENT = {
       <li>SMM provayderlari bilan buyurtma bajarish uchun (faqat link)</li>
     </ul>
 
-    <h3>4. Sizning huquqlaringiz</h3>
+    <h3>4. Ma'lumotlarni saqlash muddati</h3>
+    <p>Turli ma'lumot turlari uchun turlicha saqlash muddatlari qo'llaniladi:</p>
     <ul>
-      <li>O'z ma'lumotlaringizga kirish va ko'rish</li>
-      <li>Ma'lumotlarni o'zgartirish yoki o'chirish</li>
-      <li>Hisobingizni butunlay o'chirib tashlash</li>
-      <li>Reklama xabarlaridan voz kechish</li>
+      <li><strong>Hisob ma'lumotlari:</strong> hisob faol bo'lgan davomida va o'chirilgandan keyin yana 7 kun (huquqiy talablarga muvofiq)</li>
+      <li><strong>Tranzaksiya tarixi va cheklar:</strong> soliq va moliyaviy hisobot maqsadlarida kamida 1 oy</li>
+      <li><strong>Texnik loglar (IP, kirish vaqti):</strong> 1kun, so'ngra avtomatik o'chiriladi</li>
+      <li><strong>Support yozishmalari:</strong> nizoni hal qilish uchun 24 soat saqlanadi</li>
     </ul>
 
-    <h3>5. Xavfsizlik</h3>
-    <p>Biz ma'lumotlaringizni HTTPS shifrlash, parollarni hash qilish va xavfsiz serverlar orqali himoya qilamiz. Lekin internet orqali uzatish 100% xavfsiz emasligini bilib oling.</p>
+    <h3>5. Ma'lumotlarga kirish va nazorat huquqlari</h3>
+    <ul>
+      <li>O'z ma'lumotlaringizga kirish va ularning nusxasini so'rash</li>
+      <li>Noto'g'ri yoki eskirgan ma'lumotlarni tuzatishni talab qilish</li>
+      <li>Ma'lumotlarni o'chirishni so'rash ("unutilish huquqi"), qonuniy majburiyatlar chegarasida</li>
+      <li>Marketing xabarlaridan istalgan vaqtda voz kechish</li>
+      <li>Ma'lumotlarni qayta ishlashga qarshi chiqish yoki uni cheklashni talab qilish</li>
+    </ul>
+    <p>Ushbu huquqlardan foydalanish uchun <strong>info@smmzone.uz</strong> orqali murojaat qiling. So'rovlar odatda 30 kalendar kuni ichida ko'rib chiqiladi.</p>
 
-    <h3>6. Bog'lanish</h3>
+    <h3>6. Xalqaro va uchinchi tomon xizmatlari</h3>
+    <p>Ba'zi texnik xizmatlar (server, to'lov shlyuzlari, xabarnoma yuborish) uchinchi tomon provayderlari orqali amalga oshiriladi. Ushbu provayderlar bilan ma'lumotlarni himoya qilish bo'yicha shartnomalar mavjud va ular faqat zarur hajmda ma'lumotga ega bo'ladi.</p>
+
+    <h3>7. Bolalar maxfiyligi</h3>
+    <p>Xizmatlarimiz 18 yoshdan katta shaxslar uchun mo'ljallangan. Biz ongli ravishda voyaga yetmagan shaxslardan shaxsiy ma'lumot to'plamaymiz. Agar bunday holat aniqlansa, ma'lumot darhol o'chiriladi.</p>
+
+    <h3>8. Xavfsizlik choralari</h3>
+    <p>Biz ma'lumotlaringizni HTTPS shifrlash, parollarni bir tomonlama hash qilish, ikki bosqichli autentifikatsiya (mavjud bo'lganda) va xavfsiz serverlar orqali himoya qilamiz. Shunga qaramay, internet orqali uzatishning 100% xavfsizligi kafolatlanmaydi.</p>
+
+    <h3>9. Siyosatga o'zgartirish kiritish</h3>
+    <p>Ushbu siyosat vaqti-vaqti bilan yangilanishi mumkin. Muhim o'zgarishlar haqida saytda e'lon yoki email orqali xabar beriladi. Siyosatning joriy versiyasi doimo shu sahifada e'lon qilinadi.</p>
+
+    <h3>10. Bog'lanish</h3>
     <p>Maxfiylik bo'yicha savollar uchun: <strong>info@smmzone.uz</strong> yoki <strong>+998 99 759 55 15</strong> (<strong>Iskandarov Azizbek</strong>).</p>
+
+    <div class="modal-sign">
+      <div class="signature-name">Iskandarov Azizbek</div>
+      <div class="signature-meta"><div class="signature-title">Asoschi &amp; Vakolatli shaxs</div></div>
+    </div>
   `,
 
   terms: `
@@ -863,6 +951,7 @@ const MODAL_CONTENT = {
       <li>Ushbu shartlarga rioya qilmaslik hisobingiz bloklanishiga olib kelishi mumkin</li>
       <li>18 yoshga to'lmagan shaxslar saytdan ota-ona ruxsati bilan foydalanishlari mumkin</li>
       <li>Bitta shaxs faqat bitta hisob ochishi mumkin</li>
+      <li>Ro'yxatdan o'tishda ko'rsatilgan ma'lumotlar haqiqiy va aniq bo'lishi shart</li>
     </ul>
 
     <h3>2. Xizmatlar va to'lovlar</h3>
@@ -871,6 +960,7 @@ const MODAL_CONTENT = {
       <li>To'lovlar Payme, Click, UZCARD, HUMO, Visa va Mastercard orqali qabul qilinadi</li>
       <li>To'ldirilgan balans qaytarib olinmaydi (faqat bonusli xizmat sifatida)</li>
       <li>Bajarilmagan buyurtma uchun pul balansga qaytariladi</li>
+      <li>Narxlar oldindan ogohlantirmasdan o'zgartirilishi mumkin, biroq amalga oshirilgan buyurtmalarga ta'sir qilmaydi</li>
     </ul>
 
     <h3>3. Buyurtmalar va kafolat</h3>
@@ -879,34 +969,49 @@ const MODAL_CONTENT = {
       <li>To'liq bajarilmagan buyurtma uchun bepul refill yoki pul qaytarish</li>
       <li>Noto'g'ri kiritilgan link uchun mas'uliyatni mijoz oladi</li>
       <li>Bekor qilingan/o'chirilgan profillarga refill berilmaydi</li>
+      <li>Refill kafolati xizmat tavsifida ko'rsatilgan muddat ichida amal qiladi (odatda 30 kun)</li>
     </ul>
 
     <h3>4. Taqiqlangan harakatlar</h3>
     <p>Quyidagi harakatlar qat'iyan taqiqlanadi:</p>
     <ul>
-      <li>Soxta hisoblar yaratish</li>
+      <li>Soxta hisoblar yaratish yoki bir nechta hisobdan foydalanib bonuslarni suiiste'mol qilish</li>
       <li>Saytga DDoS hujum, hack va boshqa zararli harakatlar</li>
       <li>Boshqa foydalanuvchilarni aldash yoki noqonuniy kontent uchun ishlatish</li>
       <li>Pornografik, ekstremistik yoki noqonuniy kontentga xizmat buyurtma berish</li>
+      <li>Platformani pul yuvish yoki boshqa moliyaviy jinoyatlar uchun ishlatish</li>
     </ul>
 
-    <h3>5. Mas'uliyat</h3>
+    <h3>5. Mas'uliyat va uning cheklari</h3>
     <p>SMMZONE quyidagi hollarda mas'uliyat olmaydi:</p>
     <ul>
-      <li>Ijtimoiy tarmoqlar tomonidan profilingizning bloklanishi</li>
+      <li>Ijtimoiy tarmoqlar tomonidan profilingizning bloklanishi yoki cheklanishi</li>
       <li>Provayder muammolaridan kelib chiqqan kechikishlar</li>
-      <li>Internet uzilishi yoki texnik nosozliklar</li>
+      <li>Internet uzilishi, elektr ta'minoti yoki texnik nosozliklar</li>
       <li>Mijoz tomonidan noto'g'ri kiritilgan ma'lumotlar</li>
+      <li>Fors-major holatlar (tabiiy ofatlar, urush, davlat cheklovlari va h.k.)</li>
     </ul>
+    <p>Har qanday holatda SMMZONE javobgarligi mijoz tomonidan to'langan summa miqdori bilan cheklanadi.</p>
 
-    <h3>6. Hisobni o'chirish</h3>
+    <h3>6. Nizolarni hal qilish</h3>
+    <p>Har qanday nizo avvalo muzokaralar yo'li bilan hal qilinishga harakat qilinadi. Kelishuvga erishilmasa, nizo O'zbekiston Respublikasi qonunchiligiga muvofiq tegishli sud organlari orqali hal qilinadi.</p>
+
+    <h3>7. Amal qiluvchi qonunchilik</h3>
+    <p>Ushbu shartlar O'zbekiston Respublikasi qonunchiligiga muvofiq tuziladi va talqin qilinadi.</p>
+
+    <h3>8. Hisobni o'chirish</h3>
     <p>Siz xohlagan vaqtda hisobingizni o'chirib tashlashingiz mumkin. Buning uchun support'ga murojaat qiling. Balansda qoldiq summa qaytarilmaydi.</p>
 
-    <h3>7. Shartlarni o'zgartirish</h3>
+    <h3>9. Shartlarni o'zgartirish</h3>
     <p>Biz ushbu shartlarni o'zgartirish huquqini saqlaymiz. Muhim o'zgarishlar haqida sizga email yoki sayt orqali xabar beriladi.</p>
 
-    <h3>8. Bog'lanish</h3>
+    <h3>10. Bog'lanish</h3>
     <p>Savollar uchun: <strong>+998 99 759 55 15</strong> yoki Telegram <strong>@uccenter_bot</strong> (<strong>Iskandarov Azizbek</strong>).</p>
+
+    <div class="modal-sign">
+      <div class="signature-name">Iskandarov Azizbek</div>
+      <div class="signature-meta"><div class="signature-title">Asoschi &amp; Vakolatli shaxs</div></div>
+    </div>
   `,
 
   cookie: `
@@ -920,9 +1025,16 @@ const MODAL_CONTENT = {
       <li><strong>Zarur cookielar:</strong> Saytga kirish, sessiyani saqlash uchun (siz o'chira olmaysiz)</li>
       <li><strong>Funksional cookielar:</strong> Til, tema va boshqa afzalliklaringizni saqlash</li>
       <li><strong>Analitik cookielar:</strong> Sayt ishlashini tahlil qilish (anonim)</li>
+      <li><strong>Marketing cookielari:</strong> Sizga mos reklama va takliflarni ko'rsatish uchun (faqat roziligingiz bilan)</li>
     </ul>
 
-    <h3>2. Cookielarni qanday boshqarish mumkin?</h3>
+    <h3>2. Cookielar qancha vaqt saqlanadi?</h3>
+    <ul>
+      <li><strong>Sessiya cookielari:</strong> brauzerni yopganingizda o'chib ketadi</li>
+      <li><strong>Doimiy cookielar:</strong> turigacha 12 oygacha saqlanishi mumkin</li>
+    </ul>
+
+    <h3>3. Cookielarni qanday boshqarish mumkin?</h3>
     <p>Brauzeringiz orqali cookielarni o'chirish yoki bloklash mumkin. Bu sayt funksiyalariga ta'sir qilishi mumkin.</p>
     <ul>
       <li><strong>Chrome:</strong> Settings → Privacy → Cookies</li>
@@ -930,15 +1042,23 @@ const MODAL_CONTENT = {
       <li><strong>Firefox:</strong> Options → Privacy</li>
     </ul>
 
-    <h3>3. Bog'lanish</h3>
+    <h3>4. Uchinchi tomon cookielari</h3>
+    <p>Google Fonts va Font Awesome kabi tashqi xizmatlar ba'zi texnik cookie/so'rovlarni yaratishi mumkin. Ular faqat resurslarni to'g'ri yuklash uchun ishlatiladi.</p>
+
+    <h3>5. Bog'lanish</h3>
     <p>Savollar uchun: <strong>info@smmzone.uz</strong> (<strong>Iskandarov Azizbek</strong>)</p>
+
+    <div class="modal-sign">
+      <div class="signature-name">Iskandarov Azizbek</div>
+      <div class="signature-meta"><div class="signature-title">Asoschi &amp; Vakolatli shaxs</div></div>
+    </div>
   `,
 
   offer: `
     <h2>Ommaviy Oferta</h2>
     <div class="modal-date">Oxirgi yangilanish: 2026-yil 5-may · <strong>Iskandarov Azizbek</strong> tomonidan tayyorlangan</div>
 
-    <p>SMMZONE platformasi tomonidan ommaviy oferta sifatida taklif etiladi. Saytga ro'yxatdan o'tish va xizmatlardan foydalanish ushbu ofertani qabul qilishni anglatadi.</p>
+    <p>SMMZONE platformasi tomonidan ommaviy oferta sifatida taklif etiladi. Saytga ro'yxatdan o'tish va xizmatlardan foydalanish ushbu ofertani qabul qilishni anglatadi (O'zR Fuqarolik Kodeksining ommaviy oferta haqidagi qoidalariga muvofiq).</p>
 
     <h3>1. Tomonlar</h3>
     <ul>
@@ -949,22 +1069,38 @@ const MODAL_CONTENT = {
     <h3>2. Shartnoma predmeti</h3>
     <p>Xizmat ko'rsatuvchi mijozga SMM xizmatlari (Instagram, Telegram, TikTok va boshqalar uchun follower, like, view va boshqa xizmatlar) taqdim etadi. Mijoz esa ushbu xizmatlar uchun belgilangan haq to'laydi.</p>
 
-    <h3>3. Narxlar va to'lov</h3>
+    <h3>3. Narxlar va to'lov tartibi</h3>
     <ul>
       <li>Narxlar saytda doimiy yangilab turiladi</li>
       <li>To'lov oldindan amalga oshiriladi (balansga to'ldirish orqali)</li>
       <li>Minimal to'ldirish: 5,000 so'm</li>
+      <li>To'lov Payme, Click, UZCARD, HUMO, Visa yoki Mastercard orqali amalga oshiriladi</li>
     </ul>
 
-    <h3>4. Xizmatni ko'rsatish</h3>
-    <p>Xizmat buyurtma berilgandan so'ng 0-72 soat ichida amalga oshiriladi. Murakkab buyurtmalar ko'proq vaqt olishi mumkin (provayderga bog'liq).</p>
+    <h3>4. Xizmatni ko'rsatish tartibi</h3>
+    <p>Xizmat buyurtma berilgandan so'ng 0-72 soat ichida amalga oshiriladi. Murakkab buyurtmalar ko'proq vaqt olishi mumkin (provayderga bog'liq). Xizmat bajarilishi haqida mijozga profil sahifasida statusi orqali xabar beriladi.</p>
 
-    <h3>5. Bog'lanish</h3>
+    <h3>5. Tomonlarning huquq va majburiyatlari</h3>
+    <ul>
+      <li>Xizmat ko'rsatuvchi sifatli va o'z vaqtida xizmat ko'rsatishga majburdir</li>
+      <li>Mijoz to'g'ri va aniq ma'lumot (link, username) taqdim etishga majburdir</li>
+      <li>Har ikki tomon ham shaxsiy ma'lumotlar maxfiyligini saqlashga majburdir</li>
+    </ul>
+
+    <h3>6. Oferta amal qilish muddati</h3>
+    <p>Ushbu oferta cheksiz muddatga amal qiladi va xizmat ko'rsatuvchi tomonidan bir tomonlama o'zgartirilishi yoki bekor qilinishi mumkin. O'zgarishlar sayt orqali e'lon qilinadi.</p>
+
+    <h3>7. Bog'lanish</h3>
     <p><strong>Mas'ul shaxs:</strong> Iskandarov Azizbek<br>
     <strong>Telefon:</strong> +998 99 759 55 15<br>
     <strong>Telegram:</strong> @uccenter_bot<br>
     <strong>Email:</strong> info@smmzone.uz<br>
     <strong>Manzil:</strong> Toshkent shahar, O'zbekiston</p>
+
+    <div class="modal-sign">
+      <div class="signature-name">Iskandarov Azizbek</div>
+      <div class="signature-meta"><div class="signature-title">Asoschi &amp; Vakolatli shaxs</div></div>
+    </div>
   `,
 
   contact: `

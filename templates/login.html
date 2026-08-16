@@ -2,24 +2,24 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Xavfsiz Kirish — SMMZONE Premium</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #030303;
-    --bg2: #07080a;
-    --card: rgba(10, 10, 10, 0.6);
+    --bg: #030712;
+    --card-bg: rgba(15, 23, 42, 0.65);
     --accent: #d2f55e;
-    --accent-glow: rgba(210, 245, 94, 0.25);
-    --violet: #9333ea;
-    --danger: #ff4d6d;
-    --border: rgba(255, 255, 255, 0.05);
-    --text-main: #ffffff;
+    --accent-hover: #b8e62b;
+    --accent-glow: rgba(210, 245, 94, 0.2);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-focus: rgba(210, 245, 94, 0.5);
+    --text-main: #f8fafc;
     --text-muted: #94a3b8;
+    --danger: #ff4d6d;
   }
 
   html, body { height: 100%; }
@@ -35,242 +35,243 @@
     position: relative;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
-  }
-
-  /* ── JONLI FON: zarrachalar tarmog'i (ijtimoiy tarmoq aloqalarini ramziy ifodalaydi) ── */
+  /* ── Background Elements ── */
   #particles {
     position: fixed; inset: 0; z-index: -2; display: block;
-    background: radial-gradient(ellipse at 50% 0%, #0b0d10 0%, var(--bg) 60%);
+    background: radial-gradient(ellipse at 50% 0%, #0f172a 0%, var(--bg) 70%);
   }
 
-  .bg-glow-1 {
-    position: fixed; top: -10%; right: -10%; width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(210, 245, 94, 0.1) 0%, transparent 70%);
-    z-index: -1; pointer-events: none;
-    animation: pulseGlow 8s infinite alternate ease-in-out;
+  .glow-orb-1 {
+    position: fixed; top: -15%; right: -10%; width: 550px; height: 550px;
+    background: radial-gradient(circle, rgba(210, 245, 94, 0.12) 0%, transparent 65%);
+    z-index: -1; pointer-events: none; filter: blur(40px);
+    animation: orbFloat 10s infinite alternate ease-in-out;
   }
-  .bg-glow-2 {
-    position: fixed; bottom: -10%; left: -10%; width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, transparent 70%);
-    z-index: -1; pointer-events: none;
-    animation: pulseGlow 12s infinite alternate-reverse ease-in-out;
+  .glow-orb-2 {
+    position: fixed; bottom: -15%; left: -10%; width: 450px; height: 450px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 65%);
+    z-index: -1; pointer-events: none; filter: blur(40px);
+    animation: orbFloat 14s infinite alternate-reverse ease-in-out;
   }
-  @keyframes pulseGlow {
+
+  @keyframes orbFloat {
     0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(30px, 20px) scale(1.1); }
+    100% { transform: translate(40px, 30px) scale(1.15); }
   }
 
-  /* ── Yuqori burchak: ro'yxatdan o'tish havolasi (nav o'rniga ixcham) ── */
+  /* ── Top Header Corner Link ── */
   .corner-link {
-    position: absolute; top: 22px; right: 28px; z-index: 20;
-    font-size: 12.5px; color: var(--text-muted); font-weight: 500;
+    position: absolute; top: 24px; right: 28px; z-index: 20;
+    font-size: 13px; color: var(--text-muted); font-weight: 500;
   }
-  .corner-link a { color: var(--accent); text-decoration: none; font-weight: 700; margin-left: 4px; }
-  .corner-link a:hover { text-decoration: underline; }
+  .corner-link a { color: var(--accent); text-decoration: none; font-weight: 700; margin-left: 5px; transition: opacity .2s; }
+  .corner-link a:hover { opacity: .8; text-decoration: underline; }
 
-  /* ── Asosiy markazlashgan layout ── */
+  /* ── Layout ── */
   main {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    max-width: 620px; margin: 0 auto; width: 100%; padding: 70px 24px 40px; position: relative; z-index: 1;
+    max-width: 600px; margin: 0 auto; width: 100%; padding: 60px 20px 40px; position: relative; z-index: 1;
   }
 
-  .top-pill {
-    font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 3px; text-transform: uppercase;
-    margin-bottom: 22px; background: rgba(210,245,94,0.04); padding: 5px 14px; border-radius: 100px;
-    border: 1px solid rgba(210,245,94,0.12);
+  .top-badge {
+    font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 20px; background: rgba(210,245,94,0.05); padding: 6px 16px; border-radius: 100px;
+    border: 1px solid rgba(210,245,94,0.15); backdrop-filter: blur(10px);
+    display: inline-flex; align-items: center; gap: 6px;
   }
-  .top-pill i { margin-right: 5px; font-size: 9px; }
 
-  /* ── Brend logotipi: markazda katta "SMMZONE" ── */
-  .brand-lockup { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+  .brand-lockup { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
   .brand-mark {
-    width: 34px; height: 34px; background: var(--accent); border-radius: 9px;
-    transform: rotate(45deg); box-shadow: 0 0 30px var(--accent-glow);
-    animation: markPulse 4s ease-in-out infinite;
-  }
-  @keyframes markPulse {
-    0%, 100% { box-shadow: 0 0 22px var(--accent-glow); }
-    50%      { box-shadow: 0 0 40px rgba(210,245,94,0.45); }
+    width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
+    transform: rotate(45deg); box-shadow: 0 0 25px var(--accent-glow);
   }
   .brand-word {
     font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: clamp(38px, 6vw, 58px); letter-spacing: -2px; line-height: 1;
-    color: #fff; text-shadow: 0 0 40px rgba(210,245,94,0.12);
+    font-size: clamp(36px, 5vw, 50px); letter-spacing: -1.5px; line-height: 1; color: #fff;
   }
   .brand-tagline {
-    text-align: center; color: var(--text-muted); font-size: 14px; font-weight: 400;
-    max-width: 380px; margin-bottom: 18px; line-height: 1.5;
+    text-align: center; color: var(--text-muted); font-size: 13.5px; font-weight: 400;
+    max-width: 380px; margin-bottom: 20px; line-height: 1.5;
   }
 
-  /* ── Jonli onlayn foydalanuvchilar ko'rsatkichi ── */
   .live-indicator {
     display: inline-flex; align-items: center; gap: 8px;
     font-size: 12px; color: var(--text-muted); font-weight: 600;
-    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-    padding: 7px 16px; border-radius: 100px; margin-bottom: 34px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    padding: 6px 16px; border-radius: 100px; margin-bottom: 28px;
   }
   .live-dot {
-    width: 7px; height: 7px; border-radius: 50%; background: #4ade80;
-    box-shadow: 0 0 8px rgba(74,222,128,0.7); animation: livePulse 1.6s infinite;
+    width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
+    box-shadow: 0 0 10px rgba(34,197,94,0.8); animation: pulse 1.6s infinite;
   }
-  @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
-  .live-indicator strong { color: #fff; font-weight: 800; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.25)} }
 
-  /* ── Login karta (shishasimon) ── */
+  /* ── Modern Card Container ── */
   .login-box {
     width: 100%; max-width: 420px;
-    background: rgba(15, 15, 15, 0.65); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 24px; padding: 34px;
-    position: relative; box-shadow: 0 30px 70px rgba(0,0,0,0.65);
+    background: var(--card-bg);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border); border-radius: 28px; padding: 36px 30px;
+    position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
   .login-box::after {
-    content: ''; position: absolute; top: -1px; left: 15%;
-    width: 70%; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    content: ''; position: absolute; top: -1px; left: 10%;
+    width: 80%; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
   }
 
-  .form-header { margin-bottom: 18px; text-align: center; }
-  .form-header h2 { font-family: 'Syne', sans-serif; font-size: 23px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
-  .form-header p { color: var(--text-muted); font-size: 13.5px; }
+  .form-header { margin-bottom: 20px; text-align: center; }
+  .form-header h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+  .form-header p { color: var(--text-muted); font-size: 13px; }
 
-  /* ── Ixcham xavfsizlik ogohlantirishi (bitta qator) ── */
+  /* ── Notice Line ── */
   .fraud-line {
     display: flex; align-items: center; gap: 8px; justify-content: center;
-    font-size: 11px; color: #fca5a5; background: rgba(255,77,109,0.03);
-    border: 1px solid rgba(255,77,109,0.12); border-radius: 100px;
-    padding: 7px 14px; margin-bottom: 22px; text-align: center; line-height: 1.4;
+    font-size: 11px; color: #fca5a5; background: rgba(255, 77, 109, 0.05);
+    border: 1px solid rgba(255, 77, 109, 0.15); border-radius: 12px;
+    padding: 8px 12px; margin-bottom: 22px; text-align: center;
   }
-  .fraud-line i { color: var(--danger); font-size: 11px; flex-shrink: 0; }
 
-  .input-group { position: relative; margin-bottom: 18px; }
-  .input-label { font-size: 12.5px; font-weight: 600; color: #94a3b8; display: block; margin-bottom: 8px; }
-  .input-group:focus-within .input-label { color: var(--accent); }
+  /* ── Inputs ── */
+  .input-group { position: relative; margin-bottom: 18px; text-align: left; }
+  .input-label { font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px; letter-spacing: 0.3px; }
 
+  .input-wrapper { position: relative; display: flex; align-items: center; }
   .input-field {
-    width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px; color: #fff; font-size: 14px; transition: all 0.3s ease; outline: none;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    width: 100%; padding: 14px 16px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border);
+    border-radius: 14px; color: #fff; font-size: 14px; transition: all 0.25s ease; outline: none;
+    font-family: inherit;
   }
   .input-field:focus {
-    border-color: var(--accent);
-    background: rgba(210, 245, 94, 0.01);
-    box-shadow: 0 0 20px rgba(210, 245, 94, 0.03);
+    border-color: var(--border-focus);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 15px var(--accent-glow);
   }
 
   .eye-icon {
-    position: absolute; right: 18px; bottom: 15px; color: #64748b; cursor: pointer;
-    font-size: 14px; transition: 0.2s; padding: 2px;
+    position: absolute; right: 16px; color: var(--text-muted); cursor: pointer;
+    font-size: 14px; transition: color 0.2s; padding: 4px;
   }
   .eye-icon:hover { color: var(--accent); }
 
-  .remember-me { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); cursor: pointer; user-select: none; }
+  /* ── Checkbox & Links ── */
+  .form-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+
+  .remember-me { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); cursor: pointer; user-select: none; }
   .remember-me input { display: none; }
-  .custom-checkbox { width: 16px; height: 16px; border: 1px solid rgba(255,255,255,0.18); border-radius: 5px; display: inline-block; position: relative; transition: 0.2s; }
-  .remember-me input:checked + .custom-checkbox { background: var(--accent); border-color: var(--accent); }
+  .custom-checkbox {
+    width: 18px; height: 18px; border: 1.5px solid var(--border); border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s;
+    background: rgba(0,0,0,0.2);
+  }
+  .remember-me input:checked + .custom-checkbox { background: var(--accent); border-color: var(--accent); color: #000; }
   .remember-me input:checked + .custom-checkbox::after {
-    content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
-    font-size: 9px; color: #000; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px;
   }
 
-  .forgot-link { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: 0.2s; font-weight: 500; }
+  .forgot-link { font-size: 12.5px; color: var(--text-muted); text-decoration: none; transition: 0.2s; font-weight: 600; }
   .forgot-link:hover { color: var(--accent); }
 
+  /* ── Buttons ── */
   .btn-primary {
     width: 100%; padding: 15px; background: var(--accent); color: #000; border: none;
-    border-radius: 12px; font-weight: 700; font-size: 14.5px; cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 10px;
+    border-radius: 14px; font-weight: 800; font-size: 14.5px; cursor: pointer;
+    transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 10px;
   }
   .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px rgba(210, 245, 94, 0.25);
-  }
-  .btn-primary i { transition: transform 0.3s; font-size: 13px; }
-  .btn-primary:hover i { transform: translateX(4px); }
-
-  .security-badge {
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-size: 10px; color: #55657e; margin-top: 22px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+    background: var(--accent-hover); transform: translateY(-2px);
+    box-shadow: 0 10px 25px var(--accent-glow);
   }
 
-  .card-divider {
-    display: flex; align-items: center; gap: 12px; margin: 22px 0 16px;
-    font-size: 11px; color: #55657e; text-transform: uppercase; letter-spacing: 1px;
+  .btn-telegram {
+    width: 100%; padding: 12px; background: rgba(36, 161, 222, 0.08); border: 1px solid rgba(36, 161, 222, 0.25);
+    border-radius: 14px; color: #38bdf8; font-weight: 700; font-size: 13.5px; cursor: pointer;
+    transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 10px; text-decoration: none;
   }
-  .card-divider::before, .card-divider::after { content:''; flex:1; height:1px; background: var(--border); }
+  .btn-telegram:hover { background: rgba(36, 161, 222, 0.15); border-color: #38bdf8; }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px; margin: 20px 0;
+    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
   .signup-row { text-align: center; font-size: 13px; color: var(--text-muted); }
   .signup-row a { color: var(--accent); text-decoration: none; font-weight: 700; margin-left: 4px; }
   .signup-row a:hover { text-decoration: underline; }
 
-  /* ── Footer ── */
-  .page-footer {
-    text-align: center; font-size: 11.5px; color: #4b5768; padding: 26px 20px 10px; position: relative; z-index: 1;
+  .security-badge {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 10px; color: var(--text-muted); margin-top: 22px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
   }
-  .page-footer a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+
+  .page-footer {
+    text-align: center; font-size: 12px; color: var(--text-muted); padding: 20px; position: relative; z-index: 1;
+  }
+  .page-footer a { color: var(--text-main); text-decoration: none; font-weight: 600; }
   .page-footer a:hover { color: var(--accent); }
 
   @media (max-width: 480px) {
-    main { padding: 60px 16px 30px; }
-    .login-box { padding: 26px 20px; border-radius: 20px; }
-    .corner-link { top: 16px; right: 16px; font-size: 11.5px; }
-    .brand-mark { width: 26px; height: 26px; }
+    main { padding: 40px 16px 20px; }
+    .login-box { padding: 28px 20px; border-radius: 22px; }
+    .corner-link { top: 18px; right: 18px; font-size: 12px; }
   }
 </style>
 </head>
 <body>
 
 <canvas id="particles"></canvas>
-<div class="bg-glow-1"></div>
-<div class="bg-glow-2"></div>
+<div class="glow-orb-1"></div>
+<div class="glow-orb-2"></div>
 
 <div class="corner-link">
-  Yangi foydalanuvchi? <a href="/register">Ro'yxatdan o'tish</a>
+  Hisobingiz yo'qmi? <a href="/register">Ro'yxatdan o'tish</a>
 </div>
 
 <main>
-  <div class="top-pill"><i class="fas fa-shield"></i>Xavfsiz Platforma</div>
+  <div class="top-badge"><i class="fas fa-shield-halved"></i> Keyingi Avlod Platformasi</div>
 
   <div class="brand-lockup">
     <div class="brand-mark"></div>
     <div class="brand-word">SMMZONE</div>
   </div>
-  <p class="brand-tagline">Ijtimoiy tarmoqlar uchun professional SMM xizmatlar platformasi</p>
+  <p class="brand-tagline">Ijtimoiy tarmoqlar uchun professional SMM va avtomatlashtirish platformasi</p>
 
   <div class="live-indicator">
     <span class="live-dot"></span>
-    Hozir onlayn: <strong id="onlineCount">1,284</strong> foydalanuvchi
+    Hozir onlayn: <strong id="onlineCount" style="color: #fff;">1,284</strong> foydalanuvchi
   </div>
 
   <section class="login-box">
     <div class="form-header">
       <h2>Xush kelibsiz</h2>
-      <p>Tizimga kirish uchun ma'lumotlaringizni kiriting</p>
+      <p>Boshqaruv paneliga kirish uchun ma'lumotlarni kiriting</p>
     </div>
 
     <div class="fraud-line">
-      <i class="fas fa-shield-halved"></i>
-      SMMZONE hech qachon SMS kod yoki parolingizni so'ramaydi
+      <i class="fas fa-circle-exclamation" style="color: var(--danger);"></i>
+      SMMZONE hech qachon SMS-kod yoki parolingizni so'ramaydi
     </div>
 
     <form method="POST" action="/login">
       <div class="input-group">
-        <label class="input-label">Login yoki Email</label>
-        <input type="text" name="login" class="input-field" placeholder="Username yoki email" required>
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">Parol</label>
-        <div style="position: relative;">
-          <input type="password" name="password" id="pwd" class="input-field" placeholder="••••••••" required>
-          <i class="fas fa-eye eye-icon" id="eye" onclick="toggle()"></i>
+        <label class="input-label">LOGIN YOKI EMAIL</label>
+        <div class="input-wrapper">
+          <input type="text" name="login" class="input-field" placeholder="Foydalanuvchi nomi yoki email" required autocomplete="username">
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+      <div class="input-group">
+        <label class="input-label">PAROL</label>
+        <div class="input-wrapper">
+          <input type="password" name="password" id="pwd" class="input-field" placeholder="••••••••" required autocomplete="current-password">
+          <i class="fas fa-eye eye-icon" id="eye" onclick="togglePassword()"></i>
+        </div>
+      </div>
+
+      <div class="form-options">
         <label class="remember-me">
-          <input type="checkbox">
+          <input type="checkbox" name="remember">
           <span class="custom-checkbox"></span>
           Eslab qolish
         </label>
@@ -282,62 +283,67 @@
       </button>
     </form>
 
-    <div class="security-badge">
-      <i class="fas fa-lock" style="font-size: 9px; color: var(--accent);"></i> 256-bit SSL himoya
-    </div>
+    <div class="divider">yoki</div>
 
-    <div class="card-divider">yoki</div>
-    <div class="signup-row">Hisobingiz yo'qmi?<a href="/register">Ro'yxatdan o'tish</a></div>
+    <a href="https://t.me/uccenter_bot" class="btn-telegram" target="_blank">
+      <i class="fab fa-telegram"></i> Telegram orqali tezkor kirish
+    </a>
+
+    <div class="security-badge">
+      <i class="fas fa-lock" style="color: var(--accent);"></i> 256-Bit SSL shifrlangan xavfsiz aloqa
+    </div>
   </section>
 </main>
 
 <div class="page-footer">
-  © 2026 SMMZONE. Barcha huquqlar himoyalangan · <a href="/support">Yordam markazi</a>
+  © 2026 SMMZONE. Barcha huquqlar himoyalangan · <a href="/support">Yordam Markazi</a>
 </div>
 
 <script>
-  function toggle() {
+  // Parolni ko'rsatish / yashirish
+  function togglePassword() {
     const p = document.getElementById('pwd'), e = document.getElementById('eye');
-    if(p.type === 'password') {
+    if (p.type === 'password') {
       p.type = 'text'; e.classList.replace('fa-eye', 'fa-eye-slash');
     } else {
       p.type = 'password'; e.classList.replace('fa-eye-slash', 'fa-eye');
     }
   }
 
-  // ── Jonli onlayn hisoblagich (vizual effekt — backendga ulash uchun fetch bilan almashtiring) ──
+  // Onlayn hisoblagich imitatsiyasi
   (function liveCounter() {
     const el = document.getElementById('onlineCount');
     let val = 1284;
     setInterval(() => {
-      val += Math.floor(Math.random() * 7) - 3;
-      if (val < 900) val = 900;
+      val += Math.floor(Math.random() * 5) - 2;
+      if (val < 1000) val = 1000;
       el.textContent = val.toLocaleString('en-US');
-    }, 2200);
+    }, 3000);
   })();
 
-  // ── Zarrachalar tarmog'i (ijtimoiy aloqalar ramzi) ──
+  // Dinamik Zarrachalar (Particles Canvas) Fon Effekti
   (function particleNetwork() {
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let w, h, particles;
-    const COUNT = 55;
-    const LINK_DIST = 130;
+    const COUNT = 45;
+    const LINK_DIST = 120;
 
     function resize() {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
     }
+
     function init() {
       particles = Array.from({ length: COUNT }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        r: Math.random() * 1.6 + 0.6,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 1.5 + 0.5,
       }));
     }
+
     function step() {
       ctx.clearRect(0, 0, w, h);
       for (const p of particles) {
@@ -345,13 +351,14 @@
         if (p.x < 0 || p.x > w) p.vx *= -1;
         if (p.y < 0 || p.y > h) p.vy *= -1;
       }
+
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const a = particles[i], b = particles[j];
           const dx = a.x - b.x, dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < LINK_DIST) {
-            ctx.strokeStyle = `rgba(210,245,94,${0.10 * (1 - dist / LINK_DIST)})`;
+            ctx.strokeStyle = `rgba(210,245,94,${0.12 * (1 - dist / LINK_DIST)})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
@@ -359,17 +366,18 @@
           }
         }
       }
+
       for (const p of particles) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(210,245,94,0.35)';
+        ctx.fillStyle = 'rgba(210,245,94,0.4)';
         ctx.fill();
       }
-      if (!reduceMotion) requestAnimationFrame(step);
+      requestAnimationFrame(step);
     }
-    window.addEventListener('resize', () => { resize(); });
-    resize(); init();
-    step();
+
+    window.addEventListener('resize', resize);
+    resize(); init(); step();
   })();
 </script>
 
