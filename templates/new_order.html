@@ -1,406 +1,451 @@
 {% extends "base.html" %}
-{% block title %}Yangi Order — SMMZone.uz{% endblock %}
+{% block title %}Yangi Buyurtma — SMMZone.uz{% endblock %}
 
 {% block content %}
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg:      #050a14;
-    --card:    #0d1628;
-    --card2:   #111d35;
-    --card3:   #0a1220;
-    --border:  rgba(99,179,237,0.12);
-    --border2: rgba(99,179,237,0.2);
-    --accent:  #38bdf8;
-    --accent2: #818cf8;
-    --accent3: #34d399;
-    --accent4: #fb923c;
-    --text:    #e2eaf8;
-    --muted:   #7a8fad;
-    --white:   #ffffff;
-    --grad:    linear-gradient(135deg, #38bdf8, #818cf8);
-    --grad-g:  linear-gradient(135deg, #34d399, #059669);
-    --err:     #f87171;
-    --ok:      #34d399;
-    --warn:    #fb923c;
+    --no-bg-card: linear-gradient(145deg, rgba(17, 29, 53, 0.92), rgba(9, 17, 31, 0.98));
+    --no-border: rgba(148, 163, 184, 0.12);
+    --no-border-focus: #334155;
+    --no-accent: #38bdf8;
+    --no-accent-glow: rgba(56, 189, 248, 0.15);
+    --no-primary: #2563eb;
+    --no-primary-hover: #1d4ed8;
+    --no-success: #10b981;
+    --no-warning: #f59e0b;
+    --no-danger: #ef4444;
   }
 
-  .no-wrap {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text);
-    padding: 8px 0 40px;
+  .no-container {
+    max-width: 1140px;
+    margin: 0 auto;
+    font-family: var(--font-sans, 'Inter', sans-serif);
   }
 
-  /* PAGE HEADER */
-  .no-page-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 28px; flex-wrap: wrap; gap: 14px;
+  /* Header */
+  .no-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 14px;
   }
-  .no-page-header-left { display: flex; align-items: center; gap: 12px; }
-  .no-header-icon {
-    width: 42px; height: 42px;
-    background: var(--grad);
-    border-radius: 13px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 17px; color: #fff;
-    box-shadow: 0 0 20px rgba(56,189,248,0.3);
-    flex-shrink: 0;
+  .no-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text, #fff);
+    letter-spacing: -0.4px;
   }
-  .no-header-title { font-size: 22px; font-weight: 700; color: var(--white); letter-spacing: -0.5px; }
-  .no-header-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .no-sub {
+    font-size: 13px;
+    color: var(--text-muted, #94a3b8);
+    margin-top: 2px;
+  }
 
-  /* LAYOUT */
-  .no-layout {
+  .no-active-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 100px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--no-success);
+  }
+  .no-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--no-success);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--no-success);
+  }
+
+  /* Progress Stepper */
+  .no-stepper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    background: var(--no-bg-card);
+    border: 1px solid var(--no-border);
+    border-radius: 14px;
+    padding: 12px 20px;
+  }
+  .no-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub, #64748b);
+  }
+  .no-step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-subtle, #1e293b);
+    border: 1px solid var(--no-border-focus);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .no-step.active { color: var(--no-accent); }
+  .no-step.active .no-step-num {
+    background: var(--no-primary);
+    border-color: var(--no-primary);
+    color: #fff;
+    box-shadow: 0 0 10px var(--no-accent-glow);
+  }
+  .no-step.done { color: var(--no-success); }
+  .no-step.done .no-step-num {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: var(--no-success);
+    color: var(--no-success);
+  }
+  .no-step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--no-border);
+    margin: 0 12px;
+  }
+
+  /* 2 Ustunli Layout */
+  .no-grid {
     display: grid;
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr 340px;
     gap: 20px;
     align-items: start;
   }
 
-  /* CARD */
+  /* Card */
   .no-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 26px;
-    position: relative;
-    overflow: hidden;
+    background: var(--no-bg-card);
+    border: 1px solid var(--no-border);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   }
-  .no-card::before {
-    content: ''; position: absolute; top:0; left:0; right:0;
-    height: 1px; background: var(--grad); opacity: 0.5;
+  .no-card-head {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-sub, #64748b);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .no-card + .no-card { margin-top: 16px; }
+  .no-card-head i { color: var(--no-accent); }
 
-  .no-card-title {
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 18px 0;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .no-card-title i { color: var(--accent); font-size: 11px; }
-
-  /* SECTION DIVIDER */
-  .no-section-title {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted); margin: 22px 0 14px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .no-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
-  .no-section-title i { color: var(--accent); }
-
-  /* FORM GROUP */
-  .no-form-group { margin-bottom: 18px; }
+  /* Form Elements */
+  .no-group { margin-bottom: 18px; }
   .no-label {
-    display: block; font-size: 12px; font-weight: 600;
-    color: var(--muted); margin-bottom: 8px;
-    letter-spacing: 0.3px;
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-sub, #64748b);
+    margin-bottom: 6px;
   }
-  .no-label .req { color: var(--err); margin-left: 2px; }
-  .no-label .opt { color: #3a4a62; font-weight: 400; font-size: 11px; margin-left: 4px; }
-
-  /* INPUTS */
   .no-input-wrap { position: relative; }
   .no-input-icon {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    color: var(--muted); font-size: 13px; pointer-events: none;
-    transition: color 0.2s;
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-sub, #64748b);
+    font-size: 13px;
+    pointer-events: none;
   }
-  .no-input-wrap:focus-within .no-input-icon { color: var(--accent); }
-
-  .no-input {
+  .no-input, .no-select {
     width: 100%;
-    padding: 12px 14px 12px 38px;
-    background: var(--card2);
-    border: 1px solid var(--border);
+    padding: 11px 14px 11px 38px;
+    background: #0f1a2e;
+    border: 1px solid var(--no-border);
     border-radius: 11px;
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13.5px;
     outline: none;
-    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
-    appearance: none; -webkit-appearance: none;
+    transition: all 0.2s;
   }
-  .no-input::placeholder { color: #3a4a62; }
-  .no-input:focus {
-    border-color: rgba(56,189,248,0.5);
-    box-shadow: 0 0 0 3px rgba(56,189,248,0.08);
-    background: #0f1c33;
-  }
-  .no-input.valid   { border-color: rgba(52,211,153,0.4); }
-  .no-input.invalid { border-color: rgba(248,113,113,0.4); }
-
-  select.no-input {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%237a8fad' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 34px;
+  .no-select {
     cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%2364748b' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  .no-select option { background: #0d1628; color: #fff; }
+  .no-input:focus, .no-select:focus {
+    border-color: var(--no-accent);
+    background: #11223e;
+    box-shadow: 0 0 12px var(--no-accent-glow);
   }
 
-  select.no-input option { background: #0d1628; color: var(--white); }
+  .no-input.valid { border-color: rgba(16, 185, 129, 0.4); }
+  .no-input.invalid { border-color: rgba(239, 68, 68, 0.4); }
 
-  .no-hint { font-size: 12px; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
-  .no-hint i { color: var(--accent); font-size: 10px; }
+  .no-hint {
+    font-size: 11.5px;
+    color: var(--text-muted, #94a3b8);
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-  /* SERVICE INFO PANEL */
+  /* Service Info Box */
   .no-svc-info {
     display: none;
     margin-top: 12px;
-    padding: 16px;
-    background: rgba(52,211,153,0.05);
-    border: 1px solid rgba(52,211,153,0.2);
+    padding: 14px;
+    background: rgba(56, 189, 248, 0.04);
+    border: 1px solid rgba(56, 189, 248, 0.18);
     border-radius: 12px;
-    animation: fadeIn .3s ease;
+    animation: fadeIn 0.3s ease;
   }
   .no-svc-info.show { display: block; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
-  .no-svc-grid {
-    display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
-    margin-bottom: 12px;
+  .no-svc-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
   }
-  .no-svc-stat { }
-  .no-svc-stat .s-lbl { font-size: 10px; color: var(--ok); opacity: 0.7; margin-bottom: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
-  .no-svc-stat .s-val { font-size: 14px; font-weight: 700; color: var(--ok); }
+  .no-svc-stat-cell {
+    background: #0f1a2e;
+    border: 1px solid var(--no-border);
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .no-svc-stat-cell .lbl { font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700; }
+  .no-svc-stat-cell .val { font-family: monospace; font-size: 13px; font-weight: 700; color: var(--no-accent); margin-top: 2px; }
 
   .no-svc-desc {
-    padding-top: 10px;
-    border-top: 1px solid rgba(52,211,153,0.15);
-    font-size: 12px; color: rgba(52,211,153,0.7); line-height: 1.6;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  /* PRICE BOX */
-  .no-price-box {
+  /* Price Calculation Box */
+  .no-calc-box {
     display: none;
-    background: var(--card2);
-    border: 1px solid var(--border);
+    background: #0f1a2e;
+    border: 1px solid var(--no-border);
     border-radius: 14px;
     overflow: hidden;
-    margin-top: 6px;
-    animation: fadeIn .3s ease;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
-  .no-price-head {
+  .no-calc-head {
     padding: 10px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted);
-    display: flex; align-items: center; gap: 7px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--no-border);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
-  .no-price-head i { color: var(--accent); }
-  .no-price-body { padding: 14px 16px; }
-  .no-price-row {
-    display: flex; justify-content: space-between;
-    font-size: 13px; padding: 4px 0;
-  }
-  .no-price-row .pl { color: var(--muted); }
-  .no-price-row .pv { color: var(--text); font-weight: 500; }
-  .no-price-row .pfee { color: var(--warn); font-weight: 600; }
-  .no-price-divider { height: 1px; background: var(--border); margin: 10px 0; }
-  .no-price-total {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 0 2px;
-  }
-  .no-price-total .tl { font-size: 13px; font-weight: 600; color: var(--muted); }
-  .no-price-total .tv {
-    font-size: 24px; font-weight: 800;
-    background: var(--grad-g); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    letter-spacing: -1px;
+  .no-calc-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .no-calc-table td { padding: 9px 16px; }
+  .no-calc-table td.lbl { color: var(--text-muted); width: 50%; }
+  .no-calc-table td.val { color: #fff; font-weight: 600; text-align: right; }
+  .no-calc-table tr.total { border-top: 1px dashed var(--no-border); }
+  .no-calc-table tr.total td.val {
+    color: var(--no-success);
+    font-size: 18px;
+    font-weight: 800;
+    font-family: monospace;
   }
 
-  /* SUBMIT BUTTON */
+  /* Submit Button */
   .no-btn-submit {
-    width: 100%; padding: 14px;
-    background: var(--grad);
-    border: none; border-radius: 12px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--no-primary);
     color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px; font-weight: 700;
+    font-size: 14.5px;
+    font-weight: 700;
     cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    box-shadow: 0 0 24px rgba(56,189,248,0.2);
     transition: all 0.2s;
-    margin-top: 20px;
-    letter-spacing: -0.2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
   }
   .no-btn-submit:hover:not(:disabled) {
-    opacity: 0.9; transform: translateY(-1px);
-    box-shadow: 0 6px 32px rgba(56,189,248,0.35);
-  }
-  .no-btn-submit:active:not(:disabled) { transform: translateY(0); }
-  .no-btn-submit:disabled {
-    background: var(--card2); color: #3a4a62;
-    border: 1px solid var(--border);
-    box-shadow: none; cursor: not-allowed; transform: none;
-  }
-  .no-btn-submit:disabled i { opacity: 0.3; }
-
-  /* SIDEBAR CARDS */
-  .no-balance-wrap {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    flex-wrap: wrap; gap: 10px;
-  }
-  .no-balance-amount {
-    font-size: 32px; font-weight: 800; letter-spacing: -1.5px;
-    background: var(--grad-g); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    line-height: 1;
-  }
-  .no-balance-cur { font-size: 13px; color: var(--muted); margin-left: 4px; font-weight: 400; -webkit-text-fill-color: var(--muted); }
-  .no-balance-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
-
-  .no-btn-topup {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 9px 16px;
-    background: rgba(52,211,153,0.1);
-    border: 1px solid rgba(52,211,153,0.25);
-    border-radius: 9px;
-    color: var(--ok); font-size: 13px; font-weight: 600;
-    text-decoration: none; cursor: pointer;
-    transition: all 0.2s; margin-top: 14px;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .no-btn-topup:hover {
-    background: rgba(52,211,153,0.18);
+    background: var(--no-primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(52,211,153,0.2);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  }
+  .no-btn-submit:disabled {
+    background: #1e293b;
+    color: var(--text-sub);
+    cursor: not-allowed;
+    box-shadow: none;
   }
 
-  /* BALANCE WARNING */
-  .no-balance-warn {
+  /* Sidebar Widget */
+  .no-sidebar-col { display: flex; flex-direction: column; gap: 16px; }
+
+  .balance-widget {
+    background: var(--no-bg-card);
+    border: 1px solid var(--no-border);
+    border-radius: 18px;
+    padding: 20px;
+  }
+  .bw-label { font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
+  .bw-amount {
+    font-family: monospace;
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .bw-amount span { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+  .btn-topup-side {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: var(--no-accent);
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .btn-topup-side:hover {
+    background: var(--no-accent);
+    color: #0b1120;
+  }
+
+  .bw-warn-box {
     display: none;
-    margin-top: 12px; padding: 10px 14px;
-    background: rgba(248,113,113,0.08);
-    border: 1px solid rgba(248,113,113,0.2);
-    border-radius: 9px; font-size: 12px; color: var(--err);
-    display: flex; align-items: center; gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 10px;
+    font-size: 11.5px;
+    color: #fca5a5;
+    line-height: 1.4;
   }
-  .no-balance-warn.hidden { display: none !important; }
+  .bw-warn-box.show { display: block; }
 
-  /* STEPS */
-  .no-steps { list-style: none; counter-reset: s; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-  .no-steps li {
-    counter-increment: s;
-    display: flex; align-items: flex-start; gap: 12px;
-    font-size: 13px; color: var(--muted); line-height: 1.5;
+  /* Qo'llanma kartasi */
+  .guide-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
   }
-  .no-steps li::before {
-    content: counter(s);
-    min-width: 24px; height: 24px; border-radius: 50%;
-    background: rgba(56,189,248,0.1);
-    border: 1px solid rgba(56,189,248,0.2);
-    color: var(--accent); font-size: 11px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
+  .guide-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
   }
-
-  /* WARN CARD */
-  .no-warn-card {
-    background: rgba(251,146,60,0.05) !important;
-    border-color: rgba(251,146,60,0.15) !important;
+  .guide-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: var(--no-accent);
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
   }
-  .no-warn-card .no-card-title { color: var(--warn) !important; }
-  .no-warn-card .no-card-title i { color: var(--warn) !important; }
-  .no-warn-card p { font-size: 13px; color: rgba(251,146,60,0.8); line-height: 1.7; margin: 0; }
-  .no-warn-card strong { color: var(--warn); }
-
-  /* ACTIVE ORDERS BADGE */
-  .no-active-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px;
-    background: rgba(56,189,248,0.1);
-    border: 1px solid rgba(56,189,248,0.2);
-    border-radius: 100px;
-    font-size: 11px; font-weight: 600; color: var(--accent);
-  }
-  .no-active-dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: blink 2s infinite; }
-  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
-
-  /* PROGRESS INDICATOR */
-  .no-progress {
-    display: flex; align-items: center; gap: 0;
-    margin-bottom: 28px;
-  }
-  .no-step-item {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12px; color: var(--muted); font-weight: 500;
-  }
-  .no-step-num {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--card2); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700;
-    transition: all .3s;
-  }
-  .no-step-item.active .no-step-num { background: var(--grad); border-color: transparent; color: #fff; box-shadow: 0 0 12px rgba(56,189,248,0.4); }
-  .no-step-item.active { color: var(--accent); }
-  .no-step-item.done .no-step-num { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.3); color: var(--ok); }
-  .no-step-line { flex: 1; height: 1px; background: var(--border); margin: 0 8px; min-width: 20px; }
 
   @media (max-width: 900px) {
-    .no-layout { grid-template-columns: 1fr; }
-    .no-progress { display: none; }
-  }
-  @media (max-width: 500px) {
-    .no-svc-grid { grid-template-columns: 1fr 1fr; }
+    .no-grid { grid-template-columns: 1fr; }
+    .no-stepper { display: none; }
   }
 </style>
 
-<div class="no-wrap">
+<div class="no-container">
 
-  <!-- HEADER -->
-  <div class="no-page-header">
-    <div class="no-page-header-left">
-      <div class="no-header-icon"><i class="fas fa-bolt"></i></div>
-      <div>
-        <div class="no-header-title">Yangi Order</div>
-        <div class="no-header-sub">Xizmat tanlang va linkni kiriting</div>
-      </div>
+  <!-- PAGE HEADER -->
+  <div class="no-header">
+    <div>
+      <div class="no-title">Yangi Buyurtma</div>
+      <div class="no-sub">Ijtimoiy tarmoq xizmatini tanlang va tezkor ijroni boshlang</div>
     </div>
-    <div class="no-active-badge">
-      <span class="no-active-dot"></span>
-      Panel faol
+    <div class="no-active-pill">
+      <div class="no-dot"></div>
+      <span>Avtomat Tizim Faol</span>
     </div>
   </div>
 
-  <!-- PROGRESS -->
-  <div class="no-progress">
-    <div class="no-step-item active" id="step1">
-      <div class="no-step-num">1</div> Xizmat
+  <!-- STEPPER -->
+  <div class="no-stepper">
+    <div class="no-step active" id="step1">
+      <div class="no-step-num">1</div>
+      <span>Xizmat</span>
     </div>
     <div class="no-step-line"></div>
-    <div class="no-step-item" id="step2">
-      <div class="no-step-num">2</div> Link
+    <div class="no-step" id="step2">
+      <div class="no-step-num">2</div>
+      <span>Havola</span>
     </div>
     <div class="no-step-line"></div>
-    <div class="no-step-item" id="step3">
-      <div class="no-step-num">3</div> Miqdor
+    <div class="no-step" id="step3">
+      <div class="no-step-num">3</div>
+      <span>Miqdor</span>
     </div>
     <div class="no-step-line"></div>
-    <div class="no-step-item" id="step4">
-      <div class="no-step-num">4</div> Tasdiqlash
+    <div class="no-step" id="step4">
+      <div class="no-step-num">4</div>
+      <span>Tasdiqlash</span>
     </div>
   </div>
 
-  <div class="no-layout">
+  <!-- 2 USTUNLI GRID -->
+  <div class="no-grid">
 
-    <!-- MAIN FORM CARD -->
+    <!-- CHAP: BUYURTMA FORMASI -->
     <div class="no-card">
-      <div class="no-card-title"><i class="fas fa-shopping-cart"></i> Order tafsilotlari</div>
+      <div class="no-card-head"><i class="fas fa-cart-plus"></i> Buyurtma parametrlarini kiriting</div>
 
       <form method="POST" action="/new-order" id="order-form" autocomplete="off">
 
-        <!-- CATEGORY + SERVICE -->
-        <div class="no-section-title"><i class="fas fa-layer-group"></i> Xizmat tanlash</div>
-
-        <div class="no-form-group">
-          <label class="no-label">Kategoriya <span class="opt">(filterlash uchun)</span></label>
+        <!-- Kategoriya Filter -->
+        <div class="no-group">
+          <label class="no-label">Kategoriya</label>
           <div class="no-input-wrap">
-            <i class="fas fa-th-large no-input-icon"></i>
-            <select class="no-input" id="cat-select" onchange="filterServices()">
-              <option value="">— Barcha kategoriyalar —</option>
+            <i class="fas fa-layer-group no-input-icon"></i>
+            <select class="no-select" id="cat-select" onchange="filterServices()">
+              <option value="">— Barcha platformalar —</option>
               {% for c in categories %}
               <option value="{{ c.id }}">{{ c.name }}</option>
               {% endfor %}
@@ -408,11 +453,12 @@
           </div>
         </div>
 
-        <div class="no-form-group">
-          <label class="no-label">Xizmat <span class="req">*</span></label>
+        <!-- Xizmat -->
+        <div class="no-group">
+          <label class="no-label">Xizmat turi <span style="color:var(--no-danger)">*</span></label>
           <div class="no-input-wrap">
-            <i class="fas fa-magic no-input-icon"></i>
-            <select class="no-input" name="service_id" id="service-select" required onchange="onServiceChange(this)">
+            <i class="fas fa-bolt no-input-icon"></i>
+            <select class="no-select" name="service_id" id="service-select" required onchange="onServiceChange(this)">
               <option value="">— Xizmatni tanlang —</option>
               {% for s in services %}
               <option value="{{ s.id }}"
@@ -428,120 +474,124 @@
             </select>
           </div>
 
-          <!-- Service info -->
+          <!-- Xizmat tafsilotlari bloki -->
           <div class="no-svc-info" id="svc-info">
-            <div class="no-svc-grid">
-              <div class="no-svc-stat">
-                <div class="s-lbl">Min</div>
-                <div class="s-val" id="svc-min">—</div>
+            <div class="no-svc-stats-grid">
+              <div class="no-svc-stat-cell">
+                <div class="lbl">Minimal</div>
+                <div class="val" id="svc-min">—</div>
               </div>
-              <div class="no-svc-stat">
-                <div class="s-lbl">Max</div>
-                <div class="s-val" id="svc-max">—</div>
+              <div class="no-svc-stat-cell">
+                <div class="lbl">Maksimal</div>
+                <div class="val" id="svc-max">—</div>
               </div>
-              <div class="no-svc-stat">
-                <div class="s-lbl">Tur</div>
-                <div class="s-val" id="svc-type">—</div>
+              <div class="no-svc-stat-cell">
+                <div class="lbl">Turi</div>
+                <div class="val" id="svc-type" style="color:#fff;">—</div>
               </div>
             </div>
             <div class="no-svc-desc" id="svc-desc"></div>
           </div>
         </div>
 
-        <!-- LINK + QUANTITY -->
-        <div class="no-section-title"><i class="fas fa-link"></i> Link va miqdor</div>
-
-        <div class="no-form-group">
-          <label class="no-label">Link <span class="req">*</span></label>
+        <!-- Havola -->
+        <div class="no-group">
+          <label class="no-label">Havola (Target Link) <span style="color:var(--no-danger)">*</span></label>
           <div class="no-input-wrap">
-            <i class="fas fa-globe no-input-icon"></i>
+            <i class="fas fa-link no-input-icon"></i>
             <input type="url" name="link" id="link-input" class="no-input"
                    placeholder="https://instagram.com/p/..." required
                    oninput="validateLink(this)">
           </div>
-          <div class="no-hint"><i class="fas fa-info-circle"></i> To'liq URL kiriting (https:// bilan)</div>
+          <div class="no-hint"><i class="fas fa-circle-info"></i> To'g'ri va ochiq profil/post havolasini kiriting (https:// bilan)</div>
         </div>
 
-        <div class="no-form-group">
-          <label class="no-label">Miqdor <span class="req">*</span></label>
+        <!-- Miqdor -->
+        <div class="no-group">
+          <label class="no-label">Miqdor <span style="color:var(--no-danger)">*</span></label>
           <div class="no-input-wrap">
-            <i class="fas fa-sort-amount-up no-input-icon"></i>
+            <i class="fas fa-arrow-up-9-1 no-input-icon"></i>
             <input type="number" name="quantity" id="qty-input" class="no-input"
-                   placeholder="100" min="1" required oninput="updatePrice()">
+                   placeholder="1000" min="1" required oninput="updatePrice()">
           </div>
-          <div class="no-hint" id="qty-hint"><i class="fas fa-arrows-alt-h"></i> Avval xizmatni tanlang</div>
+          <div class="no-hint" id="qty-hint"><i class="fas fa-sliders"></i> Avval xizmat turini tanlang</div>
         </div>
 
-        <!-- PRICE -->
-        <div class="no-price-box" id="price-box">
-          <div class="no-price-head"><i class="fas fa-receipt"></i> Hisob-kitob</div>
-          <div class="no-price-body">
-            <div class="no-price-row">
-              <span class="pl">Asosiy narx</span>
-              <span class="pv" id="price-base">—</span>
-            </div>
-            <div class="no-price-row">
-              <span class="pl">Xizmat to'lovi (1%)</span>
-              <span class="pfee" id="price-fee">—</span>
-            </div>
-            <div class="no-price-divider"></div>
-            <div class="no-price-total">
-              <span class="tl">Jami to'lov:</span>
-              <span class="tv" id="price-val">—</span>
-            </div>
-          </div>
+        <!-- HISOB-KITOB JADVALI -->
+        <div class="no-calc-box" id="price-box">
+          <div class="no-calc-head"><i class="fas fa-receipt" style="margin-right: 6px;"></i> To'lov Tafsilotlari</div>
+          <table class="no-calc-table">
+            <tr>
+              <td class="lbl">Asosiy narx:</td>
+              <td class="val" id="price-base">—</td>
+            </tr>
+            <tr>
+              <td class="lbl">Xizmat to'lovi (1%):</td>
+              <td class="val" id="price-fee" style="color: #fca5a5;">—</td>
+            </tr>
+            <tr class="total">
+              <td class="lbl" style="font-weight: 700; color: #fff;">Jami yechiladi:</td>
+              <td class="val" id="price-val">—</td>
+            </tr>
+          </table>
         </div>
 
         <button type="submit" class="no-btn-submit" id="submit-btn" disabled>
-          <i class="fas fa-paper-plane"></i> Orderni Joylash
+          <i class="fas fa-paper-plane"></i> Buyurtmani Tasdiqlash
         </button>
 
       </form>
     </div>
 
-    <!-- SIDEBAR -->
-    <div>
+    <!-- O'NG: BALANS VA QO'LLANMA WIDGETLARI -->
+    <div class="no-sidebar-col">
 
-      <!-- BALANCE CARD -->
-      <div class="no-card">
-        <div class="no-card-title"><i class="fas fa-wallet"></i> Balansingiz</div>
-        <div class="no-balance-wrap">
-          <div>
-            <div class="no-balance-amount">
-              {{ "{:,.0f}".format(user.balance) }}<span class="no-balance-cur">so'm</span>
-            </div>
-            <div class="no-balance-label">Mavjud mablag'</div>
-          </div>
+      <!-- Balans Vidjeti -->
+      <div class="balance-widget">
+        <div class="bw-label">Hisobdagi Balans</div>
+        <div class="bw-amount">
+          {{ "{:,.0f}".format(user.balance or 0) }} <span>UZS</span>
         </div>
-        <div class="no-balance-warn hidden" id="balance-warn">
-          <i class="fas fa-exclamation-triangle"></i>
-          Balans yetarli emas. To'ldiring!
-        </div>
-        <a href="/add-funds" class="no-btn-topup">
-          <i class="fas fa-plus"></i> Balansni to'ldirish
+        <a href="/add-funds" class="btn-topup-side">
+          <i class="fas fa-wallet"></i> Balansni To'ldirish
         </a>
+        <div class="bw-warn-box" id="balance-warn">
+          <i class="fas fa-triangle-exclamation" style="color: var(--no-danger); margin-right: 4px;"></i>
+          Ushbu buyurtma uchun balansingizda mablag' yetarli emas.
+        </div>
       </div>
 
-      <!-- GUIDE -->
+      <!-- Tezkor Qo'llanma -->
       <div class="no-card">
-        <div class="no-card-title"><i class="fas fa-compass"></i> Qo'llanma</div>
-        <ol class="no-steps">
-          <li>Xizmat kategoriyasini tanlang</li>
-          <li>Kerakli xizmatni belgilang</li>
-          <li>Post yoki sahifa linkini kiriting</li>
-          <li>Kerakli miqdorni belgilang</li>
-          <li>Orderni joylang va kuting</li>
-        </ol>
+        <div class="no-card-head"><i class="fas fa-circle-check"></i> Qisqa Qo'llanma</div>
+        <ul class="guide-list">
+          <li>
+            <div class="guide-num">1</div>
+            <span>Platforma va kerakli xizmatni tanlang</span>
+          </li>
+          <li>
+            <div class="guide-num">2</div>
+            <span>Profilingiz ochiq (public) ekanligini tekshiring</span>
+          </li>
+          <li>
+            <div class="guide-num">3</div>
+            <span>Miqdorni belgilang va tasdiqlang</span>
+          </li>
+        </ul>
       </div>
 
-      <!-- WARNING -->
-      <div class="no-card no-warn-card">
-        <div class="no-card-title"><i class="fas fa-triangle-exclamation"></i> Muhim</div>
-        <p>Har bir buyurtmaga <strong>1% xizmat to'lovi</strong> qo'shiladi. Narx miqdor kiritilganda avtomatik hisoblanadi. Noto'g'ri link kiritilsa buyurtma bajarilmaydi.</p>
+      <!-- Muhim Eslatma -->
+      <div class="no-card" style="background: rgba(245, 158, 11, 0.04); border-color: rgba(245, 158, 11, 0.2);">
+        <div class="no-card-head" style="color: var(--no-warning);"><i class="fas fa-shield-halved" style="color: var(--no-warning);"></i> Xavfsizlik</div>
+        <p style="font-size: 11.5px; color: #fde68a; line-height: 1.6; margin: 0;">
+          Har bir buyurtmaga avtomatik 1% xizmat to'lovi qo'shiladi. Noto'g'ri havola kiritilsa, buyurtma server tomonidan bekor qilinishi mumkin.
+        </p>
       </div>
 
     </div>
+
   </div>
+
 </div>
 {% endblock %}
 
@@ -551,10 +601,10 @@
   const USER_BALANCE = {{ user.balance | default(0) }};
   const svcs = document.querySelectorAll('#service-select option[data-min]');
 
-  // Progress stepper
   function updateSteps(n) {
     for (let i = 1; i <= 4; i++) {
       const el = document.getElementById('step' + i);
+      if (!el) continue;
       el.classList.remove('active', 'done');
       if (i < n) el.classList.add('done');
       else if (i === n) el.classList.add('active');
@@ -564,22 +614,22 @@
   function filterServices() {
     const cat = document.getElementById('cat-select').value;
     svcs.forEach(o => {
-      o.style.display = (!cat || o.dataset.cat == cat) ? '' : 'none';
+      o.style.display = (!cat || o.dataset.cat === cat) ? '' : 'none';
     });
     document.getElementById('service-select').value = '';
     onServiceChange(document.getElementById('service-select'));
   }
 
   function onServiceChange(sel) {
-    const opt  = sel.options[sel.selectedIndex];
+    const opt = sel.options[sel.selectedIndex];
     const info = document.getElementById('svc-info');
     const hint = document.getElementById('qty-hint');
 
-    if (!opt.dataset.min) {
+    if (!opt || !opt.dataset.min) {
       info.classList.remove('show');
       document.getElementById('price-box').style.display = 'none';
       document.getElementById('submit-btn').disabled = true;
-      hint.innerHTML = '<i class="fas fa-arrows-alt-h"></i> Avval xizmatni tanlang';
+      hint.innerHTML = '<i class="fas fa-sliders"></i> Avval xizmat turini tanlang';
       updateSteps(1);
       return;
     }
@@ -587,12 +637,12 @@
     const minF = parseInt(opt.dataset.min).toLocaleString('uz-UZ');
     const maxF = parseInt(opt.dataset.max).toLocaleString('uz-UZ');
 
-    document.getElementById('svc-min').textContent  = minF;
-    document.getElementById('svc-max').textContent  = maxF;
-    document.getElementById('svc-type').textContent = opt.dataset.type;
-    document.getElementById('svc-desc').textContent = opt.dataset.desc;
+    document.getElementById('svc-min').textContent = minF;
+    document.getElementById('svc-max').textContent = maxF;
+    document.getElementById('svc-type').textContent = opt.dataset.type || 'Default';
+    document.getElementById('svc-desc').textContent = opt.dataset.desc || "Qo'shimcha tafsilotlar mavjud emas.";
 
-    hint.innerHTML = `<i class="fas fa-arrows-alt-h"></i> Min: <b style="color:var(--accent)">${minF}</b> — Max: <b style="color:var(--accent)">${maxF}</b>`;
+    hint.innerHTML = `<i class="fas fa-arrows-left-right"></i> Min: <b style="color:var(--no-accent)">${minF}</b> &bull; Max: <b style="color:var(--no-accent)">${maxF}</b>`;
 
     document.getElementById('qty-input').min = opt.dataset.min;
     document.getElementById('qty-input').max = opt.dataset.max;
@@ -610,42 +660,41 @@
   }
 
   function updatePrice() {
-    const sel   = document.getElementById('service-select');
-    const opt   = sel.options[sel.selectedIndex];
-    const qty   = parseInt(document.getElementById('qty-input').value || 0);
-    const link  = document.getElementById('link-input').value;
-    const btn   = document.getElementById('submit-btn');
-    const warn  = document.getElementById('balance-warn');
+    const sel = document.getElementById('service-select');
+    const opt = sel.options[sel.selectedIndex];
+    const qty = parseInt(document.getElementById('qty-input').value || 0);
+    const link = document.getElementById('link-input').value;
+    const btn = document.getElementById('submit-btn');
+    const warn = document.getElementById('balance-warn');
 
-    if (!opt.dataset.price || !qty) {
+    if (!opt || !opt.dataset.price || !qty) {
       document.getElementById('price-box').style.display = 'none';
       btn.disabled = true;
       return;
     }
 
     const basePrice = Math.round((parseFloat(opt.dataset.price) / 1000) * qty);
-    const fee       = Math.round(basePrice * MARGIN / 100);
-    const total     = basePrice + fee;
+    const fee = Math.round((basePrice * MARGIN) / 100);
+    const total = basePrice + fee;
 
-    document.getElementById('price-base').textContent = basePrice.toLocaleString('uz-UZ') + ' so\'m';
-    document.getElementById('price-fee').textContent  = fee.toLocaleString('uz-UZ') + ' so\'m';
-    document.getElementById('price-val').textContent  = total.toLocaleString('uz-UZ') + ' so\'m';
+    document.getElementById('price-base').textContent = basePrice.toLocaleString('uz-UZ') + ' UZS';
+    document.getElementById('price-fee').textContent = '+' + fee.toLocaleString('uz-UZ') + ' UZS';
+    document.getElementById('price-val').textContent = total.toLocaleString('uz-UZ') + ' UZS';
     document.getElementById('price-box').style.display = 'block';
 
-    const min      = parseInt(opt.dataset.min);
-    const max      = parseInt(opt.dataset.max);
-    const qtyOk    = qty >= min && qty <= max;
-    const linkOk   = link.startsWith('http') && link.length > 10;
-    const balOk    = total <= USER_BALANCE;
+    const min = parseInt(opt.dataset.min);
+    const max = parseInt(opt.dataset.max);
+    const qtyOk = qty >= min && qty <= max;
+    const linkOk = link.startsWith('http') && link.length > 10;
+    const balOk = total <= USER_BALANCE;
 
-    warn.classList.toggle('hidden', balOk || !qtyOk);
+    warn.classList.toggle('show', !balOk && qtyOk);
 
     btn.disabled = !(qtyOk && linkOk && balOk);
     if (qtyOk && linkOk) updateSteps(balOk ? 4 : 3);
 
-    // Qty field validation
     const qtyInp = document.getElementById('qty-input');
-    qtyInp.classList.toggle('valid',   qtyOk);
+    qtyInp.classList.toggle('valid', qtyOk);
     qtyInp.classList.toggle('invalid', !qtyOk && qty > 0);
   }
 </script>

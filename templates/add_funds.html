@@ -1,635 +1,751 @@
 {% extends "base.html" %}
-{% block title %}Balans To'ldirish — SMMZone.uz{% endblock %}
+{% block title %}Balansni To'ldirish — SMMZone.uz{% endblock %}
 
 {% block content %}
 <style>
   :root {
-    --primary-glow: rgba(56, 189, 248, 0.15);
-    --border-glow: rgba(255, 255, 255, 0.08);
+    --bg-main: #0b1120;
+    --bg-card: #111827;
+    --bg-subtle: #1e293b;
+    --border-color: #1e293b;
+    --border-focus: #334155;
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.1);
+
+    --success: #16a34a;
+    --success-bg: rgba(22, 163, 74, 0.08);
+    --warning: #d97706;
+    --warning-bg: rgba(217, 119, 6, 0.08);
+    --danger: #dc2626;
+    --danger-bg: rgba(220, 38, 38, 0.08);
+
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-sub: #64748b;
   }
 
-  .pf-wrap { max-width: 600px; margin: 0 auto; padding: 20px 0 60px; position: relative; z-index: 1; }
-  .pf-card {
-    background: rgba(22, 27, 34, 0.85);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border-glow);
-    border-radius: 28px;
-    padding: 36px 32px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  .fin-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 30px 16px 80px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 
-  .pf-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -0.5px; }
-  .pf-sub { font-size: 13.5px; color: var(--muted); margin-bottom: 24px; }
+  .fin-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 32px 28px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
 
-  /* ── Notice & Warning Boxes ── */
-  .notice-box {
-    background: rgba(56,189,248,.06); border: 1px solid rgba(56,189,248,.2);
-    border-radius: 16px; padding: 16px; font-size: 13px; line-height: 1.6;
-    color: var(--text); margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px;
-  }
-  .notice-box .notice-icon {
-    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-    background: rgba(56,189,248,.15); border: 1px solid rgba(56,189,248,.3);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--accent); font-size: 13px; margin-top: 1px;
-  }
-  .notice-box .notice-title {
-    font-weight: 700; color: var(--accent); font-size: 13px;
-    display: block; margin-bottom: 4px;
-  }
-  .notice-box .notice-actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
-  .notice-box .notice-btn {
-    font-size: 11.5px; font-weight: 700; padding: 7px 14px; border-radius: 100px;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all .2s;
-  }
-  .notice-box .notice-btn:hover { opacity: .9; transform: translateY(-1px); }
-  .notice-btn.tg { background: #24A1DE; color: #fff; }
-  .notice-btn.admin { background: rgba(255,255,255,.08); color: var(--text); border: 1px solid var(--border2); }
+  .fin-header { margin-bottom: 24px; }
+  .fin-title { font-size: 22px; font-weight: 700; color: var(--text-main); letter-spacing: -0.3px; }
+  .fin-sub { font-size: 13.5px; color: var(--text-muted); margin-top: 4px; }
 
-  .warn-box {
-    background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 14px; padding: 12px 16px; font-size: 12px; line-height: 1.5;
-    color: #fca5a5; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 10px;
+  /* Xavfsizlik qoidasi */
+  .security-banner {
+    background: var(--danger-bg);
+    border: 1px solid rgba(220, 38, 38, 0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
   }
-  .warn-box i { font-size: 15px; margin-top: 2px; flex-shrink: 0; color: #ef4444; }
+  .security-banner i { color: var(--danger); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
+  .security-banner-text { font-size: 12px; line-height: 1.6; color: #fca5a5; }
+  .security-banner-text strong { color: #fff; }
 
-  /* ── Step Indicators ── */
-  .steps-bar { display: flex; align-items: center; margin-bottom: 28px; }
-  .step-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--muted); }
-  .step-item.active { color: var(--accent); }
-  .step-item.done { color: #22c55e; }
-  .step-num {
-    width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border);
+  /* Qadamlar */
+  .fin-steps { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .step-node { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--text-sub); }
+  .step-node.active { color: var(--primary); }
+  .step-node.done { color: var(--success); }
+  .step-badge {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--bg-subtle); border: 1px solid var(--border-focus);
     display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
   }
-  .step-item.active .step-num { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,.1); }
-  .step-item.done .step-num { border-color: #22c55e; background: rgba(34,197,94,.1); color: #22c55e; }
-  .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 10px; }
+  .step-node.active .step-badge { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .step-node.done .step-badge { background: var(--success); color: #fff; border-color: var(--success); }
+  .step-divider { flex: 1; height: 1px; background: var(--border-color); margin: 0 12px; }
 
-  /* ── Payment Methods ── */
-  .methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
-  .mitem {
-    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-    border-radius: 16px; padding: 16px 10px; text-align: center;
-    cursor: pointer; transition: all .2s ease; position: relative;
+  /* To'lov Usullari */
+  .group-title {
+    font-size: 11px; font-weight: 700; color: var(--text-sub);
+    letter-spacing: 0.8px; text-transform: uppercase; margin: 18px 0 10px;
+    display: flex; align-items: center; gap: 6px;
   }
-  .mitem:hover { border-color: var(--border2); transform: translateY(-2px); }
-  .mitem.sel { border-color: var(--accent); background: var(--primary-glow); box-shadow: 0 4px 20px rgba(56,189,248,0.15); }
-  .mitem.popular { border: 1px solid rgba(36, 161, 222, 0.4); background: rgba(36, 161, 222, 0.04); }
-  .mitem.popular:hover { border-color: #24A1DE; }
-  .mitem.locked { opacity: .4; cursor: not-allowed; transform: none !important; }
-  .mitem i { font-size: 22px; color: var(--muted); display: block; margin-bottom: 8px; }
-  .mitem.sel i { color: var(--accent); }
-  .mitem-label { font-size: 12.5px; font-weight: 600; color: var(--text); }
+  .group-title:first-of-type { margin-top: 0; }
 
-  .lock-badge {
-    font-size: 9px; background: rgba(251,191,36,.12); color: #fbbf24;
-    border-radius: 100px; padding: 2px 7px; margin-top: 6px; display: inline-block;
-    border: 1px solid rgba(251,191,36,.2);
-  }
-  .pop-badge {
-    position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
-    font-size: 8px; font-weight: 800; background: #24A1DE; color: #fff;
-    padding: 2px 9px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px;
-  }
+  .methods-grid-rec { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 6px; }
+  .methods-grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 6px; }
+  .methods-grid-soon { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
-  /* ── Amount Input ── */
-  .amount-row {
-    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-    border-radius: 16px; padding: 18px; margin-bottom: 20px;
-  }
-  .amount-label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .8px; margin-bottom: 10px; }
-  .amount-input-wrap { display: flex; align-items: center; gap: 8px; }
-  .amount-input-wrap input {
-    flex: 1; font-size: 30px; font-weight: 800; border: none;
-    background: transparent; color: #fff; outline: none;
-    font-family: 'Syne', sans-serif;
-  }
-  .amount-cur { font-size: 14px; font-weight: 700; color: var(--muted); }
-  .quick-btns { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-  .quick-btn {
-    font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 100px;
-    border: 1px solid var(--border); background: transparent;
-    color: var(--muted); cursor: pointer; transition: all .15s; font-family: inherit;
-  }
-  .quick-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,.05); }
-
-  /* ── Fee breakdown ── */
-  .fee-box {
-    background: rgba(52,211,153,.04); border: 1px solid rgba(52,211,153,.15);
-    border-radius: 14px; padding: 14px 16px; margin-top: 14px; font-size: 12.5px;
-  }
-  .fee-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; color: var(--muted); }
-  .fee-row.total { border-top: 1px dashed rgba(52,211,153,.2); margin-top: 8px; padding-top: 10px; }
-  .fee-row .val { color: var(--text); font-weight: 700; }
-  .fee-row.total .val { color: #34d399; font-size: 16px; }
-  .fee-row .val.neg { color: #fca5a5; }
-  .fee-hint { font-size: 11px; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
-
-  /* ── Buttons ── */
-  .btn-main {
-    width: 100%; padding: 16px; border-radius: 16px; border: none;
-    background: linear-gradient(135deg, var(--accent) 0%, #0284c7 100%);
-    color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
-    transition: all .2s; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
-    box-shadow: 0 4px 15px rgba(56,189,248,0.25);
-  }
-  .btn-main:hover { opacity: .95; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56,189,248,0.35); }
-  .btn-back {
-    width: 100%; padding: 14px; border-radius: 16px;
-    border: 1px solid var(--border); background: transparent;
-    color: var(--muted); font-size: 13.5px; font-weight: 600; cursor: pointer;
-    font-family: inherit; margin-top: 10px; transition: all .2s;
-  }
-  .btn-back:hover { border-color: var(--border2); color: var(--text); background: rgba(255,255,255,0.02); }
-
-  /* ── REALISTIC BANK CARD MOCKUP ── */
-  .virtual-card {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
-    padding: 22px 24px;
-    margin-bottom: 20px;
+  .method-box {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     position: relative;
-    overflow: hidden;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-    transition: all .3s;
   }
-  .virtual-card::before {
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .vc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .vc-chip {
-    width: 38px; height: 28px; background: linear-gradient(135deg, #fcd34d 0%, #d97706 100%);
-    border-radius: 6px; position: relative; overflow: hidden; border: 1px solid rgba(0,0,0,0.2);
-  }
-  .vc-chip::after {
-    content: ''; position: absolute; inset: 3px; border: 1px solid rgba(0,0,0,0.15); border-radius: 3px;
-  }
-  .vc-brand { font-weight: 900; font-size: 16px; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
-  .vc-num-wrap { margin-bottom: 18px; }
-  .vc-num-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
-  .vc-num {
-    font-family: 'Courier New', Courier, monospace; font-size: 20px; font-weight: 700;
-    color: #fff; letter-spacing: 2px; display: flex; gap: 12px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  }
-  .vc-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
-  .vc-owner-name { font-size: 13px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+  .method-box:hover { border-color: var(--border-focus); }
+  .method-box.selected { border-color: var(--primary); background: var(--primary-light); }
+  .method-box.locked { opacity: 0.45; cursor: not-allowed; }
 
-  /* ── Receipt Summary Box ── */
-  .receipt-box {
-    background: rgba(0, 0, 0, 0.2); border: 1px border var(--border);
-    border-radius: 16px; padding: 16px 18px; margin-bottom: 20px;
-  }
-  .receipt-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 12.5px; color: var(--muted); }
-  .receipt-row.total { border-top: 1px dashed var(--border); margin-top: 6px; padding-top: 10px; font-weight: 700; }
-  .receipt-row .val { color: #fff; font-weight: 600; }
+  .method-box i { font-size: 20px; color: var(--text-muted); flex-shrink: 0; }
+  .method-box.selected i { color: var(--primary); }
 
-  /* ── Timer ── */
-  .timer-wrap {
-    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-    border-radius: 18px; padding: 18px 16px; margin-bottom: 20px;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-  }
-  .timer-top { display: flex; align-items: center; gap: 8px; }
-  .timer-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 1.2s infinite; }
-  .timer-dot.danger { background: #f87171; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.2)} }
-  .timer-status { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; }
-  .timer-val { font-size: 22px; font-weight: 800; color: #fff; font-family: 'Syne', sans-serif; }
-  .timer-val.danger { color: #f87171; }
-  .timer-lbl { font-size: 11.5px; color: var(--muted); text-align: center; }
+  .method-info { flex: 1; text-align: left; }
+  .method-name { font-size: 13px; font-weight: 600; color: var(--text-main); }
+  .method-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
-  /* ── Instruction & Upload ── */
-  .instr-box {
-    background: rgba(56,189,248,.03); border: 1px solid rgba(56,189,248,.12);
-    border-radius: 16px; padding: 16px; margin-bottom: 20px;
+  .rec-badge {
+    background: #0284c7; color: #fff; font-size: 9px; font-weight: 700;
+    padding: 2px 8px; border-radius: 6px; text-transform: uppercase;
   }
-  .instr-title { font-size: 11px; letter-spacing: 1.2px; color: var(--accent); margin-bottom: 12px; text-transform: uppercase; font-weight: 700; }
-  .instr-step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
-  .instr-step:last-child { margin-bottom: 0; }
-  .instr-n {
-    width: 20px; height: 20px; border-radius: 50%;
-    background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.25);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 800; color: var(--accent); flex-shrink: 0;
+  .lock-badge {
+    font-size: 9.5px; background: rgba(255,255,255,0.06); color: var(--text-sub);
+    padding: 2px 6px; border-radius: 4px;
   }
 
-  .upload-zone {
-    border: 2px dashed var(--border2); border-radius: 16px;
-    padding: 24px 16px; text-align: center; margin-bottom: 20px;
-    cursor: pointer; transition: all .2s; background: rgba(0,0,0,0.1);
+  /* Summa Kiritish */
+  .input-block {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 20px;
   }
-  .upload-zone:hover { background: rgba(56,189,248,.03); border-color: var(--accent); }
-  .upload-zone i { font-size: 32px; color: var(--muted); display: block; margin-bottom: 8px; }
-  .upload-zone p { font-size: 12.5px; color: var(--text); font-weight: 600; margin: 0; }
-  .upload-zone input { display: none; }
-  .file-chosen { font-size: 12px; color: #22c55e; margin-top: 8px; font-weight: 600; }
-  .upload-preview { width: 100%; max-height: 160px; object-fit: cover; border-radius: 10px; margin-top: 12px; display: none; border: 1px solid var(--border); }
-
-  .copy-card-btn {
-    width: 100%; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; font-weight: 700;
-    cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;
-    transition: all .2s;
+  .input-label { font-size: 11px; font-weight: 700; color: var(--text-sub); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+  .amount-wrapper { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-focus); padding-bottom: 6px; }
+  .amount-wrapper input {
+    flex: 1; font-size: 26px; font-weight: 700; border: none; background: transparent;
+    color: var(--text-main); outline: none; font-family: monospace;
   }
-  .copy-card-btn:hover { background: rgba(255,255,255,0.15); }
-  .copy-card-btn.copied { background: #22c55e; color: #fff; border-color: #22c55e; }
+  .amount-cur { font-size: 14px; font-weight: 700; color: var(--text-sub); }
 
-  .hidden { display: none; }
-  .secure-badge { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; color: var(--muted); margin-top: 16px; }
-  .secure-badge i { font-size: 13px; color: #22c55e; }
+  .quick-chips { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .quick-chip {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);
+    color: var(--text-muted); font-size: 12px; font-weight: 600; padding: 6px 12px;
+    border-radius: 8px; cursor: pointer; transition: all .15s;
+  }
+  .quick-chip:hover { border-color: var(--primary); color: var(--text-main); }
+
+  /* Tugmalar */
+  .btn-primary {
+    width: 100%; padding: 14px; border-radius: 12px; border: none;
+    background: var(--primary); color: #fff; font-size: 14.5px; font-weight: 600;
+    cursor: pointer; transition: background .15s; margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+
+  .btn-cancel {
+    width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(220, 38, 38, 0.3);
+    background: var(--danger-bg); color: #fca5a5; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; transition: all .15s; margin-top: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-cancel:hover { background: rgba(220, 38, 38, 0.15); border-color: var(--danger); }
+  .btn-cancel:disabled { opacity: 0.7; cursor: not-allowed; }
+
+  /* Timer */
+  .timer-card {
+    background: var(--bg-subtle); border: 1px solid var(--border-color);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 20px; text-align: center;
+  }
+  .timer-header { font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
+  .timer-digits { font-family: monospace; font-size: 24px; font-weight: 800; color: var(--text-main); margin: 4px 0; }
+  .timer-digits.danger { color: var(--danger); }
+  .timer-progress {
+    width: 100%; height: 4px; background: rgba(255,255,255,0.06);
+    border-radius: 100px; overflow: hidden; margin: 8px 0 4px;
+  }
+  .timer-progress-fill { height: 100%; width: 100%; background: var(--primary); transition: width 1s linear; }
+  .timer-progress-fill.danger { background: var(--danger); }
+  .timer-sub { font-size: 11px; color: var(--text-sub); }
+
+  /* Karta Mockup */
+  .card-fin-box {
+    background: #0f172a;
+    border: 1px solid var(--border-focus);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .cf-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .cf-brand { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 1px; }
+  .cf-num-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .cf-num { font-family: monospace; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+  .cf-toggle-btn {
+    background: transparent; border: 1px solid var(--border-focus); color: var(--text-muted);
+    font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer;
+  }
+  .cf-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+  .cf-lbl { font-size: 10px; text-transform: uppercase; color: var(--text-sub); margin-bottom: 2px; }
+  .cf-val { font-size: 13px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; }
+
+  .cf-copy-btn {
+    width: 100%; padding: 10px; margin-top: 14px; border-radius: 8px;
+    border: 1px solid var(--border-focus); background: rgba(255,255,255,0.04);
+    color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s;
+  }
+  .cf-copy-btn:hover { background: rgba(255,255,255,0.08); }
+  .cf-copy-btn.copied { background: var(--success); border-color: var(--success); color: #fff; }
+
+  /* To'lov Tafsilotlari Jadvali */
+  .details-table-box {
+    background: var(--bg-subtle); border: 1px solid var(--border-color);
+    border-radius: 14px; overflow: hidden; margin-bottom: 20px;
+  }
+  .details-header { padding: 10px 16px; background: rgba(255,255,255,0.02); font-size: 11.5px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color); text-transform: uppercase; }
+  .details-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .details-table tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .details-table tr:last-child { border-bottom: none; }
+  .details-table td { padding: 9px 16px; }
+  .details-table td.lbl { color: var(--text-muted); width: 45%; }
+  .details-table td.val { color: var(--text-main); font-weight: 600; text-align: right; }
+  .details-table td.val.net { color: #34d399; font-weight: 700; }
+  .status-badge-wait {
+    background: var(--warning-bg); color: var(--warning);
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(217,119,6,0.2);
+  }
+
+  /* Drag & Drop Upload */
+  .drag-zone {
+    border: 1.5px dashed var(--border-focus); border-radius: 14px;
+    padding: 24px 16px; text-align: center; cursor: pointer;
+    background: var(--bg-subtle); transition: all .15s; margin-bottom: 20px;
+  }
+  .drag-zone.dragover { border-color: var(--primary); background: var(--primary-light); }
+  .drag-zone i { font-size: 26px; color: var(--text-muted); margin-bottom: 8px; display: block; }
+  .drag-zone-title { font-size: 13px; font-weight: 600; color: var(--text-main); }
+  .drag-zone-sub { font-size: 11.5px; color: var(--text-sub); margin-top: 3px; }
+  .drag-file-chosen {
+    display: none; background: var(--success-bg); border: 1px solid rgba(22,163,74,0.3);
+    border-radius: 10px; padding: 10px 14px; text-align: left; margin-top: 10px;
+  }
+  .drag-file-chosen-name { font-size: 12px; font-weight: 700; color: #86efac; display: flex; align-items: center; gap: 6px; }
+  .drag-file-chosen-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Xavfsizlik bloklari */
+  .trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 28px; }
+  .trust-item {
+    background: var(--bg-subtle); border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 12px; text-align: center;
+  }
+  .trust-item i { font-size: 16px; margin-bottom: 6px; display: inline-block; }
+  .trust-title { font-size: 11.5px; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
+  .trust-desc { font-size: 10.5px; color: var(--text-sub); line-height: 1.3; }
+
+  /* Custom Modal Alert */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px); z-index: 999; display: flex;
+    align-items: center; justify-content: center; padding: 16px;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .fin-modal {
+    background: var(--bg-card); border: 1px solid var(--border-focus);
+    border-radius: 16px; width: 100%; max-width: 360px; padding: 24px 20px;
+    text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+  .fin-modal-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 12px;
+  }
+  .fin-modal-icon.warning { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(217,119,6,0.3); }
+  .fin-modal-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .fin-modal-text { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px; }
+  .fin-modal-btn {
+    width: 100%; padding: 10px; border-radius: 10px; border: none;
+    background: var(--primary); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 540px) {
+    .fin-card { padding: 22px 16px; border-radius: 14px; }
+    .methods-grid-cards { grid-template-columns: 1fr; gap: 8px; }
+    .methods-grid-soon { grid-template-columns: 1fr; gap: 8px; }
+    .trust-grid { grid-template-columns: 1fr; gap: 8px; }
+    .cf-num { font-size: 16px; letter-spacing: 1px; }
+    .details-table td { padding: 8px 12px; font-size: 12px; }
+  }
 </style>
 
-<div class="pf-wrap">
-  <div class="pf-card">
+<div class="fin-wrap">
+  <div class="fin-card">
 
-    <div class="pf-title">Balans To'ldirish</div>
-    <div class="pf-sub">Xavfsiz to'lov tizimi orqali hisobingizni to'ldiring</div>
-
-    <!-- Payment system notice -->
-    <div class="notice-box">
-      <div class="notice-icon"><i class="fas fa-circle-info"></i></div>
-      <div>
-        <span class="notice-title">Hurmatli SMMZone foydalanuvchilari!</span>
-        Saytda to'lov qilish tizimi vaqti-vaqti bilan ishlamay qolmoqda. Shuning uchun hisobingizni
-        <strong>Telegram bot</strong> orqali to'ldirishingiz yoki tushmagan to'lovlaringizni
-        <strong>adminga chek shaklida</strong> yuborib tasdiqlatishingiz mumkin.
-        <div class="notice-actions">
-          <a href="https://t.me/uccenter_bot" target="_blank" class="notice-btn tg"><i class="fab fa-telegram"></i> Bot orqali to'ldirish</a>
-          <a href="https://t.me/uccenter_bot" target="_blank" class="notice-btn admin"><i class="fas fa-headset"></i> Admin bilan bog'lanish</a>
-        </div>
-      </div>
+    <div class="fin-header">
+      <div class="fin-title">Balansni to'ldirish</div>
+      <div class="fin-sub">Hisobingizni xavfsiz billing tizimi orqali to'ldiring</div>
     </div>
 
-    <!-- Step bar -->
-    <div class="steps-bar" id="steps-bar">
-      <div class="step-item active" id="sb1">
-        <div class="step-num">1</div>
-        <span>Usul</span>
-      </div>
-      <div class="step-line"></div>
-      <div class="step-item" id="sb2">
-        <div class="step-num">2</div>
-        <span>To'lov</span>
-      </div>
-      <div class="step-line"></div>
-      <div class="step-item" id="sb3">
-        <div class="step-num">3</div>
-        <span>Tasdiqlash</span>
-      </div>
-    </div>
-
-    <div class="warn-box">
+    <!-- Ogohlantirish banneri -->
+    <div class="security-banner">
       <i class="fas fa-shield-halved"></i>
-      <span>
-        <strong>Diqqat!</strong> Firibgarlik maqsadida soxta to'lov cheki yuborsangiz hisobingiz darhol bloklanadi. Faqat o'zingizga tegishli kartalardan to'lov qiling.
-      </span>
+      <div class="security-banner-text">
+        <strong>Qat'iy xavfsizlik qoidasi:</strong> Uchinchi shaxslar nomidan to'lov qilish taqiqlanadi. Mablag' faqat o'zingizga tegishli bank kartasidan o'tkazilishi shart. Qalbaki chek yuborilsa, hisob bloklanadi.
+      </div>
     </div>
 
-    <!-- STEP 1 -->
-    <div id="step1">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:12px;letter-spacing:.8px;">TO'LOV USULINI TANLANG</div>
+    <!-- Qadamlar -->
+    <div class="fin-steps">
+      <div class="step-node active" id="st1">
+        <div class="step-badge">1</div>
+        <span>To'lov usuli</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-node" id="st2">
+        <div class="step-badge">2</div>
+        <span>To'lov va chek</span>
+      </div>
+    </div>
 
-      <div class="methods" id="method-grid">
-        <div class="mitem popular" onclick="redirectToBot()">
-          <span class="pop-badge">Avtomat</span>
+    <!-- 1-BOSQICH -->
+    <div id="view-step1">
+
+      <div class="group-title"><i class="fas fa-star" style="color:#0284c7"></i> Tavsiya etiladi</div>
+      <div class="methods-grid-rec">
+        <div class="method-box" onclick="redirectToBot()">
           <i class="fab fa-telegram" style="color: #24A1DE;"></i>
-          <div class="mitem-label">Telegram Bot</div>
-        </div>
-        <div class="mitem" onclick="selectMethod('uzcard',this)">
-          <i class="fas fa-credit-card" style="color:#0052cc"></i>
-          <div class="mitem-label">Uzcard</div>
-        </div>
-        <div class="mitem" onclick="selectMethod('visa',this)">
-          <i class="fab fa-cc-visa" style="color:#1a1f71"></i>
-          <div class="mitem-label">Visa / Master</div>
-        </div>
-        <div class="mitem" onclick="selectMethod('humo',this)">
-          <i class="fas fa-credit-card" style="color:#FFD700"></i>
-          <div class="mitem-label">Humo</div>
-        </div>
-        <div class="mitem locked">
-          <i class="fas fa-gem"></i>
-          <div class="mitem-label">Tonkeeper</div>
-          <div class="lock-badge"><i class="fas fa-lock" style="font-size:8px"></i> Tez kunda</div>
-        </div>
-        <div class="mitem locked">
-          <i class="fas fa-dollar-sign"></i>
-          <div class="mitem-label">USD (USDT)</div>
-          <div class="lock-badge"><i class="fas fa-lock" style="font-size:8px"></i> Tez kunda</div>
+          <div class="method-info">
+            <div class="method-name">Telegram Bot</div>
+            <div class="method-desc">Tezkor va to'liq avtomatlashtirilgan to'lov</div>
+          </div>
+          <span class="rec-badge">Avtomatik</span>
         </div>
       </div>
 
-      <div class="amount-row">
-        <div class="amount-label">TO'LOV SUMMASI</div>
-        <div class="amount-input-wrap">
-          <input type="number" id="amount-input" placeholder="0" min="5000" oninput="updateFeePreview()">
+      <div class="group-title"><i class="fas fa-credit-card"></i> Bank kartalari</div>
+      <div class="methods-grid-cards">
+        <div class="method-box" onclick="selectPaymentMethod('uzcard', this)">
+          <i class="fas fa-credit-card" style="color:#0284c7"></i>
+          <div class="method-info">
+            <div class="method-name">Uzcard</div>
+            <div class="method-desc">Milliy to'lov</div>
+          </div>
+        </div>
+        <div class="method-box" onclick="selectPaymentMethod('humo', this)">
+          <i class="fas fa-credit-card" style="color:#eab308"></i>
+          <div class="method-info">
+            <div class="method-name">Humo</div>
+            <div class="method-desc">Milliy to'lov</div>
+          </div>
+        </div>
+        <div class="method-box" onclick="selectPaymentMethod('visa', this)">
+          <i class="fab fa-cc-visa" style="color:#6366f1"></i>
+          <div class="method-info">
+            <div class="method-name">Visa / MC</div>
+            <div class="method-desc">Xalqaro</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="group-title"><i class="fas fa-clock"></i> Tez kunda</div>
+      <div class="methods-grid-soon">
+        <div class="method-box locked">
+          <i class="fas fa-gem"></i>
+          <div class="method-info">
+            <div class="method-name">Tonkeeper</div>
+            <div class="method-desc">TON tarmog'i</div>
+          </div>
+          <span class="lock-badge">Tez kunda</span>
+        </div>
+        <div class="method-box locked">
+          <i class="fas fa-dollar-sign"></i>
+          <div class="method-info">
+            <div class="method-name">USDT (TRC20)</div>
+            <div class="method-desc">Kriptovalyuta</div>
+          </div>
+          <span class="lock-badge">Tez kunda</span>
+        </div>
+      </div>
+
+      <!-- Summa Kiritish -->
+      <div class="input-block">
+        <div class="input-label">To'lov summasi</div>
+        <div class="amount-wrapper">
+          <input type="number" id="input-sum" placeholder="0" min="5000">
           <span class="amount-cur">UZS</span>
         </div>
-        <div class="quick-btns">
-          <button class="quick-btn" onclick="setAmount(10000)">10 000</button>
-          <button class="quick-btn" onclick="setAmount(25000)">25 000</button>
-          <button class="quick-btn" onclick="setAmount(50000)">50 000</button>
-          <button class="quick-btn" onclick="setAmount(100000)">100 000</button>
-          <button class="quick-btn" onclick="setAmount(250000)">250 000</button>
-        </div>
-
-        <div class="fee-box" id="fee-box" style="display:none">
-          <div class="fee-row"><span>To'lov summasi</span><span class="val" id="fee-base">0 so'm</span></div>
-          <div class="fee-row"><span>Xizmat haqi (2%)</span><span class="val neg" id="fee-amount">-0 so'm</span></div>
-          <div class="fee-row total"><span>Hisobingizga tushadi</span><span class="val" id="fee-credited">0 so'm</span></div>
-          <div class="fee-hint"><i class="fas fa-circle-info"></i> To'lov tizimi xizmat haqi sifatida 2% ushlab qolinadi</div>
+        <div class="quick-chips">
+          <button type="button" class="quick-chip" onclick="setQuick(10000)">10 000</button>
+          <button type="button" class="quick-chip" onclick="setQuick(25000)">25 000</button>
+          <button type="button" class="quick-chip" onclick="setQuick(50000)">50 000</button>
+          <button type="button" class="quick-chip" onclick="setQuick(100000)">100 000</button>
+          <button type="button" class="quick-chip" onclick="setQuick(250000)">250 000</button>
         </div>
       </div>
 
-      <button class="btn-main" id="step1-btn" onclick="goStep2()">
-        <i class="fas fa-arrow-right"></i> To'lovni Davom Ettirish
+      <button type="button" class="btn-primary" id="btn-proceed" onclick="proceedToStep2()">
+        Davom etish <i class="fas fa-arrow-right"></i>
       </button>
 
-      <div class="secure-badge">
-        <i class="fas fa-lock"></i> SSL shifrlangan xavfsiz to'lov
+      <div class="trust-grid">
+        <div class="trust-item">
+          <i class="fas fa-lock" style="color: #38bdf8;"></i>
+          <div class="trust-title">Xavfsiz to'lov</div>
+          <div class="trust-desc">Ma'lumotlaringiz to'liq himoyalangan</div>
+        </div>
+        <div class="trust-item">
+          <i class="fas fa-bolt" style="color: #eab308;"></i>
+          <div class="trust-title">Tezkor tekshiruv</div>
+          <div class="trust-desc">Chek operator tomonidan tekshiriladi</div>
+        </div>
+        <div class="trust-item">
+          <i class="fas fa-user-shield" style="color: #22c55e;"></i>
+          <div class="trust-title">Himoyalangan hisob</div>
+          <div class="trust-desc">To'lov profilingizga bog'lanadi</div>
+        </div>
       </div>
+
     </div>
 
-    <!-- STEP 2 -->
-    <form action="/add-funds" method="POST" enctype="multipart/form-data" id="step2" class="hidden">
-      <input type="hidden" name="payment_method" id="method-hidden">
-      <input type="hidden" name="amount" id="amount-hidden">
-      <input type="hidden" name="fee_amount" id="fee-hidden">
-      <input type="hidden" name="credited_amount" id="credited-hidden">
-      <input type="hidden" name="txn_id" id="txn-hidden">
+    <!-- 2-BOSQICH -->
+    <form action="/add-funds" method="POST" enctype="multipart/form-data" id="view-step2" class="hidden">
+      <input type="hidden" name="payment_method" id="h-method">
+      <input type="hidden" name="amount" id="h-amount">
+      <input type="hidden" name="fee_amount" id="h-fee">
+      <input type="hidden" name="credited_amount" id="h-credited">
+      <input type="hidden" name="txn_id" id="h-txnid">
 
       <!-- Timer -->
-      <div class="timer-wrap">
-        <div class="timer-top">
-          <div class="timer-dot" id="timer-dot"></div>
-          <div class="timer-status">To'lov kutilmoqda</div>
+      <div class="timer-card">
+        <div class="timer-header">To'lovni amalga oshirish uchun qolgan vaqt</div>
+        <div class="timer-digits" id="timer-text">05:00</div>
+        <div class="timer-progress">
+          <div class="timer-progress-fill" id="timer-bar"></div>
         </div>
-        <div class="timer-val" id="timer">05:00</div>
-        <div class="timer-lbl">Ushbu vaqt ichida to'lovni amalga oshiring va chekni yuklang</div>
+        <div class="timer-sub">To'lovni belgilangan vaqt ichida amalga oshiring</div>
       </div>
 
-      <!-- Real Dynamic Bank Card Mockup -->
-      <div class="virtual-card" id="vc-card">
-        <div class="vc-top">
-          <div class="vc-chip"></div>
-          <div class="vc-brand" id="vc-brand-txt">UZCARD</div>
+      <!-- Karta Mockup -->
+      <div class="card-fin-box">
+        <div class="cf-top">
+          <div class="cf-brand" id="card-brand-display">UZCARD</div>
+          <button type="button" class="cf-toggle-btn" id="toggle-mask-btn" onclick="toggleCardMask()">
+            <i class="fas fa-eye"></i> Ko'rsatish
+          </button>
         </div>
-        <div class="vc-num-wrap">
-          <div class="vc-num-label">Karta raqami</div>
-          <div class="vc-num" id="vc-card-num">
-            <span>5614</span><span>6835</span><span>8387</span><span>8624</span>
-          </div>
+        <div class="cf-num-row">
+          <div class="cf-num" id="card-num-display">5614 •••• •••• 8624</div>
         </div>
-        <div class="vc-bottom">
+        <div class="cf-bottom">
           <div>
-            <div class="vc-num-label">Karta Egasi</div>
-            <div class="vc-owner-name" id="vc-owner-txt">zzzzzz</div>
+            <div class="cf-lbl">Karta egasi</div>
+            <div class="cf-val" id="card-owner-display">Zubayda Aliyeva</div>
           </div>
-          <i class="fas fa-wifi" style="color: rgba(255,255,255,0.4); font-size: 18px;"></i>
+          <i class="fas fa-shield-halved" style="color: var(--text-sub); font-size: 18px;"></i>
         </div>
-        <button type="button" class="copy-card-btn" id="copy-btn" onclick="copyCard()">
-          <i class="fas fa-copy"></i> Karta raqamini nusxalash
+        <button type="button" class="cf-copy-btn" id="card-copy-btn" onclick="copyCardNumber()">
+          <i class="fas fa-copy"></i> Karta raqamidan nusxa olish
         </button>
       </div>
 
-      <!-- Receipt summary -->
-      <div class="receipt-box">
-        <div class="receipt-row">
-          <span>To'lov ID:</span>
-          <span class="val" id="txn-id-txt" style="font-family: monospace;">—</span>
-        </div>
-        <div class="receipt-row">
-          <span>To'lov summasi:</span>
-          <span class="val" id="pay-amount-show">0 so'm</span>
-        </div>
-        <div class="receipt-row total">
-          <span>Hisobga tushadigan summa:</span>
-          <span class="val" id="pay-credited-show" style="color:#34d399">0 so'm</span>
-        </div>
+      <!-- To'lov Tafsilotlari Jadvali -->
+      <div class="details-table-box">
+        <div class="details-header">To'lov tafsilotlari</div>
+        <table class="details-table">
+          <tr>
+            <td class="lbl">Tranzaksiya</td>
+            <td class="val" id="tb-txn" style="font-family: monospace;">—</td>
+          </tr>
+          <tr>
+            <td class="lbl">To'lov usuli</td>
+            <td class="val" id="tb-method">—</td>
+          </tr>
+          <tr>
+            <td class="lbl">Summa</td>
+            <td class="val" id="tb-amount">0 UZS</td>
+          </tr>
+          <tr>
+            <td class="lbl">Komissiya (2%)</td>
+            <td class="val" id="tb-fee" style="color: #fca5a5;">-0 UZS</td>
+          </tr>
+          <tr>
+            <td class="lbl">Hisobga tushadi</td>
+            <td class="val net" id="tb-credited">0 UZS</td>
+          </tr>
+          <tr>
+            <td class="lbl">Holat</td>
+            <td class="val"><span class="status-badge-wait">Kutilmoqda</span></td>
+          </tr>
+        </table>
       </div>
 
-      <!-- Instruction -->
-      <div class="instr-box">
-        <div class="instr-title"><i class="fas fa-list-ol" style="margin-right:5px"></i>Qo'llanma</div>
-        <div class="instr-step">
-          <div class="instr-n">1</div>
-          <span>Yuqoridagi karta raqamini nusxalang va bank ilovangizni oching.</span>
-        </div>
-        <div class="instr-step">
-          <div class="instr-n">2</div>
-          <span>"Pul o'tkazish" bo'limiga o'ting va karta raqamini kiriting.</span>
-        </div>
-        <div class="instr-step">
-          <div class="instr-n">3</div>
-          <span>Ko'rsatilgan summani (<strong id="instr-amount-val">—</strong>) to'lang.</span>
-        </div>
-        <div class="instr-step">
-          <div class="instr-n">4</div>
-          <span>To'lov cheki (screenshot)ni quyida yuklang va tasdiqlashga yuboring.</span>
-        </div>
-      </div>
-
-      <!-- Upload -->
-      <div class="upload-zone" onclick="document.getElementById('file-input').click()">
+      <!-- Drag & Drop Upload Zone -->
+      <div class="drag-zone" id="drop-target" onclick="document.getElementById('file-field').click()">
         <i class="fas fa-cloud-arrow-up"></i>
-        <p>To'lov chekini (skrinshotini) yuklang</p>
-        <p style="margin-top:4px;font-size:11px;color:var(--muted)">PNG, JPG, PDF — bosing yoki sudrab tashlang</p>
-        <div class="file-chosen" id="file-name"></div>
-        <img class="upload-preview" id="upload-preview" alt="Chek preview">
-        <input type="file" name="check_file" id="file-input" accept="image/*,.pdf" onchange="showFile(this)" required>
+        <div class="drag-zone-title">Chekni shu yerga tashlang</div>
+        <div class="drag-zone-sub">yoki <span style="color: var(--primary); text-decoration: underline;">Fayl tanlang</span> (JPG • PNG • PDF)</div>
+        <input type="file" name="check_file" id="file-field" accept="image/*,.pdf" style="display:none;" onchange="processFile(this)" required>
       </div>
 
-      <button type="submit" class="btn-main">
-        <i class="fas fa-check-circle"></i> Tasdiqlashga Yuborish
-      </button>
-      <button type="button" class="btn-back" onclick="goBack()">
-        <i class="fas fa-arrow-left"></i> Orqaga
+      <div class="drag-file-chosen" id="file-ready-box">
+        <div class="drag-file-chosen-name" id="file-ready-name"><i class="fas fa-circle-check"></i> fayl_nomi.jpg</div>
+        <div class="drag-file-chosen-desc">Fayl muvaffaqiyatli biriktirildi</div>
+      </div>
+
+      <button type="submit" class="btn-primary">
+        <i class="fas fa-circle-check"></i> To'lovni tasdiqlash
       </button>
 
-      <div class="secure-badge">
-        <i class="fas fa-lock"></i> SSL shifrlangan xavfsiz to'lov
-      </div>
+      <button type="button" class="btn-cancel" id="btn-cancel" onclick="cancelFlow()">
+        <i class="fas fa-ban"></i> To'lovni bekor qilish
+      </button>
     </form>
 
   </div>
 </div>
 
+<!-- Modal Alert -->
+<div class="modal-overlay" id="custom-modal">
+  <div class="fin-modal">
+    <div class="fin-modal-icon warning">
+      <i class="fas fa-triangle-exclamation"></i>
+    </div>
+    <div class="fin-modal-title" id="modal-title">Diqqat</div>
+    <div class="fin-modal-text" id="modal-text">Xatolik matni bu yerda ko'rinadi.</div>
+    <button type="button" class="fin-modal-btn" onclick="closeModal()">Tushunarli</button>
+  </div>
+</div>
+
 <script>
-  // Dynamic Cards Data (Uzcard karta raqami va egasi yangilandi)
-  const CARDS = {
-    uzcard: { num: '5614 6835 8387 8624', owner: 'zzzzzz', bank: 'Uzcard', bg: 'linear-gradient(135deg, #0284c7 0%, #0f172a 100%)' },
-    visa:   { num: '4916 9903 1159 8418', owner: 'Zubayda Aliyeva', bank: 'Visa',   bg: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)' },
-    humo:   { num: '9860 0966 0108 4120', owner: 'Zubayda Aliyeva', bank: 'Humo',   bg: 'linear-gradient(135deg, #78350f 0%, #451a03 100%)' },
+  const CARDS_DATA = {
+    uzcard: { num: '5614 6835 8387 8624', mask: '5614 •••• •••• 8624', owner: 'Zubayda Aliyeva', brand: 'UZCARD' },
+    humo:   { num: '9860 0966 0108 4120', mask: '9860 •••• •••• 4120', owner: 'Zubayda Aliyeva', brand: 'HUMO' },
+    visa:   { num: '4916 9903 1159 8418', mask: '4916 •••• •••• 8418', owner: 'Zubayda Aliyeva', brand: 'VISA / MASTERCARD' }
   };
 
-  const FEE_PERCENT = 2;
-  let selectedMethod = '';
-  let timerInterval  = null;
-  const TOTAL_SEC    = 300;
+  const COMMISSION = 2;
+  let selectedMethodKey = null;
+  let isCardMasked = true;
+  let countdownTimer = null;
+  const DURATION_SEC = 300;
+
+  function showModal(title, text) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-text').textContent = text;
+    document.getElementById('custom-modal').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('custom-modal').classList.remove('active');
+  }
 
   function redirectToBot() {
     window.open('https://t.me/uccenter_bot', '_blank');
   }
 
-  function selectMethod(method, el) {
-    if (el.classList.contains('locked')) return;
-    selectedMethod = method;
-    document.querySelectorAll('.mitem').forEach(e => e.classList.remove('sel'));
-    el.classList.add('sel');
+  function selectPaymentMethod(key, element) {
+    if (element.classList.contains('locked')) return;
+    selectedMethodKey = key;
+    document.querySelectorAll('.method-box').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
   }
 
-  function setAmount(val) {
-    document.getElementById('amount-input').value = val;
-    updateFeePreview();
+  function setQuick(value) {
+    document.getElementById('input-sum').value = value;
   }
 
-  function calcFee(amount) {
-    const fee = Math.round(amount * FEE_PERCENT / 100);
-    const credited = amount - fee;
-    return { fee, credited };
+  function formatCurrency(val) {
+    return Math.round(val).toLocaleString('uz-UZ') + " UZS";
   }
 
-  function fmt(n) {
-    return Math.round(n).toLocaleString('uz-UZ') + " so'm";
+  function generateTxnCode() {
+    const d = new Date();
+    const y = d.getFullYear().toString().slice(-2);
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    const rnd = Math.floor(100000 + Math.random() * 900000);
+    return `TXN-${y}${m}${day}-${rnd}`;
   }
 
-  function updateFeePreview() {
-    const raw = parseInt(document.getElementById('amount-input').value);
-    const box = document.getElementById('fee-box');
-    if (!raw || raw <= 0) { box.style.display = 'none'; return; }
-    const { fee, credited } = calcFee(raw);
-    document.getElementById('fee-base').textContent = fmt(raw);
-    document.getElementById('fee-amount').textContent = '-' + fmt(fee);
-    document.getElementById('fee-credited').textContent = fmt(credited);
-    box.style.display = 'block';
-  }
+  // 2 soniyalik aylanuvchi loader bilan Davom etish
+  function proceedToStep2() {
+    const amountVal = parseInt(document.getElementById('input-sum').value);
 
-  function generateTxnId() {
-    const now = new Date();
-    const y = now.getFullYear().toString().slice(-2);
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const d = String(now.getDate()).padStart(2, '0');
-    const rand = Math.floor(100000 + Math.random() * 900000);
-    return `TXN-${y}${m}${d}-${rand}`;
-  }
+    if (!selectedMethodKey) {
+      showModal("To'lov usuli tanlanmagan", "Davom etish uchun ro'yxatdan to'lov usulini tanlang.");
+      return;
+    }
+    if (!amountVal || amountVal < 5000) {
+      showModal("Summa noto'g'ri", "Minimal to'lov miqdori: 5 000 UZS.");
+      return;
+    }
 
-  function renderVirtualCard(card) {
-    const groups = card.num.split(' ');
-    const numWrap = document.getElementById('vc-card-num');
-    numWrap.innerHTML = groups.map(g => `<span>${g}</span>`).join('');
-
-    document.getElementById('vc-brand-txt').textContent = card.bank;
-    document.getElementById('vc-owner-txt').textContent = card.owner;
-    document.getElementById('vc-card').style.background = card.bg;
-  }
-
-  function goStep2() {
-    const amount = parseInt(document.getElementById('amount-input').value);
-    if (!selectedMethod) { alert("Iltimos, to'lov usulini tanlang!"); return; }
-    if (!amount || amount < 5000) { alert("Minimal to'lov 5 000 so'm!"); return; }
-
-    const btn = document.getElementById('step1-btn');
+    const btn = document.getElementById('btn-proceed');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Tayyorlanmoqda...';
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Iltimos, kuting...';
 
-    setTimeout(function() {
-      const card = CARDS[selectedMethod];
-      const { fee, credited } = calcFee(amount);
-      const txnId = generateTxnId();
+    setTimeout(() => {
+      const fee = Math.round((amountVal * COMMISSION) / 100);
+      const credited = amountVal - fee;
+      const txnCode = generateTxnCode();
+      const card = CARDS_DATA[selectedMethodKey];
 
-      renderVirtualCard(card);
+      isCardMasked = true;
+      document.getElementById('card-brand-display').textContent = card.brand;
+      document.getElementById('card-owner-display').textContent = card.owner;
+      document.getElementById('card-num-display').textContent = card.mask;
+      document.getElementById('toggle-mask-btn').innerHTML = '<i class="fas fa-eye"></i> Ko\'rsatish';
 
-      document.getElementById('txn-id-txt').textContent = txnId;
-      document.getElementById('pay-amount-show').textContent = fmt(amount);
-      document.getElementById('pay-credited-show').textContent = fmt(credited);
-      document.getElementById('instr-amount-val').textContent = fmt(amount);
+      document.getElementById('tb-txn').textContent = txnCode;
+      document.getElementById('tb-method').textContent = card.brand;
+      document.getElementById('tb-amount').textContent = formatCurrency(amountVal);
+      document.getElementById('tb-fee').textContent = '-' + formatCurrency(fee);
+      document.getElementById('tb-credited').textContent = formatCurrency(credited);
 
-      document.getElementById('method-hidden').value = selectedMethod;
-      document.getElementById('amount-hidden').value = amount;
-      document.getElementById('fee-hidden').value = fee;
-      document.getElementById('credited-hidden').value = credited;
-      document.getElementById('txn-hidden').value = txnId;
+      document.getElementById('h-method').value = selectedMethodKey;
+      document.getElementById('h-amount').value = amountVal;
+      document.getElementById('h-fee').value = fee;
+      document.getElementById('h-credited').value = credited;
+      document.getElementById('h-txnid').value = txnCode;
 
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-arrow-right"></i> To\'lovni Davom Ettirish';
+      btn.innerHTML = 'Davom etish <i class="fas fa-arrow-right"></i>';
 
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('step2').classList.remove('hidden');
+      document.getElementById('view-step1').classList.add('hidden');
+      document.getElementById('view-step2').classList.remove('hidden');
 
-      document.getElementById('sb1').classList.remove('active');
-      document.getElementById('sb1').classList.add('done');
-      document.getElementById('sb1').querySelector('.step-num').innerHTML = '<i class="fas fa-check" style="font-size:9px"></i>';
-      document.getElementById('sb2').classList.add('active');
+      document.getElementById('st1').classList.add('done');
+      document.getElementById('st2').classList.add('active');
 
-      startTimer(TOTAL_SEC);
-    }, 600);
+      startCountdown(DURATION_SEC);
+    }, 2000);
   }
 
-  function goBack() {
-    clearInterval(timerInterval);
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('step1').classList.remove('hidden');
-    document.getElementById('sb1').classList.remove('done');
-    document.getElementById('sb1').classList.add('active');
-    document.getElementById('sb1').querySelector('.step-num').textContent = '1';
-    document.getElementById('sb2').classList.remove('active');
+  // 2 soniyalik aylanuvchi loader bilan Bekor qilish
+  function cancelFlow() {
+    const btn = document.getElementById('btn-cancel');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Bekor qilinmoqda, kuting...';
+
+    setTimeout(() => {
+      clearInterval(countdownTimer);
+      document.getElementById('file-field').value = '';
+      document.getElementById('file-ready-box').style.display = 'none';
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-ban"></i> To\'lovni bekor qilish';
+
+      document.getElementById('view-step2').classList.add('hidden');
+      document.getElementById('view-step1').classList.remove('hidden');
+
+      document.getElementById('st1').classList.remove('done');
+      document.getElementById('st1').classList.add('active');
+      document.getElementById('st2').classList.remove('active');
+    }, 2000);
   }
 
-  function startTimer(sec) {
-    clearInterval(timerInterval);
-    let t = sec;
-    const el = document.getElementById('timer');
-    const dot = document.getElementById('timer-dot');
+  function toggleCardMask() {
+    const card = CARDS_DATA[selectedMethodKey];
+    if (!card) return;
+    const numDisplay = document.getElementById('card-num-display');
+    const toggleBtn = document.getElementById('toggle-mask-btn');
 
-    function tick() {
-      let m = Math.floor(t / 60);
-      let s = t % 60;
-      el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-      const danger = t <= 60;
-      el.classList.toggle('danger', danger);
-      dot.classList.toggle('danger', danger);
-      if (--t < 0) {
-        clearInterval(timerInterval);
-        el.textContent = 'VAQT TUGADI';
-        el.classList.add('danger');
-      }
+    if (isCardMasked) {
+      numDisplay.textContent = card.num;
+      toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Yashirish';
+      isCardMasked = false;
+    } else {
+      numDisplay.textContent = card.mask;
+      toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Ko\'rsatish';
+      isCardMasked = true;
     }
-    tick();
-    timerInterval = setInterval(tick, 1000);
   }
 
-  function copyCard() {
-    const card = CARDS[selectedMethod];
-    if(!card) return;
-    const rawNum = card.num.replace(/\s+/g, '');
-    const btn = document.getElementById('copy-btn');
+  function copyCardNumber() {
+    const card = CARDS_DATA[selectedMethodKey];
+    if (!card) return;
+    const raw = card.num.replace(/\s+/g, '');
+    const btn = document.getElementById('card-copy-btn');
 
-    navigator.clipboard.writeText(rawNum).then(() => {
+    navigator.clipboard.writeText(raw).then(() => {
       btn.classList.add('copied');
       btn.innerHTML = '<i class="fas fa-check"></i> Nusxalandi!';
       setTimeout(() => {
         btn.classList.remove('copied');
-        btn.innerHTML = '<i class="fas fa-copy"></i> Karta raqamini nusxalash';
-      }, 2500);
+        btn.innerHTML = '<i class="fas fa-copy"></i> Karta raqamidan nusxa olish';
+      }, 2000);
     });
   }
 
-  function showFile(input) {
+  function startCountdown(totalSeconds) {
+    clearInterval(countdownTimer);
+    let remaining = totalSeconds;
+    const textEl = document.getElementById('timer-text');
+    const barEl = document.getElementById('timer-bar');
+
+    function tick() {
+      const mins = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const secs = String(remaining % 60).padStart(2, '0');
+      textEl.textContent = `${mins}:${secs}`;
+
+      const progressPercent = (remaining / totalSeconds) * 100;
+      barEl.style.width = progressPercent + '%';
+
+      if (remaining <= 60) {
+        textEl.classList.add('danger');
+        barEl.classList.add('danger');
+      } else {
+        textEl.classList.remove('danger');
+        barEl.classList.remove('danger');
+      }
+
+      if (--remaining < 0) {
+        clearInterval(countdownTimer);
+        textEl.textContent = "VAQT TUGADI";
+        showModal("Vaqt tugadi", "To'lov muddati yakunlandi. Iltimos, qaytadan boshlang.");
+        cancelFlow();
+      }
+    }
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
+
+  const dropZone = document.getElementById('drop-target');
+
+  ['dragenter', 'dragover'].forEach(name => {
+    dropZone.addEventListener(name, e => { e.preventDefault(); dropZone.classList.add('dragover'); }, false);
+  });
+  ['dragleave', 'drop'].forEach(name => {
+    dropZone.addEventListener(name, e => { e.preventDefault(); dropZone.classList.remove('dragover'); }, false);
+  });
+
+  dropZone.addEventListener('drop', e => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length) {
+      document.getElementById('file-field').files = files;
+      processFile(document.getElementById('file-field'));
+    }
+  });
+
+  function processFile(input) {
     const file = input.files[0];
-    if (!file) return;
-    document.getElementById('file-name').innerHTML = '<i class="fas fa-check-circle"></i> ' + file.name;
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const prev = document.getElementById('upload-preview');
-        prev.src = e.target.result;
-        prev.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
+    if (file) {
+      const box = document.getElementById('file-ready-box');
+      const nameEl = document.getElementById('file-ready-name');
+      nameEl.innerHTML = `<i class="fas fa-circle-check"></i> ${file.name}`;
+      box.style.display = 'block';
     }
   }
 </script>

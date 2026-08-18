@@ -1,442 +1,565 @@
 {% extends "base.html" %}
-{% block title %}Yordam — SMMZone.uz{% endblock %}
+{% block title %}Yordam Markazi — SMMZone.uz{% endblock %}
 {% block content %}
+
 <style>
   *, *::before, *::after { box-sizing: border-box; }
-  @keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes fadeIn  { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-  /* HEADER */
+  :root {
+    --bg-main:      #0b1120;
+    --bg-card:      #111827;
+    --bg-card2:     #0f1a2e;
+    --bg-subtle:    #1e293b;
+    --border:       #1e293b;
+    --border-focus: #334155;
+
+    --primary:       #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.12);
+
+    --success:       #10b981;
+    --success-bg:    rgba(16, 185, 129, 0.1);
+    --warning:       #f59e0b;
+    --warning-bg:    rgba(245, 158, 11, 0.1);
+    --danger:        #ef4444;
+    --danger-bg:     rgba(239, 68, 68, 0.1);
+
+    --text-main:     #f8fafc;
+    --text-muted:    #94a3b8;
+    --text-sub:      #64748b;
+  }
+
+  .sp-wrap {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /* ── 1. REALISTIK HEADER ── */
   .sp-header {
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:28px; flex-wrap:wrap; gap:14px;
-    animation:fadeUp .45s ease both;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 14px;
   }
-  .sp-header-left { display:flex; align-items:center; gap:14px; }
-  .sp-header-icon {
-    width:44px; height:44px; background:var(--grad);
-    border-radius:14px; display:flex; align-items:center;
-    justify-content:center; font-size:18px; color:#fff;
-    box-shadow:0 0 22px rgba(56,189,248,.3); flex-shrink:0;
-  }
-  .sp-title    { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:var(--white); letter-spacing:-.5px; }
-  .sp-subtitle { font-size:13px; color:var(--muted); margin-top:2px; }
+  .sp-title { font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.4px; }
+  .sp-sub   { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
 
-  /* LAYOUT */
+  .sp-status-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 100px; font-size: 12px; color: var(--text-muted);
+  }
+  .sp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+
+  /* ── LAYOUT ── */
   .sp-layout {
-    display:grid; grid-template-columns:1fr 320px;
-    gap:20px; align-items:start;
-    animation:fadeUp .45s .07s ease both;
+    display: grid; grid-template-columns: 1fr 340px;
+    gap: 20px; align-items: start;
   }
+  .sp-main-col { display: flex; flex-direction: column; gap: 20px; }
+  .sp-side-col { display: flex; flex-direction: column; gap: 20px; }
 
-  /* CARD */
+  /* ── CARDS ── */
   .sp-card {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:20px; padding:26px;
-    position:relative; overflow:hidden;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
   }
-  .sp-card::before {
-    content:''; position:absolute; top:0; left:0; right:0;
-    height:1px; background:var(--grad); opacity:.4;
-  }
-  .sp-card + .sp-card { margin-top:18px; }
   .sp-card-title {
-    font-size:10px; font-weight:700; letter-spacing:.12em;
-    text-transform:uppercase; color:var(--muted);
-    margin:0 0 20px; display:flex; align-items:center; gap:8px;
+    font-size: 13px; font-weight: 700; color: var(--text-main);
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px;
   }
-  .sp-card-title i { color:var(--accent); font-size:11px; }
+  .sp-card-title-left { display: flex; align-items: center; gap: 8px; }
+  .sp-card-title-left i { color: var(--primary); font-size: 14px; }
 
-  /* NEW TICKET FORM */
-  .sp-form-group { margin-bottom:18px; }
+  /* ── FORM ELEMENTS ── */
+  .sp-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .sp-form-group { margin-bottom: 14px; }
+  .sp-form-group.full { grid-column: span 2; }
+  .sp-form-group:last-of-type { margin-bottom: 0; }
+
   .sp-label {
-    display:block; font-size:11px; font-weight:700;
-    text-transform:uppercase; letter-spacing:.8px;
-    color:var(--muted); margin-bottom:8px;
+    display: block; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--text-sub); margin-bottom: 6px;
   }
-  .sp-input-wrap { position:relative; }
+  .sp-input-wrap { position: relative; }
   .sp-input-icon {
-    position:absolute; left:13px; top:50%; transform:translateY(-50%);
-    color:var(--muted); font-size:13px; pointer-events:none; transition:color .2s;
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--text-sub); font-size: 13px;
   }
-  .sp-input-wrap:focus-within .sp-input-icon { color:var(--accent); }
-  .sp-input {
-    width:100%; padding:12px 14px 12px 38px;
-    background:var(--card2); border:1px solid var(--border);
-    border-radius:11px; color:var(--white);
-    font-family:'DM Sans',sans-serif; font-size:14px;
-    outline:none; transition:all .25s;
+  .sp-input, .sp-select, .sp-textarea {
+    width: 100%; padding: 11px 14px 11px 36px;
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text-main);
+    font-size: 13.5px; outline: none; transition: border-color .15s;
+    font-family: inherit;
   }
-  .sp-input::placeholder { color:#2a3a55; }
-  .sp-input:focus {
-    border-color:rgba(56,189,248,.5);
-    box-shadow:0 0 0 3px rgba(56,189,248,.08);
-    background:#0f1c33;
-  }
-
   .sp-select {
-    width:100%; padding:12px 14px;
-    background:var(--card2); border:1px solid var(--border);
-    border-radius:11px; color:var(--white);
-    font-family:'DM Sans',sans-serif; font-size:14px;
-    outline:none; transition:all .25s; cursor:pointer;
-    appearance:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%237a8fad' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat:no-repeat; background-position:right 12px center;
-    padding-right:32px;
+    cursor: pointer; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%2364748b' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+    padding-right: 32px;
   }
-  .sp-select:focus { border-color:rgba(56,189,248,.4); box-shadow:0 0 0 3px rgba(56,189,248,.07); }
-  .sp-select option { background:#0d1628; }
-
+  .sp-select option { background: var(--bg-card2); color: var(--text-main); }
   .sp-textarea {
-    width:100%; padding:12px 14px;
-    background:var(--card2); border:1px solid var(--border);
-    border-radius:11px; color:var(--white);
-    font-family:'DM Sans',sans-serif; font-size:14px;
-    outline:none; transition:all .25s;
-    resize:vertical; min-height:120px; line-height:1.6;
+    resize: vertical; min-height: 110px; line-height: 1.6;
+    padding-left: 14px;
   }
-  .sp-textarea::placeholder { color:#2a3a55; }
-  .sp-textarea:focus {
-    border-color:rgba(56,189,248,.5);
-    box-shadow:0 0 0 3px rgba(56,189,248,.08);
-    background:#0f1c33;
-  }
+  .sp-input:focus, .sp-select:focus, .sp-textarea:focus { border-color: var(--primary); }
 
-  .sp-char-count { font-size:11px; color:var(--muted); text-align:right; margin-top:5px; }
+  .sp-char-count { font-size: 11px; color: var(--text-sub); text-align: right; margin-top: 4px; }
 
   .sp-btn-submit {
-    width:100%; padding:14px;
-    background:var(--grad); border:none; border-radius:12px;
-    color:#fff; font-family:'Syne',sans-serif;
-    font-size:15px; font-weight:700; cursor:pointer;
-    box-shadow:0 0 22px rgba(56,189,248,.2);
-    transition:all .22s; margin-top:6px;
-    display:flex; align-items:center; justify-content:center; gap:8px;
+    width: 100%; padding: 13px; border-radius: 10px; border: none;
+    background: var(--primary); color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background .15s; margin-top: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .sp-btn-submit:hover { opacity:.9; transform:translateY(-1px); box-shadow:0 4px 28px rgba(56,189,248,.35); }
+  .sp-btn-submit:hover { background: var(--primary-hover); }
 
-  /* TICKETS LIST */
-  .sp-tickets { display:flex; flex-direction:column; gap:12px; }
+  /* ── 4 & 5. CHAT USLUBIDAGI TICKETLAR ── */
+  .sp-tickets-list { display: flex; flex-direction: column; gap: 12px; }
+  .sp-ticket-card {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; transition: border-color .15s;
+  }
+  .sp-ticket-card:hover { border-color: var(--border-focus); }
 
-  .sp-ticket {
-    background:var(--card2); border:1px solid var(--border);
-    border-radius:14px; overflow:hidden;
-    transition:border-color .2s; cursor:pointer;
-    animation:fadeIn .4s ease both;
+  .sp-ticket-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; cursor: pointer; user-select: none;
   }
-  .sp-ticket:hover { border-color:rgba(56,189,248,.22); }
-  .sp-ticket.has-reply { border-color:rgba(52,211,153,.2); }
+  .sp-ticket-header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .sp-cat-icon {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    background: var(--bg-subtle); display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--primary);
+  }
+  .sp-ticket-titles { min-width: 0; }
+  .sp-ticket-sub-text {
+    font-size: 13.5px; font-weight: 600; color: var(--text-main);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sp-ticket-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; display: flex; gap: 8px; }
 
-  .sp-ticket-head {
-    display:flex; align-items:center; gap:12px;
-    padding:14px 16px;
+  .sp-ticket-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .badge-status {
+    padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700;
   }
-  .sp-ticket-icon {
-    width:36px; height:36px; border-radius:10px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:14px;
-  }
-  .sp-ticket-info { flex:1; min-width:0; }
-  .sp-ticket-subject {
-    font-size:14px; font-weight:600; color:var(--white);
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-    margin-bottom:3px;
-  }
-  .sp-ticket-meta { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:8px; }
-  .sp-ticket-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+  .badge-status.answered { background: var(--success-bg); color: var(--success); }
+  .badge-status.open     { background: var(--warning-bg); color: var(--warning); }
+  .badge-status.closed   { background: rgba(255,255,255,0.05); color: var(--text-muted); }
 
-  /* STATUS BADGES */
-  .sp-badge {
-    display:inline-flex; align-items:center; gap:5px;
-    padding:4px 10px; border-radius:100px;
-    font-size:10px; font-weight:700;
+  /* Chat oynasi */
+  .sp-chat-body {
+    border-top: 1px solid var(--border); padding: 16px;
+    background: rgba(0,0,0,0.15); display: none;
   }
-  .sp-badge-open     { background:rgba(251,191,36,.1);  color:#fbbf24; border:1px solid rgba(251,191,36,.2); }
-  .sp-badge-answered { background:rgba(52,211,153,.1);  color:#34d399; border:1px solid rgba(52,211,153,.2); }
-  .sp-badge-closed   { background:rgba(122,143,173,.1); color:var(--muted); border:1px solid rgba(122,143,173,.2); }
+  .sp-chat-body.open { display: block; }
 
-  /* EXPAND CONTENT */
-  .sp-ticket-body {
-    border-top:1px solid var(--border);
-    padding:16px; display:none;
+  .sp-meta-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+    background: var(--bg-subtle); border-radius: 8px; padding: 8px 12px;
+    font-size: 11px; color: var(--text-muted); margin-bottom: 14px;
   }
-  .sp-ticket-body.open { display:block; animation:fadeIn .3s ease; }
+  .sp-meta-bar strong { color: var(--text-main); }
 
-  .sp-ticket-msg {
-    font-size:13px; color:var(--text); line-height:1.7;
-    padding:12px 14px; background:rgba(255,255,255,.03);
-    border-radius:9px; margin-bottom:12px;
-    border-left:2px solid rgba(56,189,248,.3);
+  .chat-msg { display: flex; flex-direction: column; margin-bottom: 12px; }
+  .chat-msg.user { align-items: flex-end; }
+  .chat-msg.admin { align-items: flex-start; }
+  .chat-sender { font-size: 10.5px; color: var(--text-sub); margin-bottom: 3px; font-weight: 700; text-transform: uppercase; }
+  .chat-bubble {
+    max-width: 85%; padding: 10px 14px; border-radius: 12px;
+    font-size: 12.5px; line-height: 1.6;
   }
+  .chat-msg.user .chat-bubble {
+    background: var(--primary-light); color: #bfdbfe; border: 1px solid rgba(37, 99, 235, 0.25);
+    border-bottom-right-radius: 2px;
+  }
+  .chat-msg.admin .chat-bubble {
+    background: var(--bg-subtle); color: var(--text-main); border: 1px solid var(--border-focus);
+    border-bottom-left-radius: 2px;
+  }
+  .chat-time { font-size: 10px; color: var(--text-sub); margin-top: 4px; }
 
-  .sp-reply-box {
-    background:rgba(52,211,153,.05);
-    border:1px solid rgba(52,211,153,.15);
-    border-radius:9px; padding:12px 14px;
-    margin-top:10px;
+  /* ── 6. STATISTIKA KARTASI (4 TALIK) ── */
+  .sp-stat-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
   }
-  .sp-reply-label {
-    font-size:10px; font-weight:700; color:var(--accent3);
-    letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px;
-    display:flex; align-items:center; gap:6px;
-  }
-  .sp-reply-text { font-size:13px; color:var(--text); line-height:1.7; }
-  .sp-reply-date { font-size:11px; color:var(--muted); margin-top:6px; }
+  .sp-stat-box { background: var(--bg-card2); padding: 14px 12px; text-align: center; }
+  .sp-stat-num { font-family: monospace; font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 2px; }
+  .sp-stat-lbl { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
 
-  /* EMPTY */
-  .sp-empty {
-    text-align:center; padding:48px 20px;
+  /* ── 8. TEZ YORDAM KARTASI ── */
+  .quick-links-list { display: flex; flex-direction: column; gap: 8px; }
+  .quick-link-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-card2); border: 1px solid var(--border);
+    padding: 11px 14px; border-radius: 10px; text-decoration: none;
+    color: var(--text-main); font-size: 12.5px; font-weight: 600;
+    transition: all .15s;
   }
-  .sp-empty-icon {
-    width:64px; height:64px; border-radius:50%;
-    background:rgba(56,189,248,.06); border:1px solid rgba(56,189,248,.12);
-    display:flex; align-items:center; justify-content:center;
-    font-size:26px; color:var(--muted); margin:0 auto 16px;
-  }
-  .sp-empty h3 { font-size:15px; font-weight:600; color:var(--white); margin-bottom:6px; }
-  .sp-empty p  { font-size:13px; color:var(--muted); }
+  .quick-link-item:hover { border-color: var(--primary); background: var(--primary-light); }
+  .quick-link-left { display: flex; align-items: center; gap: 10px; }
+  .quick-link-left i { font-size: 14px; width: 16px; text-align: center; }
 
-  /* PRIORITY */
-  .prio-low    { color:#34d399; }
-  .prio-medium { color:#fbbf24; }
-  .prio-high   { color:#f87171; }
-
-  /* SIDEBAR INFO */
-  .sp-info-list { display:flex; flex-direction:column; gap:10px; }
-  .sp-info-item {
-    display:flex; align-items:flex-start; gap:10px;
-    padding:12px 14px; border-radius:11px;
-    background:var(--card2); border:1px solid var(--border);
+  /* ── 7. FAQ ACCORDION ── */
+  .faq-list { display: flex; flex-direction: column; gap: 8px; }
+  .faq-item {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
   }
-  .sp-info-icon {
-    width:28px; height:28px; border-radius:8px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:12px;
+  .faq-question {
+    padding: 12px 14px; font-size: 13px; font-weight: 600; color: var(--text-main);
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; user-select: none;
   }
-  .sp-info-title { font-size:12px; font-weight:600; color:var(--white); margin-bottom:2px; }
-  .sp-info-desc  { font-size:11px; color:var(--muted); line-height:1.5; }
-
-  /* STATS */
-  .sp-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
-  .sp-stat {
-    background:var(--card2); border:1px solid var(--border);
-    border-radius:12px; padding:14px 10px; text-align:center;
+  .faq-question i { font-size: 11px; color: var(--text-muted); transition: transform .2s; }
+  .faq-answer {
+    padding: 0 14px 12px; font-size: 12px; color: var(--text-muted);
+    line-height: 1.6; display: none; border-top: 1px solid rgba(255,255,255,0.02); margin-top: 6px; padding-top: 8px;
   }
-  .sp-stat-num { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:var(--white); line-height:1; margin-bottom:4px; }
-  .sp-stat-lbl { font-size:10px; color:var(--muted); }
+  .faq-item.active .faq-answer { display: block; }
+  .faq-item.active .faq-question i { transform: rotate(180deg); color: var(--primary); }
 
-  @media (max-width:900px) { .sp-layout { grid-template-columns:1fr; } }
+  .hidden { display: none !important; }
+
+  @media (max-width: 900px) {
+    .sp-layout { grid-template-columns: 1fr; }
+    .sp-form-grid { grid-template-columns: 1fr; }
+    .sp-form-group.full { grid-column: span 1; }
+    .sp-meta-bar { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  }
 </style>
 
-<!-- HEADER -->
-<div class="sp-header">
-  <div class="sp-header-left">
-    <div class="sp-header-icon"><i class="fas fa-headset"></i></div>
+<div class="sp-wrap">
+
+  <!-- HEADER -->
+  <div class="sp-header">
     <div>
       <div class="sp-title">Yordam Markazi</div>
-      <div class="sp-subtitle">Savol yuboring, tez javob beramiz</div>
+      <div class="sp-sub">Savol yoki muammo bo'yicha biz bilan bog'laning</div>
+    </div>
+    <div class="sp-status-chip">
+      <div class="sp-dot"></div>
+      <span>Operatorlar faol &bull; O'rtacha javob: <strong>1–2 soat</strong></span>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)">
-    <span style="width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block;animation:pulse 2s infinite"></span>
-    Onlayn — 24/7 qo'llab-quvvatlash
-  </div>
-</div>
 
-<div class="sp-layout">
+  <div class="sp-layout">
 
-  <!-- LEFT -->
-  <div>
+    <!-- ASOSIY USTUN (CHAP) -->
+    <div class="sp-main-col">
 
-    <!-- NEW TICKET -->
-    <div class="sp-card">
-      <div class="sp-card-title"><i class="fas fa-plus-circle"></i> Yangi savol yuborish</div>
-
-      <form method="POST" action="/support/new">
-        <div class="sp-form-group">
-          <label class="sp-label">Mavzu</label>
-          <div class="sp-input-wrap">
-            <i class="fas fa-tag sp-input-icon"></i>
-            <input type="text" name="subject" class="sp-input"
-                   placeholder="Muammo yoki savolingizni qisqacha yozing"
-                   required maxlength="100">
+      <!-- 2. YANGI MUROJAAT FORMASI -->
+      <div class="sp-card">
+        <div class="sp-card-title">
+          <div class="sp-card-title-left">
+            <i class="fas fa-plus-circle"></i>
+            <span>Yangi murojaat yuborish</span>
           </div>
         </div>
 
-        <div class="sp-form-group">
-          <label class="sp-label">Kategoriya</label>
-          <select name="category" class="sp-select" required>
-            <option value="">— Tanlang —</option>
-            <option value="order">Order muammosi</option>
-            <option value="payment">To'lov / Balans</option>
-            <option value="account">Akkaunt</option>
-            <option value="technical">Texnik muammo</option>
-            <option value="other">Boshqa</option>
-          </select>
-        </div>
+        <form method="POST" action="/support/new">
+          <div class="sp-form-grid">
 
-        <div class="sp-form-group">
-          <label class="sp-label">Xabar</label>
-          <textarea name="message" class="sp-textarea"
-                    placeholder="Muammoni batafsil tushuntiring. Order ID, link yoki boshqa ma'lumotlarni ham qo'shing..."
-                    required maxlength="1000" oninput="updateChar(this)"></textarea>
-          <div class="sp-char-count"><span id="char-count">0</span> / 1000</div>
-        </div>
-
-        <div class="sp-form-group">
-          <label class="sp-label">Muhimlik darajasi</label>
-          <select name="priority" class="sp-select">
-            <option value="low">🟢 Past — shoshilinch emas</option>
-            <option value="medium" selected>🟡 O'rta — oddiy savol</option>
-            <option value="high">🔴 Yuqori — jiddiy muammo</option>
-          </select>
-        </div>
-
-        <button type="submit" class="sp-btn-submit">
-          <i class="fas fa-paper-plane"></i> Yuborish
-        </button>
-      </form>
-    </div>
-
-    <!-- MY TICKETS -->
-    <div class="sp-card" style="margin-top:18px">
-      <div class="sp-card-title"><i class="fas fa-ticket"></i> Mening savollarim</div>
-
-      {% if tickets %}
-      <div class="sp-tickets">
-        {% for t in tickets %}
-        <div class="sp-ticket {% if t.reply %}has-reply{% endif %}" onclick="toggleTicket({{ t.id }})">
-          <div class="sp-ticket-head">
-            <div class="sp-ticket-icon"
-                 style="background:{% if t.category == 'order' %}rgba(56,189,248,.1){% elif t.category == 'payment' %}rgba(52,211,153,.1){% elif t.category == 'technical' %}rgba(248,113,113,.1){% else %}rgba(129,140,248,.1){% endif %}">
-              <i class="fas fa-{% if t.category == 'order' %}cart-shopping{% elif t.category == 'payment' %}wallet{% elif t.category == 'technical' %}wrench{% else %}question{% endif %}"
-                 style="color:{% if t.category == 'order' %}var(--accent){% elif t.category == 'payment' %}var(--accent3){% elif t.category == 'technical' %}#f87171{% else %}var(--accent2){% endif %}"></i>
-            </div>
-            <div class="sp-ticket-info">
-              <div class="sp-ticket-subject">{{ t.subject }}</div>
-              <div class="sp-ticket-meta">
-                <span>{{ t.created_at[:16] }}</span>
-                <span>·</span>
-                <span class="prio-{{ t.priority }}">
-                  <i class="fas fa-circle" style="font-size:7px"></i>
-                  {% if t.priority == 'high' %}Yuqori
-                  {% elif t.priority == 'medium' %}O'rta
-                  {% else %}Past{% endif %}
-                </span>
+            <div class="sp-form-group">
+              <label class="sp-label">Mavzu</label>
+              <div class="sp-input-wrap">
+                <i class="fas fa-tag sp-input-icon"></i>
+                <input type="text" name="subject" class="sp-input" placeholder="Qisqacha mavzu kiriting" required maxlength="100">
               </div>
             </div>
-            <div class="sp-ticket-right">
-              {% if t.status == 'answered' %}
-                <span class="sp-badge sp-badge-answered"><i class="fas fa-check"></i> Javob berildi</span>
-              {% elif t.status == 'closed' %}
-                <span class="sp-badge sp-badge-closed"><i class="fas fa-lock"></i> Yopildi</span>
+
+            <!-- 3. KENGAYTIRILGAN KATEGORIYALAR -->
+            <div class="sp-form-group">
+              <label class="sp-label">Kategoriya</label>
+              <select name="category" id="ticket-category" class="sp-select" onchange="handleCategoryChange(this.value)" required>
+                <option value="">— Tanlang —</option>
+                <option value="order">🛒 Buyurtma muammosi</option>
+                <option value="payment">💳 To'lov va balans</option>
+                <option value="account">👤 Akkaunt xavfsizligi</option>
+                <option value="api">🔑 API integratsiyasi</option>
+                <option value="technical">⚙️ Texnik nosozlik</option>
+                <option value="referral">🎁 Referral tizimi</option>
+                <option value="services">📢 Xizmatlar haqida</option>
+                <option value="other">❓ Boshqa masala</option>
+              </select>
+            </div>
+
+            <!-- 2. ORDER ID MAYDONI (Dinamik ta'kidlanadi) -->
+            <div class="sp-form-group" id="order-id-group">
+              <label class="sp-label" id="order-id-label">Order ID (Ixtiyoriy)</label>
+              <div class="sp-input-wrap">
+                <i class="fas fa-hashtag sp-input-icon"></i>
+                <input type="text" name="order_id" id="order-id-input" class="sp-input" placeholder="Masalan: #18291">
+              </div>
+            </div>
+
+            <div class="sp-form-group">
+              <label class="sp-label">Muhimlik darajasi</label>
+              <select name="priority" class="sp-select">
+                <option value="low">🟢 Past — Shoshilinch emas</option>
+                <option value="medium" selected>🟡 O'rta — Oddiy murojaat</option>
+                <option value="high">🔴 Yuqori — Jiddiy xatolik</option>
+              </select>
+            </div>
+
+            <div class="sp-form-group full">
+              <label class="sp-label">Xabar matni</label>
+              <textarea name="message" class="sp-textarea" placeholder="Muammoni batafsil tushuntiring. Havolalar va boshqa tafsilotlarni ham ilova qilishingiz mumkin..." required maxlength="1000" oninput="document.getElementById('c-count').textContent = this.value.length"></textarea>
+              <div class="sp-char-count"><span id="c-count">0</span> / 1000 belgi</div>
+            </div>
+
+          </div>
+
+          <button type="submit" class="sp-btn-submit">
+            <i class="fas fa-paper-plane"></i> Murojaatni Yuborish
+          </button>
+        </form>
+      </div>
+
+      <!-- 4 & 5. MENING MUROJAATLARIM (SUPPORT CHAT) -->
+      <div class="sp-card">
+        <div class="sp-card-title">
+          <div class="sp-card-title-left">
+            <i class="fas fa-ticket"></i>
+            <span>Mening murojaatlarim</span>
+          </div>
+        </div>
+
+        {% if tickets %}
+        <div class="sp-tickets-list">
+          {% for t in tickets %}
+          <div class="sp-ticket-card">
+            <div class="sp-ticket-header" onclick="toggleChat({{ t.id }})">
+              <div class="sp-ticket-header-left">
+                <div class="sp-cat-icon">
+                  <i class="fas fa-{% if t.category == 'order' %}cart-shopping{% elif t.category == 'payment' %}wallet{% elif t.category == 'api' %}terminal{% elif t.category == 'technical' %}wrench{% else %}comments{% endif %}"></i>
+                </div>
+                <div class="sp-ticket-titles">
+                  <div class="sp-ticket-sub-text">{{ t.subject }}</div>
+                  <div class="sp-ticket-meta">
+                    <span>#{{ t.id }}</span>
+                    <span>&bull;</span>
+                    <span>{{ t.created_at[:16] }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sp-ticket-header-right">
+                {% if t.status == 'answered' %}
+                  <span class="badge-status answered"><i class="fas fa-check"></i> Javob berildi</span>
+                {% elif t.status == 'closed' %}
+                  <span class="badge-status closed"><i class="fas fa-lock"></i> Yopilgan</span>
+                {% else %}
+                  <span class="badge-status open"><i class="fas fa-clock"></i> Kutilmoqda</span>
+                {% endif %}
+                <i class="fas fa-chevron-down" style="font-size:12px; color:var(--text-sub);" id="arrow-{{ t.id }}"></i>
+              </div>
+            </div>
+
+            <!-- CHAT VIEW BODY -->
+            <div class="sp-chat-body" id="chat-body-{{ t.id }}">
+
+              <!-- 5. TICKET METADATA BAR -->
+              <div class="sp-meta-bar">
+                <div>Kategoriya: <strong>{{ t.category|capitalize }}</strong></div>
+                <div>Muhimlik: <strong>{{ t.priority|upper }}</strong></div>
+                <div>Yaratildi: <strong>{{ t.created_at[:10] }}</strong></div>
+                <div>Order: <strong>{{ t.order_id or 'Mavjud emas' }}</strong></div>
+              </div>
+
+              <!-- Foydalanuvchi xabari -->
+              <div class="chat-msg user">
+                <div class="chat-sender">Siz</div>
+                <div class="chat-bubble">{{ t.message }}</div>
+                <div class="chat-time">{{ t.created_at[11:16] }}</div>
+              </div>
+
+              <!-- Admin javobi -->
+              {% if t.reply %}
+              <div class="chat-msg admin">
+                <div class="chat-sender" style="color:var(--primary);">Operator (SMMZone Support)</div>
+                <div class="chat-bubble">{{ t.reply }}</div>
+                <div class="chat-time">{{ t.replied_at[11:16] if t.replied_at else '' }}</div>
+              </div>
               {% else %}
-                <span class="sp-badge sp-badge-open"><i class="fas fa-clock"></i> Kutilmoqda</span>
+              <div style="text-align: center; padding: 12px; font-size: 12px; color: var(--text-muted); background: var(--bg-card); border-radius: 8px; border: 1px dashed var(--border);">
+                <i class="fas fa-circle-notch fa-spin" style="color: var(--warning); margin-right: 4px;"></i> Operator murojaatni ko'rib chiqmoqda. Tez orada javob qaytariladi.
+              </div>
               {% endif %}
-              <i class="fas fa-chevron-down" style="font-size:11px;color:var(--muted)" id="chev-{{ t.id }}"></i>
+
             </div>
           </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center; padding: 36px 16px; color: var(--text-muted);">
+          <i class="fas fa-inbox" style="font-size: 32px; display:block; margin-bottom: 8px; opacity: .4;"></i>
+          <div style="font-size:14px; font-weight:600; color:var(--text-main);">Hali murojaatlar yo'q</div>
+          <div style="font-size:12px; margin-top:4px;">Muammo yoki savolingiz bo'lsa, yuqoridagi formani to'ldiring</div>
+        </div>
+        {% endif %}
+      </div>
 
-          <div class="sp-ticket-body" id="body-{{ t.id }}">
-            <div class="sp-ticket-msg">{{ t.message }}</div>
+    </div>
 
-            {% if t.reply %}
-            <div class="sp-reply-box">
-              <div class="sp-reply-label"><i class="fas fa-reply"></i> Admin javobi</div>
-              <div class="sp-reply-text">{{ t.reply }}</div>
-              <div class="sp-reply-date">{{ t.replied_at[:16] if t.replied_at else '' }}</div>
-            </div>
-            {% else %}
-            <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px;padding:8px 0">
-              <i class="fas fa-clock" style="color:var(--accent)"></i>
-              Javob kutilmoqda — odatda 1-2 soat ichida javob beramiz
-            </div>
-            {% endif %}
+    <!-- YON USTUN (O'NG) -->
+    <div class="sp-side-col">
+
+      <!-- 6. STATISTIKA KARTASI (4 TALIK FINTECH GRID) -->
+      <div class="sp-card">
+        <div class="sp-card-title">
+          <div class="sp-card-title-left">
+            <i class="fas fa-chart-pie"></i>
+            <span>Statistika</span>
           </div>
         </div>
-        {% endfor %}
+        <div class="sp-stat-grid">
+          <div class="sp-stat-box">
+            <div class="sp-stat-num">{{ tickets|length if tickets else 0 }}</div>
+            <div class="sp-stat-lbl">Jami</div>
+          </div>
+          <div class="sp-stat-box">
+            <div class="sp-stat-num" style="color:var(--success);">{{ tickets|selectattr('status','equalto','answered')|list|length if tickets else 0 }}</div>
+            <div class="sp-stat-lbl">Javob</div>
+          </div>
+          <div class="sp-stat-box">
+            <div class="sp-stat-num" style="color:var(--warning);">{{ tickets|selectattr('status','equalto','open')|list|length if tickets else 0 }}</div>
+            <div class="sp-stat-lbl">Ochiq</div>
+          </div>
+          <div class="sp-stat-box">
+            <div class="sp-stat-num" style="color:#38bdf8;">1.4h</div>
+            <div class="sp-stat-lbl">O'rtacha javob</div>
+          </div>
+        </div>
       </div>
-      {% else %}
-      <div class="sp-empty">
-        <div class="sp-empty-icon"><i class="fas fa-inbox"></i></div>
-        <h3>Hali savollar yo'q</h3>
-        <p>Yuqoridagi forma orqali birinchi savolingizni yuboring</p>
+
+      <!-- 8. TEZ YORDAM VA INTEGRATSIYA -->
+      <div class="sp-card">
+        <div class="sp-card-title">
+          <div class="sp-card-title-left">
+            <i class="fas fa-bolt"></i>
+            <span>Tez yordam</span>
+          </div>
+        </div>
+        <div class="quick-links-list">
+          <a href="/api-docs" class="quick-link-item">
+            <div class="quick-link-left">
+              <i class="fas fa-code" style="color:#38bdf8;"></i>
+              <span>API Hujjatlari</span>
+            </div>
+            <i class="fas fa-arrow-up-right-from-square" style="font-size:11px; color:var(--text-sub);"></i>
+          </a>
+          <a href="https://t.me/yakkavazir" target="_blank" class="quick-link-item">
+            <div class="quick-link-left">
+              <i class="fab fa-telegram" style="color:#24A1DE;"></i>
+              <span>Telegram Operator</span>
+            </div>
+            <i class="fas fa-arrow-up-right-from-square" style="font-size:11px; color:var(--text-sub);"></i>
+          </a>
+          <div class="quick-link-item" style="cursor: default;">
+            <div class="quick-link-left">
+              <i class="fas fa-clock" style="color:var(--warning);"></i>
+              <span>Ish vaqti</span>
+            </div>
+            <span style="font-size:11.5px; color:var(--text-muted);">09:00 &mdash; 22:00</span>
+          </div>
+        </div>
       </div>
-      {% endif %}
+
+      <!-- 7. FAQ ACCORDION -->
+      <div class="sp-card">
+        <div class="sp-card-title">
+          <div class="sp-card-title-left">
+            <i class="fas fa-circle-question"></i>
+            <span>Ko'p beriladigan savollar</span>
+          </div>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Buyurtmam nega boshlanmadi?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              Buyurtmalar odatda 1-15 daqiqa ichida avtomatik boshlanadi. Agar hisobingiz yopiq (private) bo'lsa yoki havola xato kiritilgan bo'lsa, tizim kutish rejimiga o'tadi.
+            </div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Balansni qanday to'ldiraman?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              "Balansni to'ldirish" bo'limiga o'tib, Uzcard, Humo yoki Telegram bot orqali avtomatik va xavfsiz to'lov qilishingiz mumkin.
+            </div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Order ID qayerdan olinadi?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              "Buyurtmalar tarixi" sahifasida har bir buyurtma qarshisida maxsus ID raqami (masalan, #18291) ko'rsatilgan.
+            </div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Mablag' qaytariladimi (Refund)?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              Agar buyurtma server tomonidan bekor qilinsa (Canceled), sarflangan mablag' avtomatik tarzda asosiy balansingizga qaytariladi.
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
+
   </div>
 
-  <!-- RIGHT -->
-  <div>
-
-    <!-- STATS -->
-    {% if tickets %}
-    <div class="sp-card">
-      <div class="sp-card-title"><i class="fas fa-chart-simple"></i> Statistika</div>
-      <div class="sp-stats">
-        <div class="sp-stat">
-          <div class="sp-stat-num">{{ tickets|length }}</div>
-          <div class="sp-stat-lbl">Jami</div>
-        </div>
-        <div class="sp-stat">
-          <div class="sp-stat-num" style="color:#34d399">{{ tickets|selectattr('status','equalto','answered')|list|length }}</div>
-          <div class="sp-stat-lbl">Javob</div>
-        </div>
-        <div class="sp-stat">
-          <div class="sp-stat-num" style="color:#fbbf24">{{ tickets|selectattr('status','equalto','open')|list|length }}</div>
-          <div class="sp-stat-lbl">Ochiq</div>
-        </div>
-      </div>
-    </div>
-    {% endif %}
-
-    <!-- INFO -->
-    <div class="sp-card" {% if tickets %}style="margin-top:18px"{% endif %}>
-      <div class="sp-card-title"><i class="fas fa-circle-info"></i> Foydali ma'lumot</div>
-      <div class="sp-info-list">
-        <div class="sp-info-item">
-          <div class="sp-info-icon" style="background:rgba(56,189,248,.1);color:var(--accent)"><i class="fas fa-clock"></i></div>
-          <div>
-            <div class="sp-info-title">Javob vaqti</div>
-            <div class="sp-info-desc">Odatda 1-2 soat ichida javob beramiz. Ish vaqti: 09:00-22:00</div>
-          </div>
-        </div>
-        <div class="sp-info-item">
-          <div class="sp-info-icon" style="background:rgba(251,191,36,.1);color:#fbbf24"><i class="fas fa-triangle-exclamation"></i></div>
-          <div>
-            <div class="sp-info-title">Order muammosi</div>
-            <div class="sp-info-desc">Order ID ni ko'rsating, tezroq yordam beramiz</div>
-          </div>
-        </div>
-        <div class="sp-info-item">
-          <div class="sp-info-icon" style="background:rgba(52,211,153,.1);color:#34d399"><i class="fab fa-telegram"></i></div>
-          <div>
-            <div class="sp-info-title">Tezkor aloqa</div>
-            <div class="sp-info-desc">
-              <a href="https://t.me/yakkavazir" target="_blank"
-                 style="color:var(--accent);text-decoration:none">@yakkavazir</a>
-              — Telegram orqali ham murojaat qilishingiz mumkin
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 {% endblock %}
+
 {% block scripts %}
 <script>
-  function toggleTicket(id) {
-    const body = document.getElementById('body-' + id);
-    const chev = document.getElementById('chev-' + id);
+  // 4. Ticket Chat Body ochish/yopish
+  function toggleChat(id) {
+    const body = document.getElementById('chat-body-' + id);
+    const arrow = document.getElementById('arrow-' + id);
     const isOpen = body.classList.contains('open');
+
     body.classList.toggle('open', !isOpen);
-    chev.style.transform = isOpen ? '' : 'rotate(180deg)';
+    arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
   }
 
-  function updateChar(el) {
-    document.getElementById('char-count').textContent = el.value.length;
+  // 2. Kategoriya bo'yicha Order ID ni majburiy/ixtiyoriy qilish
+  function handleCategoryChange(val) {
+    const label = document.getElementById('order-id-label');
+    const input = document.getElementById('order-id-input');
+
+    if (val === 'order') {
+      label.innerHTML = 'Order ID <span style="color:var(--danger)">*</span>';
+      input.placeholder = 'Masalan: #18291 (Majburiy)';
+      input.required = true;
+    } else {
+      label.textContent = 'Order ID (Ixtiyoriy)';
+      input.placeholder = 'Masalan: #18291';
+      input.required = false;
+    }
+  }
+
+  // 7. FAQ Accordion ochish/yopish
+  function toggleFaq(elem) {
+    elem.classList.toggle('active');
   }
 </script>
 {% endblock %}

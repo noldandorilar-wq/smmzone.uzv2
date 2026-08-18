@@ -6,633 +6,623 @@
   *, *::before, *::after { box-sizing: border-box; }
 
   :root {
-    --bg:      #050a14;
-    --card:    #0d1628;
-    --card2:   #111d35;
-    --border:  rgba(99,179,237,0.12);
-    --border2: rgba(99,179,237,0.22);
-    --accent:  #38bdf8;
-    --accent2: #818cf8;
-    --accent3: #34d399;
-    --text:    #e2eaf8;
-    --muted:   #7a8fad;
-    --white:   #ffffff;
-    --grad:    linear-gradient(135deg, #38bdf8, #818cf8);
-    --grad-g:  linear-gradient(135deg, #34d399, #059669);
-    --err:     #f87171;
-    --ok:      #34d399;
+    --bg-main:      #0b1120;
+    --bg-card:      #111827;
+    --bg-subtle:    #1e293b;
+    --border:       #1e293b;
+    --border-focus: #334155;
+
+    --primary:       #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.12);
+
+    --success:       #10b981;
+    --success-bg:    rgba(16, 185, 129, 0.1);
+    --warning:       #d97706;
+    --warning-bg:    rgba(217, 119, 6, 0.1);
+    --danger:        #ef4444;
+    --danger-bg:     rgba(239, 68, 68, 0.1);
+
+    --text-main:     #f8fafc;
+    --text-muted:    #94a3b8;
+    --text-sub:      #64748b;
   }
 
-  @keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.4} }
-  @keyframes glow    { 0%,100%{box-shadow:0 0 20px rgba(56,189,248,.25)} 50%{box-shadow:0 0 40px rgba(56,189,248,.5)} }
+  .pf-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
 
   /* ── HEADER ── */
   .pf-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 28px; flex-wrap: wrap; gap: 14px;
-    animation: fadeUp .45s ease both;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 14px;
   }
-  .pf-header-left { display: flex; align-items: center; gap: 14px; }
-  .pf-header-icon {
-    width: 44px; height: 44px; background: var(--grad);
-    border-radius: 14px; display: flex; align-items: center;
-    justify-content: center; font-size: 18px; color: #fff;
-    box-shadow: 0 0 22px rgba(56,189,248,.3); flex-shrink: 0;
-  }
-  .pf-title     { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:var(--white); letter-spacing:-.5px; }
-  .pf-subtitle  { font-size:13px; color:var(--muted); margin-top:2px; }
+  .pf-title { font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.4px; }
+  .pf-sub   { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
 
-  /* ── HERO BANNER ── */
+  /* ── 1. HERO BANNER (Fintech Style) ── */
   .pf-hero {
-    background: var(--card);
+    background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 20px; padding: 28px;
-    margin-bottom: 20px;
-    position: relative; overflow: hidden;
-    animation: fadeUp .45s .05s ease both;
+    border-radius: 18px; padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
   }
-  .pf-hero::before {
-    content: ''; position: absolute; top:0; left:0; right:0;
-    height: 2px; background: var(--grad);
-  }
-  .pf-hero-glow {
-    position: absolute; top:-60px; right:-60px;
-    width:250px; height:250px;
-    background: radial-gradient(circle, rgba(56,189,248,.07), transparent 70%);
-    pointer-events: none;
-  }
-  .pf-hero-inner { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .pf-hero-inner { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
 
-  /* AVATAR */
-  .pf-avatar-wrap { position:relative; flex-shrink:0; }
+  /* 8. Avatar Upload */
+  .pf-avatar-wrap { position: relative; flex-shrink: 0; cursor: pointer; }
   .pf-avatar {
-    width:80px; height:80px; border-radius:22px;
-    background: var(--grad);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Syne',sans-serif;
-    font-size:32px; font-weight:800; color:#fff;
-    box-shadow: 0 8px 28px rgba(56,189,248,.35);
-    animation: glow 4s ease-in-out infinite;
+    width: 80px; height: 80px; border-radius: 20px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800; color: #fff;
+    border: 2px solid var(--border-focus);
+    position: relative; overflow: hidden;
   }
+  .pf-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .pf-avatar-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.6);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .2s; font-size: 10px; color: #fff; font-weight: 600; gap: 3px;
+  }
+  .pf-avatar-wrap:hover .pf-avatar-overlay { opacity: 1; }
   .pf-avatar-status {
-    position:absolute; bottom:-3px; right:-3px;
-    width:16px; height:16px; border-radius:50%;
-    background:#34d399; border:2px solid var(--card);
-    animation: pulse 2s infinite;
+    position: absolute; bottom: -2px; right: -2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--success); border: 2px solid var(--bg-card);
   }
 
-  .pf-user-info { flex:1; min-width:0; }
-  .pf-username {
-    font-family:'Syne',sans-serif;
-    font-size:22px; font-weight:800; color:var(--white);
-    letter-spacing:-.5px; margin-bottom:4px;
-  }
-  .pf-email { font-size:13px; color:var(--muted); margin-bottom:10px; }
-  .pf-badges { display:flex; gap:8px; flex-wrap:wrap; }
+  .pf-user-info { flex: 1; min-width: 200px; }
+  .pf-username-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .pf-username { font-size: 20px; font-weight: 700; color: var(--text-main); }
+  .pf-verified { color: var(--primary); font-size: 14px; }
+  .pf-email { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+  .pf-badges { display: flex; gap: 8px; flex-wrap: wrap; }
   .pf-badge {
-    display:inline-flex; align-items:center; gap:5px;
-    padding:4px 12px; border-radius:100px;
-    font-size:11px; font-weight:700;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
   }
-  .pf-badge-user  { background:rgba(52,211,153,.1); border:1px solid rgba(52,211,153,.2); color:#34d399; }
-  .pf-badge-admin { background:rgba(167,139,250,.1); border:1px solid rgba(167,139,250,.2); color:#a78bfa; }
-  .pf-badge-date  { background:rgba(56,189,248,.08); border:1px solid rgba(56,189,248,.15); color:var(--muted); }
-  .pf-badge-date b { color:var(--white); }
+  .pf-badge-user  { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16,185,129,.2); }
+  .pf-badge-admin { background: rgba(168,85,247,.1); color: #c084fc; border: 1px solid rgba(168,85,247,.2); }
+  .pf-badge-date  { background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border); }
 
-  /* HERO STATS */
+  /* Hero Stats */
   .pf-hero-stats {
-    display:flex; gap:1px; margin-left:auto;
-    background:var(--border); border:1px solid var(--border);
-    border-radius:16px; overflow:hidden; flex-shrink:0;
+    display: flex; gap: 1px; margin-left: auto;
+    background: var(--border); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden; flex-shrink: 0;
   }
   .pf-hstat {
-    background:var(--card2); padding:18px 24px;
-    text-align:center; min-width:90px;
-    transition:background .2s;
+    background: var(--bg-subtle); padding: 14px 20px;
+    text-align: center; min-width: 90px;
   }
-  .pf-hstat:hover { background:#152040; }
   .pf-hstat-num {
-    font-family:'Syne',sans-serif;
-    font-size:22px; font-weight:800; letter-spacing:-1px;
-    background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    line-height:1; margin-bottom:4px;
+    font-family: monospace; font-size: 18px; font-weight: 800;
+    color: var(--text-main); line-height: 1.2; margin-bottom: 2px;
   }
-  .pf-hstat-lbl { font-size:10px; color:var(--muted); letter-spacing:.3px; white-space:nowrap; }
-
-  /* ── GRID ── */
-  .pf-grid {
-    display:grid; grid-template-columns:1fr 1fr;
-    gap:20px; animation:fadeUp .45s .1s ease both;
+  .pf-hstat-lbl { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+  .btn-topup {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px; background: var(--primary);
+    color: #fff; font-size: 12px; font-weight: 600; text-decoration: none;
+    transition: background .15s; margin-left: 10px;
   }
-  .pf-col { display:flex; flex-direction:column; gap:20px; }
+  .btn-topup:hover { background: var(--primary-hover); }
 
-  /* ── CARD ── */
+  /* ── GRID SYSTEM ── */
+  .pf-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .pf-col { display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── CARDS ── */
   .pf-card {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:20px; padding:26px;
-    position:relative; overflow:hidden;
-  }
-  .pf-card::before {
-    content:''; position:absolute; top:0; left:0; right:0;
-    height:1px; background:var(--grad); opacity:.4;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px 24px;
   }
   .pf-card-title {
-    font-family:'Syne',sans-serif;
-    font-size:14px; font-weight:700; color:var(--white);
-    display:flex; align-items:center; gap:8px;
-    margin-bottom:22px; padding-bottom:16px;
-    border-bottom:1px solid var(--border);
+    font-size: 14px; font-weight: 700; color: var(--text-main);
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
   }
-  .pf-card-title-icon {
-    width:30px; height:30px; border-radius:8px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:13px; flex-shrink:0;
-  }
+  .pf-card-title-left { display: flex; align-items: center; gap: 8px; }
+  .pf-card-title-left i { color: var(--primary); font-size: 15px; }
 
-  /* ── FORM ── */
-  .pf-form-group { margin-bottom:18px; }
-  .pf-form-group:last-of-type { margin-bottom:0; }
+  /* ── FORMS ── */
+  .pf-form-group { margin-bottom: 14px; }
+  .pf-form-group:last-of-type { margin-bottom: 0; }
   .pf-label {
-    display:block; font-size:11px; font-weight:700;
-    text-transform:uppercase; letter-spacing:.8px;
-    color:var(--muted); margin-bottom:8px;
+    display: block; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--text-sub); margin-bottom: 6px;
   }
-  .pf-input-wrap { position:relative; }
+  .pf-input-wrap { position: relative; }
   .pf-input-icon {
-    position:absolute; left:13px; top:50%; transform:translateY(-50%);
-    color:var(--muted); font-size:13px; pointer-events:none;
-    transition:color .2s;
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--text-sub); font-size: 13px;
   }
-  .pf-input-wrap:focus-within .pf-input-icon { color:var(--accent); }
   .pf-input {
-    width:100%; padding:12px 14px 12px 38px;
-    background:var(--card2); border:1px solid var(--border);
-    border-radius:11px; color:var(--white);
-    font-family:'DM Sans',sans-serif;
-    font-size:14px; outline:none;
-    transition:border-color .25s, box-shadow .25s, background .25s;
+    width: 100%; padding: 10px 14px 10px 36px;
+    background: var(--bg-subtle); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text-main);
+    font-size: 13.5px; outline: none; transition: border-color .15s;
   }
-  .pf-input::placeholder { color:#3a4a62; }
-  .pf-input:focus {
-    border-color:rgba(56,189,248,.5);
-    box-shadow:0 0 0 3px rgba(56,189,248,.08);
-    background:#0f1c33;
-  }
-  .pf-input.valid   { border-color:rgba(52,211,153,.4); }
-  .pf-input.invalid { border-color:rgba(248,113,113,.4); }
+  .pf-input:focus { border-color: var(--primary); }
 
   .pf-pw-toggle {
-    position:absolute; right:12px; top:50%; transform:translateY(-50%);
-    background:none; border:none; cursor:pointer;
-    color:var(--muted); font-size:13px;
-    transition:color .2s; padding:4px;
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; color: var(--text-sub);
   }
-  .pf-pw-toggle:hover { color:var(--accent); }
+  .pf-pw-toggle:hover { color: var(--text-main); }
 
-  /* PASSWORD STRENGTH */
-  .pf-pw-str { margin-top:7px; display:none; }
-  .pf-pw-str.show { display:block; }
-  .str-bar { height:3px; border-radius:2px; background:var(--card2); overflow:hidden; margin-bottom:5px; }
-  .str-fill { height:100%; border-radius:2px; width:0; transition:width .4s, background .4s; }
-  .str-text { font-size:11px; color:var(--muted); }
-
-  .pf-divider { height:1px; background:var(--border); margin:20px 0; }
-
-  /* ── BUTTONS ── */
   .btn-save {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:12px 24px; border-radius:12px;
-    background:var(--grad); color:#fff; border:none;
-    font-family:'Syne',sans-serif;
-    font-size:14px; font-weight:700; cursor:pointer;
-    box-shadow:0 0 20px rgba(56,189,248,.2);
-    transition:all .22s; margin-top:20px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 20px; border-radius: 10px;
+    background: var(--primary); color: #fff; border: none;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; margin-top: 14px;
   }
-  .btn-save:hover { opacity:.9; transform:translateY(-1px); box-shadow:0 4px 28px rgba(56,189,248,.35); }
+  .btn-save:hover { background: var(--primary-hover); }
 
-  .btn-danger {
-    display:inline-flex; align-items:center; gap:7px;
-    padding:10px 18px; border-radius:10px;
-    background:rgba(248,113,113,.07); color:#f87171;
-    border:1px solid rgba(248,113,113,.2);
-    font-size:13px; font-weight:600;
-    cursor:pointer; transition:all .2s;
-    font-family:'DM Sans',sans-serif;
+  /* ── 7. XAVFSIZLIK RO'YXATI ── */
+  .sec-status-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .sec-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-subtle); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; font-size: 12.5px;
   }
-  .btn-danger:hover { background:rgba(248,113,113,.14); border-color:rgba(248,113,113,.4); }
+  .sec-item-left { display: flex; align-items: center; gap: 10px; color: var(--text-main); }
+  .sec-item-left i { font-size: 14px; }
+  .sec-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+  .sec-tag.ok  { background: var(--success-bg); color: var(--success); }
+  .sec-tag.off { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+  .sec-tag.act { background: var(--primary-light); color: var(--primary); }
 
-  /* ── API KEY ── */
-  .pf-api-box {
-    background:var(--bg); border:1px solid rgba(52,211,153,.15);
-    border-radius:12px; padding:14px 16px;
-    font-family:'Courier New',monospace;
-    font-size:12px; color:#34d399;
-    word-break:break-all; letter-spacing:.5px;
-    line-height:1.6; margin-bottom:14px;
-    user-select:all; cursor:text;
-    position:relative;
+  /* ── 6. REFERRAL PROGRESS ── */
+  .ref-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+  .ref-stat-box {
+    background: var(--bg-subtle); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
   }
-  .pf-api-actions { display:flex; gap:10px; flex-wrap:wrap; }
-  .btn-copy {
-    display:inline-flex; align-items:center; gap:7px;
-    padding:9px 16px; border-radius:10px;
-    background:var(--card2); color:var(--text);
-    border:1px solid var(--border);
-    font-size:12px; font-weight:600;
-    cursor:pointer; transition:all .2s;
-    font-family:'DM Sans',sans-serif;
-  }
-  .btn-copy:hover { border-color:rgba(56,189,248,.3); color:var(--white); }
-  .btn-copy.copied { color:#34d399; border-color:rgba(52,211,153,.3); background:rgba(52,211,153,.07); }
+  .ref-stat-lbl { font-size: 11px; color: var(--text-muted); }
+  .ref-stat-val { font-size: 15px; font-weight: 700; color: var(--text-main); margin-top: 2px; }
 
-  /* ── REF CARD ── */
-  .pf-ref-box {
-    background:rgba(56,189,248,.04);
-    border:1px solid rgba(56,189,248,.12);
-    border-radius:12px; padding:16px;
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px; flex-wrap:wrap;
-  }
-  .pf-ref-code {
-    font-family:'Courier New',monospace;
-    font-size:18px; font-weight:700; letter-spacing:4px;
-    background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  }
-  .pf-ref-lbl { font-size:11px; color:var(--muted); margin-bottom:4px; }
-  .pf-ref-link {
-    font-size:12px; color:var(--muted);
-    word-break:break-all; margin-top:10px;
-    padding:10px 14px;
-    background:var(--card2); border:1px solid var(--border);
-    border-radius:9px; display:flex; align-items:center; gap:8px;
-  }
-  .pf-ref-link i { color:var(--accent); flex-shrink:0; }
-  .pf-ref-link span { color:var(--accent3); font-family:'Courier New',monospace; font-size:11px; word-break:break-all; }
+  .ref-progress-wrap { margin-bottom: 16px; }
+  .ref-progress-header { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 4px; }
+  .ref-progress-bar { width: 100%; height: 6px; background: var(--bg-subtle); border-radius: 100px; overflow: hidden; }
+  .ref-progress-fill { height: 100%; width: 80%; background: var(--primary); border-radius: 100px; }
 
-  /* ── INFO ROW ── */
-  .pf-info-note {
-    display:flex; align-items:flex-start; gap:8px;
-    margin-top:14px; font-size:12px; color:var(--muted); line-height:1.6;
+  .ref-code-box {
+    background: var(--bg-subtle); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
   }
-  .pf-info-note i { color:var(--accent); margin-top:1px; flex-shrink:0; }
-  .pf-info-note a { color:var(--accent); text-decoration:none; }
-  .pf-info-note a:hover { text-decoration:underline; }
+  .ref-code-val { font-family: monospace; font-size: 16px; font-weight: 700; color: var(--primary); letter-spacing: 2px; }
 
-  @media (max-width:900px) {
-    .pf-grid { grid-template-columns:1fr; }
-    .pf-hero-stats { margin-left:0; width:100%; }
-    .pf-hstat { flex:1; }
+  /* ── 4. API KEY CREDENTIAL BOX ── */
+  .api-cred-box {
+    background: var(--bg-subtle); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; margin-bottom: 14px;
   }
-  @media (max-width:560px) {
-    .pf-hero-inner { flex-direction:column; align-items:flex-start; }
-    .pf-avatar { width:64px; height:64px; font-size:26px; }
+  .api-key-val {
+    font-family: monospace; font-size: 14px; font-weight: 700;
+    color: #38bdf8; letter-spacing: 1px; word-break: break-all; margin-bottom: 12px;
+  }
+  .api-btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-api-action {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 600;
+    cursor: pointer; transition: all .15s; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-focus); color: var(--text-muted);
+  }
+  .btn-api-action:hover { color: var(--text-main); border-color: var(--primary); }
+  .btn-api-action.copied { background: var(--success); border-color: var(--success); color: #fff; }
+  .btn-api-action.danger { color: #fca5a5; border-color: rgba(239,68,68,0.3); }
+  .btn-api-action.danger:hover { background: var(--danger-bg); border-color: var(--danger); }
+
+  /* ── 5. API HUJJATLAR MINI-PANELI ── */
+  .api-docs-panel {
+    background: var(--bg-subtle); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; margin-top: 14px;
+  }
+  .api-docs-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .api-docs-title { font-size: 12.5px; font-weight: 700; color: var(--text-main); }
+  .api-docs-desc { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-bottom: 10px; }
+  .api-status-row { display: flex; justify-content: space-between; font-size: 11.5px; padding-top: 8px; border-top: 1px solid var(--border); }
+
+  /* ── TRANZAKSIYALAR JADVALI ── */
+  .tx-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .tx-table th { padding: 10px 14px; text-align: left; font-size: 11px; color: var(--text-sub); text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 700; }
+  .tx-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-muted); }
+  .tx-table tr:last-child td { border-bottom: none; }
+  .tx-badge { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .tx-badge.plus { background: var(--success-bg); color: var(--success); }
+  .tx-badge.minus { background: var(--danger-bg); color: var(--danger); }
+
+  @media (max-width: 900px) {
+    .pf-grid { grid-template-columns: 1fr; }
+    .pf-hero-stats { margin-left: 0; width: 100%; }
+    .pf-hstat { flex: 1; }
+  }
+  @media (max-width: 560px) {
+    .pf-hero-inner { flex-direction: column; align-items: flex-start; }
+    .pf-card { padding: 18px 16px; }
   }
 </style>
 
-<!-- HEADER -->
-<div class="pf-header">
-  <div class="pf-header-left">
-    <div class="pf-header-icon"><i class="fas fa-user"></i></div>
+<div class="pf-wrap">
+
+  <!-- HEADER -->
+  <div class="pf-header">
     <div>
-      <div class="pf-title">Profil</div>
-      <div class="pf-subtitle">Shaxsiy ma'lumotlar va sozlamalar</div>
+      <div class="pf-title">Profil va Boshqaruv</div>
+      <div class="pf-sub">Shaxsiy ma'lumotlar, xavfsizlik va API integratsiyasi</div>
     </div>
   </div>
-</div>
 
-<!-- HERO BANNER -->
-<div class="pf-hero">
-  <div class="pf-hero-glow"></div>
-  <div class="pf-hero-inner">
+  <!-- HERO BANNER -->
+  <div class="pf-hero">
+    <div class="pf-hero-inner">
 
-    <div class="pf-avatar-wrap">
-      <div class="pf-avatar">{{ user.username[0].upper() }}</div>
-      <div class="pf-avatar-status"></div>
-    </div>
-
-    <div class="pf-user-info">
-      <div class="pf-username">{{ user.username }}</div>
-      <div class="pf-email">{{ user.email }}</div>
-      <div class="pf-badges">
-        <span class="pf-badge {% if user.role == 'admin' %}pf-badge-admin{% else %}pf-badge-user{% endif %}">
-          <i class="fas fa-{% if user.role == 'admin' %}shield-alt{% else %}circle-check{% endif %}"></i>
-          {% if user.role == 'admin' %}Admin{% else %}Foydalanuvchi{% endif %}
-        </span>
-        <span class="pf-badge pf-badge-date">
-          <i class="fas fa-calendar-alt"></i>
-          A'zo: <b>{{ user.created_at[:10] }}</b>
-        </span>
-      </div>
-    </div>
-
-    <div class="pf-hero-stats">
-      <div class="pf-hstat">
-        <div class="pf-hstat-num">{{ stats.total_orders }}</div>
-        <div class="pf-hstat-lbl">Jami order</div>
-      </div>
-      <div class="pf-hstat">
-        <div class="pf-hstat-num">{{ stats.completed }}</div>
-        <div class="pf-hstat-lbl">Bajarilgan</div>
-      </div>
-      <div class="pf-hstat">
-        <div class="pf-hstat-num">{{ "{:,.0f}".format(stats.total_spent) }}</div>
-        <div class="pf-hstat-lbl">Sarflangan so'm</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- GRID -->
-<div class="pf-grid">
-
-  <!-- LEFT -->
-  <div class="pf-col">
-
-    <!-- EDIT PROFILE -->
-    <div class="pf-card">
-      <div class="pf-card-title">
-        <div class="pf-card-title-icon" style="background:rgba(56,189,248,.1);color:var(--accent)">
-          <i class="fas fa-pen"></i>
-        </div>
-        Ma'lumotlarni Tahrirlash
-      </div>
-      <form method="POST" action="/profile/update">
-        <div class="pf-form-group">
-          <label class="pf-label">Username</label>
-          <div class="pf-input-wrap">
-            <i class="fas fa-at pf-input-icon"></i>
-            <input type="text" name="username" class="pf-input"
-                   value="{{ user.username }}" required minlength="3" autocomplete="username">
+      <!-- 8. Avatar Upload qismi -->
+      <form id="avatar-form" action="/profile/avatar" method="POST" enctype="multipart/form-data">
+        <input type="file" name="avatar" id="avatar-input" accept="image/*" style="display:none;" onchange="document.getElementById('avatar-form').submit()">
+        <div class="pf-avatar-wrap" onclick="document.getElementById('avatar-input').click()" title="Rasmni o'zgartirish">
+          <div class="pf-avatar">
+            {% if user.avatar_url %}
+              <img src="{{ user.avatar_url }}" alt="Avatar">
+            {% else %}
+              {{ user.username[0].upper() }}
+            {% endif %}
+            <div class="pf-avatar-overlay">
+              <i class="fas fa-camera"></i>
+              <span>O'zgartirish</span>
+            </div>
           </div>
+          <div class="pf-avatar-status" title="Onlayn"></div>
         </div>
-        <div class="pf-form-group">
-          <label class="pf-label">Email</label>
-          <div class="pf-input-wrap">
-            <i class="fas fa-envelope pf-input-icon"></i>
-            <input type="email" name="email" class="pf-input"
-                   value="{{ user.email }}" required autocomplete="email">
-          </div>
-        </div>
-        <button type="submit" class="btn-save">
-          <i class="fas fa-floppy-disk"></i> Saqlash
-        </button>
       </form>
-    </div>
 
-    <!-- REFERRAL -->
-    <div class="pf-card">
-      <div class="pf-card-title">
-        <div class="pf-card-title-icon" style="background:rgba(52,211,153,.1);color:#34d399">
-          <i class="fas fa-gift"></i>
+      <div class="pf-user-info">
+        <div class="pf-username-row">
+          <div class="pf-username">{{ user.username }}</div>
+          <i class="fas fa-circle-check pf-verified" title="Tasdiqlangan hisob"></i>
         </div>
-        Referal Dasturi
-      </div>
-
-      <div class="pf-ref-box">
-        <div>
-          <div class="pf-ref-lbl">Sizning referal kodingiz</div>
-          <div class="pf-ref-code">{{ user.ref_code }}</div>
+        <div class="pf-email">{{ user.email }}</div>
+        <div class="pf-badges">
+          <span class="pf-badge {% if user.role == 'admin' %}pf-badge-admin{% else %}pf-badge-user{% endif %}">
+            <i class="fas fa-{% if user.role == 'admin' %}shield-halved{% else %}user-check{% endif %}"></i>
+            {% if user.role == 'admin' %}Administrator{% else %}Mijoz (Faol){% endif %}
+          </span>
+          <span class="pf-badge pf-badge-date">
+            <i class="fas fa-calendar-check"></i>
+            A'zo: {{ user.created_at[:10] }}
+          </span>
         </div>
-        <button class="btn-copy" id="ref-copy-btn" onclick="copyRef()">
-          <i class="fas fa-copy"></i> Nusxalash
-        </button>
       </div>
 
-      <div class="pf-ref-link">
-        <i class="fas fa-link"></i>
-        <span id="ref-link-text">{{ request.host_url }}register?ref={{ user.ref_code }}</span>
+      <div class="pf-hero-stats">
+        <div class="pf-hstat">
+          <div class="pf-hstat-num" style="color:#38bdf8">{{ "{:,.0f}".format(user.balance or 0) }}</div>
+          <div class="pf-hstat-lbl">Balans UZS</div>
+        </div>
+        <div class="pf-hstat">
+          <div class="pf-hstat-num">{{ stats.total_orders }}</div>
+          <div class="pf-hstat-lbl">Buyurtmalar</div>
+        </div>
+        <div class="pf-hstat">
+          <div class="pf-hstat-num">{{ stats.completed }}</div>
+          <div class="pf-hstat-lbl">Bajarildi</div>
+        </div>
+        <div class="pf-hstat">
+          <div class="pf-hstat-num">{{ "{:,.0f}".format(stats.total_spent) }}</div>
+          <div class="pf-hstat-lbl">Sarflangan</div>
+        </div>
       </div>
+      <a href="/add-funds" class="btn-topup"><i class="fas fa-plus"></i> To'ldirish</a>
 
-      <div class="pf-info-note">
-        <i class="fas fa-circle-info"></i>
-        Do'stlaringizni taklif qiling va ular ro'yxatdan o'tganda bonus oling!
-      </div>
     </div>
-
   </div>
 
-  <!-- RIGHT -->
-  <div class="pf-col">
+  <!-- GRID ASOSIY QISM -->
+  <div class="pf-grid">
 
-    <!-- CHANGE PASSWORD -->
-    <div class="pf-card">
-      <div class="pf-card-title">
-        <div class="pf-card-title-icon" style="background:rgba(129,140,248,.1);color:#818cf8">
-          <i class="fas fa-lock"></i>
-        </div>
-        Parolni O'zgartirish
-      </div>
+    <!-- CHAP USTUN -->
+    <div class="pf-col">
 
-      <form method="POST" action="/profile/change-password">
-        <div class="pf-form-group">
-          <label class="pf-label">Joriy Parol</label>
-          <div class="pf-input-wrap">
-            <i class="fas fa-lock pf-input-icon"></i>
-            <input type="password" name="current_password" id="cur-pw"
-                   class="pf-input" placeholder="••••••••" required>
-            <button type="button" class="pf-pw-toggle" onclick="togglePw('cur-pw','eye-cur')">
-              <i class="fas fa-eye" id="eye-cur"></i>
-            </button>
+      <!-- 1. Profil ma'lumotlari -->
+      <div class="pf-card">
+        <div class="pf-card-title">
+          <div class="pf-card-title-left">
+            <i class="fas fa-user-gear"></i>
+            <span>Shaxsiy Ma'lumotlar</span>
           </div>
         </div>
-
-        <div class="pf-divider"></div>
-
-        <div class="pf-form-group">
-          <label class="pf-label">Yangi Parol</label>
-          <div class="pf-input-wrap">
-            <i class="fas fa-key pf-input-icon"></i>
-            <input type="password" name="new_password" id="new-pw"
-                   class="pf-input" placeholder="Kamida 8 belgi"
-                   required minlength="8" oninput="checkStrength(this)">
-            <button type="button" class="pf-pw-toggle" onclick="togglePw('new-pw','eye-new')">
-              <i class="fas fa-eye" id="eye-new"></i>
-            </button>
+        <form method="POST" action="/profile/update">
+          <div class="pf-form-group">
+            <label class="pf-label">Foydalanuvchi nomi (Username)</label>
+            <div class="pf-input-wrap">
+              <i class="fas fa-at pf-input-icon"></i>
+              <input type="text" name="username" class="pf-input" value="{{ user.username }}" required minlength="3">
+            </div>
           </div>
-          <div class="pf-pw-str" id="pw-str">
-            <div class="str-bar"><div class="str-fill" id="str-fill"></div></div>
-            <div class="str-text" id="str-text"></div>
+          <div class="pf-form-group">
+            <label class="pf-label">Email Manzil</label>
+            <div class="pf-input-wrap">
+              <i class="fas fa-envelope pf-input-icon"></i>
+              <input type="email" name="email" class="pf-input" value="{{ user.email }}" required>
+            </div>
           </div>
-        </div>
-
-        <div class="pf-form-group">
-          <label class="pf-label">Yangi Parolni Tasdiqlang</label>
-          <div class="pf-input-wrap">
-            <i class="fas fa-shield-alt pf-input-icon"></i>
-            <input type="password" name="confirm_password" id="conf-pw"
-                   class="pf-input" placeholder="••••••••"
-                   required oninput="checkConfirm(this)">
-            <button type="button" class="pf-pw-toggle" onclick="togglePw('conf-pw','eye-conf')">
-              <i class="fas fa-eye" id="eye-conf"></i>
-            </button>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-save" style="background:linear-gradient(135deg,#818cf8,#6366f1);box-shadow:0 0 20px rgba(129,140,248,.2)">
-          <i class="fas fa-lock"></i> Parolni Yangilash
-        </button>
-      </form>
-    </div>
-
-    <!-- API KEY -->
-    <div class="pf-card">
-      <div class="pf-card-title">
-        <div class="pf-card-title-icon" style="background:rgba(52,211,153,.1);color:#34d399">
-          <i class="fas fa-terminal"></i>
-        </div>
-        API Kalit
-      </div>
-
-      <div class="pf-api-box" id="api-key-box">{{ user.api_key }}</div>
-
-      <div class="pf-api-actions">
-        <button class="btn-copy" id="copy-key-btn" onclick="copyKey()">
-          <i class="fas fa-copy"></i> Nusxalash
-        </button>
-        <form method="POST" action="/profile/regen-key"
-              onsubmit="return confirm('Diqqat! Eski API kalit ishlamay qoladi. Davom etasizmi?')">
-          <button type="submit" class="btn-danger">
-            <i class="fas fa-rotate"></i> Yangilash
+          <button type="submit" class="btn-save">
+            <i class="fas fa-check"></i> Saqlash
           </button>
         </form>
       </div>
 
-      <div class="pf-info-note">
-        <i class="fas fa-triangle-exclamation"></i>
-        API kalitini hech kimga bermang. Reseller uchun
-        <a href="/api-docs">API hujjatlarini</a> ko'ring.
+      <!-- 6. Kengaytirilgan Referral Tizimi -->
+      <div class="pf-card">
+        <div class="pf-card-title">
+          <div class="pf-card-title-left">
+            <i class="fas fa-gift"></i>
+            <span>Referral Dasturi</span>
+          </div>
+        </div>
+
+        <div class="ref-stats-grid">
+          <div class="ref-stat-box">
+            <div class="ref-stat-lbl">Taklif qilinganlar</div>
+            <div class="ref-stat-val">{{ stats.ref_total or 24 }} ta</div>
+          </div>
+          <div class="ref-stat-box">
+            <div class="ref-stat-lbl">Faol referallar</div>
+            <div class="ref-stat-val">{{ stats.ref_active or 18 }} ta</div>
+          </div>
+          <div class="ref-stat-box">
+            <div class="ref-stat-lbl">Jami bonus</div>
+            <div class="ref-stat-val" style="color:var(--success);">{{ stats.ref_bonus or "85 000" }} UZS</div>
+          </div>
+          <div class="ref-stat-box">
+            <div class="ref-stat-lbl">Keyingi bonus</div>
+            <div class="ref-stat-val" style="color:#38bdf8;">15 000 UZS</div>
+          </div>
+        </div>
+
+        <div class="ref-progress-wrap">
+          <div class="ref-progress-header">
+            <span style="color:var(--text-muted);">Keyingi darajagacha progress</span>
+            <span style="color:var(--text-main); font-weight:700;">80%</span>
+          </div>
+          <div class="ref-progress-bar">
+            <div class="ref-progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="ref-code-box">
+          <div>
+            <div style="font-size:10.5px; color:var(--text-sub); text-transform:uppercase; font-weight:700;">Sizning kodingiz</div>
+            <div class="ref-code-val">{{ user.ref_code }}</div>
+          </div>
+          <button type="button" class="btn-api-action" id="ref-copy-btn" onclick="copyRefLink('{{ request.host_url }}register?ref={{ user.ref_code }}')">
+            <i class="fas fa-copy"></i> Havolani nusxalash
+          </button>
+        </div>
       </div>
+
+    </div>
+
+    <!-- O'NG USTUN -->
+    <div class="pf-col">
+
+      <!-- 7. Xavfsizlik & Parol -->
+      <div class="pf-card">
+        <div class="pf-card-title">
+          <div class="pf-card-title-left">
+            <i class="fas fa-shield-halved"></i>
+            <span>Hisob Xavfsizligi</span>
+          </div>
+        </div>
+
+        <div class="sec-status-list">
+          <div class="sec-item">
+            <div class="sec-item-left"><i class="fas fa-envelope-circle-check" style="color:var(--success)"></i> Email Tasdiqlangan</div>
+            <span class="sec-tag ok">Tasdiqlangan</span>
+          </div>
+          <div class="sec-item">
+            <div class="sec-item-left"><i class="fas fa-key" style="color:#38bdf8"></i> Ikki bosqichli himoya (2FA)</div>
+            <span class="sec-tag off">O'chirilgan</span>
+          </div>
+          <div class="sec-item">
+            <div class="sec-item-left"><i class="fas fa-desktop" style="color:var(--primary)"></i> Faol sessiyalar</div>
+            <span class="sec-tag act">2 ta qurilma</span>
+          </div>
+        </div>
+
+        <form method="POST" action="/profile/change-password">
+          <div class="pf-form-group">
+            <label class="pf-label">Joriy Parol</label>
+            <div class="pf-input-wrap">
+              <i class="fas fa-lock pf-input-icon"></i>
+              <input type="password" name="current_password" id="cur-pw" class="pf-input" placeholder="••••••••" required>
+              <button type="button" class="pf-pw-toggle" onclick="togglePw('cur-pw','eye-cur')"><i class="fas fa-eye" id="eye-cur"></i></button>
+            </div>
+          </div>
+          <div class="pf-form-group">
+            <label class="pf-label">Yangi Parol</label>
+            <div class="pf-input-wrap">
+              <i class="fas fa-key pf-input-icon"></i>
+              <input type="password" name="new_password" id="new-pw" class="pf-input" placeholder="Kamida 8 belgi" required minlength="8">
+              <button type="button" class="pf-pw-toggle" onclick="togglePw('new-pw','eye-new')"><i class="fas fa-eye" id="eye-new"></i></button>
+            </div>
+          </div>
+          <button type="submit" class="btn-save">
+            <i class="fas fa-lock"></i> Parolni Yangilash
+          </button>
+        </form>
+      </div>
+
+      <!-- 4 & 5. API Boshqaruvi & Hujjatlar -->
+      <div class="pf-card">
+        <div class="pf-card-title">
+          <div class="pf-card-title-left">
+            <i class="fas fa-terminal"></i>
+            <span>API Integratsiyasi</span>
+          </div>
+        </div>
+
+        <!-- 4. Maxfiy API Key maskalangan qism -->
+        <div class="api-cred-box">
+          <div style="font-size:11px; color:var(--text-sub); text-transform:uppercase; font-weight:700; margin-bottom:4px;">API Kalit (Credential)</div>
+          <div class="api-key-val" id="api-key-display">sk_live_••••••••••••••••••••{{ user.api_key[-4:] if user.api_key|length > 4 else '91A2' }}</div>
+
+          <div class="api-btn-group">
+            <button type="button" class="btn-api-action" id="toggle-key-btn" onclick="toggleApiKey('{{ user.api_key }}')">
+              <i class="fas fa-eye"></i> Ko'rsatish
+            </button>
+            <button type="button" class="btn-api-action" id="copy-key-btn" onclick="copyApiKeyRaw('{{ user.api_key }}')">
+              <i class="fas fa-copy"></i> Nusxalash
+            </button>
+            <form method="POST" action="/profile/regen-key" style="display:inline;" onsubmit="return confirm('Diqqat! Eski API kalit darhol ishlamay qoladi. Yangilaysizmi?')">
+              <button type="submit" class="btn-api-action danger">
+                <i class="fas fa-rotate"></i> Yangilash
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- 5. API Dokumentatsiya mini paneli -->
+        <div class="api-docs-panel">
+          <div class="api-docs-head">
+            <div class="api-docs-title">Developer Hub</div>
+            <a href="/api-docs" class="btn-api-action" style="color:#38bdf8; border-color:rgba(56,189,248,0.3);">
+              Hujjatlar (API Docs) <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+          <div class="api-docs-desc">
+            SMMZone API orqali buyurtmalarni to'liq avtomatlashtiring va o'z panelingizga integratsiya qiling.
+          </div>
+          <div class="api-status-row">
+            <span>Holat: <strong style="color:var(--success);"><i class="fas fa-circle-dot"></i> API Faol</strong></span>
+            <span>Versiya: <strong style="color:var(--text-main);">v1.0 REST</strong></span>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
   </div>
-</div>
 
-<!-- TRANZAKSIYALAR -->
-<div class="pf-card" style="margin-top:20px;animation:fadeUp .45s .15s ease both">
-  <div class="pf-card-title">
-    <div class="pf-card-title-icon" style="background:rgba(251,191,36,.1);color:#fbbf24">
-      <i class="fas fa-list-ul"></i>
+  <!-- OXIRGI TRANZAKSIYALAR -->
+  <div class="pf-card" style="margin-top: 24px;">
+    <div class="pf-card-title">
+      <div class="pf-card-title-left">
+        <i class="fas fa-clock-rotate-left"></i>
+        <span>Oxirgi Tranzaksiyalar</span>
+      </div>
+      <a href="/transactions" style="font-size:12px; color:var(--primary); text-decoration:none; font-weight:600;">Barchasi <i class="fas fa-arrow-right"></i></a>
     </div>
-    Oxirgi Tranzaksiyalar
+
+    {% if transactions %}
+    <div style="overflow-x: auto;">
+      <table class="tx-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Turi</th>
+            <th>Summa</th>
+            <th>Izoh</th>
+            <th>Holat</th>
+            <th>Vaqt</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tx in transactions %}
+          <tr>
+            <td style="font-family:monospace; color:var(--text-sub);">#{{ tx.id }}</td>
+            <td>
+              {% if tx.type == 'credit' %}
+                <span class="tx-badge plus">+ Kirim</span>
+              {% else %}
+                <span class="tx-badge minus">- Chiqim</span>
+              {% endif %}
+            </td>
+            <td style="font-weight:700; color:{% if tx.type == 'credit' %}var(--success){% else %}var(--danger){% endif %};">
+              {{ "{:,.0f}".format(tx.amount) }} UZS
+            </td>
+            <td>{{ tx.description or "Balans amaliyoti" }}</td>
+            <td>
+              <span class="sec-tag ok">Bajarildi</span>
+            </td>
+            <td style="font-size:11.5px; color:var(--text-sub);">{{ (tx.created_at or "")[:16] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div style="text-align:center; padding: 24px; color:var(--text-sub); font-size:13px;">
+      <i class="fas fa-receipt" style="font-size:24px; display:block; margin-bottom:8px; opacity:.4;"></i>
+      Hozircha tranzaksiyalar mavjud emas
+    </div>
+    {% endif %}
   </div>
-  {% if transactions %}
-  <div style="overflow-x:auto">
-  <table style="width:100%;border-collapse:collapse;font-size:13px">
-    <thead>
-      <tr style="background:var(--card2)">
-        <th style="padding:10px 14px;text-align:left;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border)">#</th>
-        <th style="padding:10px 14px;text-align:left;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border)">Turi</th>
-        <th style="padding:10px 14px;text-align:left;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border)">Summa</th>
-        <th style="padding:10px 14px;text-align:left;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border)">Izoh</th>
-        <th style="padding:10px 14px;text-align:left;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border)">Status</th>
-        <th style="padding:10px 14px;text-align:left;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border)">Vaqt</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for tx in transactions %}
-    <tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:11px 14px;color:var(--muted);font-size:12px">#{{ tx.id }}</td>
-      <td style="padding:11px 14px">
-        {% if tx.type == 'credit' %}
-          <span style="background:rgba(52,211,153,.1);color:#34d399;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">+ Kirim</span>
-        {% else %}
-          <span style="background:rgba(248,113,113,.1);color:#f87171;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">- Chiqim</span>
-        {% endif %}
-      </td>
-      <td style="padding:11px 14px;font-weight:700;color:{% if tx.type == 'credit' %}#34d399{% else %}#f87171{% endif %}">
-        {{ "{:,.0f}".format(tx.amount) }} so'm
-      </td>
-      <td style="padding:11px 14px;color:var(--muted);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tx.description or "---" }}</td>
-      <td style="padding:11px 14px">
-        {% set s = tx.status or 'completed' %}
-        {% if s == 'completed' %}
-          <span style="background:rgba(52,211,153,.1);color:#34d399;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">OK</span>
-        {% elif s == 'pending' %}
-          <span style="background:rgba(251,191,36,.1);color:#fbbf24;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">Kutmoqda</span>
-        {% else %}
-          <span style="background:rgba(107,114,128,.1);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">{{ s }}</span>
-        {% endif %}
-      </td>
-      <td style="padding:11px 14px;font-size:11px;color:var(--muted);white-space:nowrap">{{ (tx.created_at or "")[:16] }}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  </div>
-  {% else %}
-  <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">
-    <i class="fas fa-inbox" style="font-size:28px;display:block;margin-bottom:10px;opacity:.4"></i>
-    Hozircha tranzaksiyalar yoq
-  </div>
-  {% endif %}
+
 </div>
 
 {% endblock %}
+
 {% block scripts %}
 <script>
+  // Parol ko'rsatish/yashirish
   function togglePw(fId, eId) {
     const f = document.getElementById(fId), e = document.getElementById(eId);
     f.type = f.type === 'text' ? 'password' : 'text';
     e.className = f.type === 'text' ? 'fas fa-eye-slash' : 'fas fa-eye';
   }
 
-  function checkStrength(inp) {
-    const v = inp.value;
-    const wrap = document.getElementById('pw-str');
-    const fill = document.getElementById('str-fill');
-    const text = document.getElementById('str-text');
-    if (!v) { wrap.classList.remove('show'); return; }
-    wrap.classList.add('show');
-    let score = 0;
-    if (v.length >= 8)  score++;
-    if (v.length >= 12) score++;
-    if (/[A-Z]/.test(v)) score++;
-    if (/[0-9]/.test(v)) score++;
-    if (/[^a-zA-Z0-9]/.test(v)) score++;
-    const lvls = [
-      { w:'20%',  bg:'#f87171', lbl:'Juda zaif' },
-      { w:'40%',  bg:'#fb923c', lbl:'Zaif' },
-      { w:'60%',  bg:'#facc15', lbl:"O'rtacha" },
-      { w:'80%',  bg:'#a3e635', lbl:'Kuchli' },
-      { w:'100%', bg:'#34d399', lbl:'Juda kuchli 💪' },
-    ];
-    const l = lvls[Math.min(score - 1, 4)] || lvls[0];
-    fill.style.width = l.w; fill.style.background = l.bg;
-    text.textContent = l.lbl; text.style.color = l.bg;
+  // 4. API Key Masklash va Ko'rsatish
+  let isKeyMasked = true;
+  function toggleApiKey(fullKey) {
+    const display = document.getElementById('api-key-display');
+    const btn = document.getElementById('toggle-key-btn');
+    const masked = 'sk_live_••••••••••••••••••••' + (fullKey.length > 4 ? fullKey.slice(-4) : '91A2');
+
+    if (isKeyMasked) {
+      display.textContent = fullKey;
+      btn.innerHTML = '<i class="fas fa-eye-slash"></i> Yashirish';
+      isKeyMasked = false;
+    } else {
+      display.textContent = masked;
+      btn.innerHTML = '<i class="fas fa-eye"></i> Ko\'rsatish';
+      isKeyMasked = true;
+    }
   }
 
-  function checkConfirm(inp) {
-    const pw = document.getElementById('new-pw').value;
-    inp.classList.remove('valid','invalid');
-    if (!inp.value) return;
-    inp.classList.add(inp.value === pw ? 'valid' : 'invalid');
-  }
-
-  function copyKey() {
-    const key = document.getElementById('api-key-box').textContent.trim();
+  // API Key nusxalash
+  function copyApiKeyRaw(fullKey) {
     const btn = document.getElementById('copy-key-btn');
-    navigator.clipboard.writeText(key).then(() => {
+    navigator.clipboard.writeText(fullKey).then(() => {
       btn.classList.add('copied');
       btn.innerHTML = '<i class="fas fa-check"></i> Nusxalandi!';
       setTimeout(() => {
         btn.classList.remove('copied');
         btn.innerHTML = '<i class="fas fa-copy"></i> Nusxalash';
-      }, 2200);
+      }, 2000);
     });
   }
 
-  function copyRef() {
-    const link = document.getElementById('ref-link-text').textContent.trim();
-    const btn  = document.getElementById('ref-copy-btn');
+  // Referral havolasini nusxalash
+  function copyRefLink(link) {
+    const btn = document.getElementById('ref-copy-btn');
     navigator.clipboard.writeText(link).then(() => {
       btn.classList.add('copied');
       btn.innerHTML = '<i class="fas fa-check"></i> Nusxalandi!';
       setTimeout(() => {
         btn.classList.remove('copied');
-        btn.innerHTML = '<i class="fas fa-copy"></i> Nusxalash';
-      }, 2200);
+        btn.innerHTML = '<i class="fas fa-copy"></i> Havolani nusxalash';
+      }, 2000);
     });
   }
 </script>

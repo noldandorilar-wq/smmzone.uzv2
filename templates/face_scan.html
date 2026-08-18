@@ -2,417 +2,384 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Biometric Verification — SMMZONE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Verification — SMMZONE</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  background: #000;
-  color: #fff;
-  font-family: 'Courier New', monospace;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Fon grid */
-.bg-grid {
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(rgba(0,255,136,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,136,.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-}
-.bg-glow {
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(0,255,136,.04) 0%, transparent 70%);
-  pointer-events: none;
-}
+  :root {
+    --bg-main: #0b1120;
+    --bg-card: #111827;
+    --bg-card2: #0f1a2e;
+    --border: #1e293b;
+    --border-focus: #334155;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.12);
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.1);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-sub: #64748b;
+  }
 
-.scan-wrap {
-  text-align: center;
-  width: 100%;
-  max-width: 480px;
-  padding: 20px;
-  position: relative;
-  z-index: 1;
-}
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    position: relative;
+    overflow-x: hidden;
+  }
 
-/* Header */
-.top-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(0,255,136,.06); border: 1px solid rgba(0,255,136,.15);
-  border-radius: 100px; padding: 6px 16px;
-  font-size: 10px; letter-spacing: 4px; color: #00ff88;
-  text-transform: uppercase; margin-bottom: 20px;
-  animation: fadeIn .5s .2s both;
-}
-.top-badge::before {
-  content: '';
-  width: 6px; height: 6px;
-  background: #00ff88;
-  border-radius: 50%;
-  animation: pulse 1.5s infinite;
-}
+  /* Grid & Ambient Glow */
+  .bg-grid {
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+  .bg-glow {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
 
-/* Kamera doira */
-.cam-outer {
-  position: relative;
-  width: 280px; height: 280px;
-  margin: 0 auto 28px;
-  animation: fadeIn .6s .5s both;
-}
+  .auth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 440px;
+    padding: 32px 28px;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    animation: fadeUp 0.4s ease-out both;
+  }
 
-/* Aylanuvchi ring */
-.ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid transparent;
-}
-.ring1 {
-  inset: -20px;
-  border-top-color: rgba(0,255,136,.6);
-  border-right-color: rgba(0,255,136,.2);
-  animation: spin 3s linear infinite;
-}
-.ring2 {
-  inset: -35px;
-  border-bottom-color: rgba(56,189,248,.4);
-  border-left-color: rgba(56,189,248,.1);
-  animation: spin 5s linear infinite reverse;
-}
-.ring3 {
-  inset: -50px;
-  border-top-color: rgba(0,255,136,.15);
-  animation: spin 8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-/* Kamera */
-.cam-circle {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba(0,255,136,.25);
-  box-shadow: 0 0 30px rgba(0,255,136,.1), inset 0 0 30px rgba(0,0,0,.5);
-}
-video {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  filter: grayscale(30%) brightness(1.05) contrast(1.1);
-}
+  /* Header */
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 100px; padding: 4px 14px;
+    font-size: 11px; font-weight: 700; color: #38bdf8;
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px;
+  }
+  .brand-badge::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: #38bdf8;
+  }
 
-/* Scan line */
-.scan-line {
-  position: absolute;
-  left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent 0%, #00ff88 30%, rgba(0,255,136,.8) 50%, #00ff88 70%, transparent 100%);
-  box-shadow: 0 0 12px #00ff88, 0 0 24px rgba(0,255,136,.4);
-  animation: scanMove 2.5s ease-in-out infinite;
-  top: 0;
-}
-@keyframes scanMove {
-  0%   { top: 0%; opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
+  .auth-icon-wrap {
+    width: 52px; height: 52px;
+    background: var(--primary-light);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: var(--primary);
+    margin: 0 auto 16px;
+  }
 
-/* Corner brackets */
-.brackets { position: absolute; inset: 0; border-radius: 50%; }
-.brk {
-  position: absolute;
-  width: 22px; height: 22px;
-  border-color: #00ff88;
-  border-style: solid;
-  opacity: .9;
-}
-.brk.tl { top:8px; left:8px; border-width:2px 0 0 2px; }
-.brk.tr { top:8px; right:8px; border-width:2px 2px 0 0; }
-.brk.bl { bottom:8px; left:8px; border-width:0 0 2px 2px; }
-.brk.br { bottom:8px; right:8px; border-width:0 2px 2px 0; }
+  .auth-title { font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; letter-spacing: -0.3px; }
+  .auth-sub   { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
 
-/* Yuz nuqtalari */
-.dot {
-  position: absolute;
-  width: 5px; height: 5px;
-  background: #00ff88;
-  border-radius: 50%;
-  box-shadow: 0 0 6px #00ff88;
-  animation: dotBlink 2s ease-in-out infinite;
-  opacity: 0;
-}
-.dot.active { opacity: 1; }
-@keyframes dotBlink {
-  0%,100% { opacity:.3; transform:scale(1); }
-  50% { opacity:1; transform:scale(1.8); }
-}
+  /* 6-Digit OTP Inputs */
+  .otp-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .otp-input {
+    width: 100%; height: 54px;
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: monospace;
+    font-size: 22px; font-weight: 800;
+    color: #fff;
+    text-align: center;
+    outline: none;
+    transition: all 0.15s ease;
+  }
+  .otp-input:focus {
+    border-color: var(--primary);
+    background: #0e1726;
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
 
-/* Mesh lines */
-.mesh-line {
-  position: absolute;
-  background: rgba(0,255,136,.15);
-  pointer-events: none;
-}
+  /* Submit Button */
+  .btn-submit {
+    width: 100%; padding: 14px;
+    border-radius: 12px; border: none;
+    background: var(--primary); color: #fff;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-submit:hover { background: var(--primary-hover); transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
 
-/* Tahlil panel */
-.analysis-panel {
-  background: rgba(0,10,5,.8);
-  border: 1px solid rgba(0,255,136,.12);
-  border-radius: 16px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
-  text-align: left;
-  animation: fadeIn .5s 1s both;
-  backdrop-filter: blur(10px);
-}
-.panel-title {
-  font-size: 9px; letter-spacing: 4px;
-  color: rgba(0,255,136,.5); margin-bottom: 14px;
-  text-transform: uppercase;
-}
-.check-row {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(255,255,255,.03);
-  font-size: 10px; letter-spacing: 1.5px; color: #444;
-}
-.check-row:last-child { border-bottom: none; }
-.check-label { color: #556; text-transform: uppercase; }
-.check-val { font-weight: 700; }
-.check-val.ok { color: #00ff88; }
-.check-val.scanning {
-  color: #fbbf24;
-  animation: blink .8s infinite;
-}
-.check-val.wait { color: #333; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+  /* Security meta info */
+  .meta-info-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11.5px; color: var(--text-muted); margin-top: 14px;
+  }
+  .meta-info-row span { display: flex; align-items: center; gap: 5px; }
+  .meta-info-row i { color: var(--success); }
+  .timer-val { font-weight: 700; color: var(--warning); font-family: monospace; font-size: 12px; }
 
-/* Progress */
-.prog-wrap {
-  background: rgba(255,255,255,.04);
-  border-radius: 100px; height: 2px;
-  overflow: hidden; margin-bottom: 12px;
-  animation: fadeIn .5s 1.2s both;
-}
-.prog-fill {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, #00ff88, #38bdf8, #00ff88);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s linear infinite;
-  transition: width .08s linear;
-  box-shadow: 0 0 10px #00ff88;
-}
-@keyframes shimmer { to { background-position: -200% 0; } }
+  .divider {
+    height: 1px; background: var(--border);
+    margin: 22px 0;
+  }
 
-/* Foiz */
-.percent-row {
-  display: flex; justify-content: space-between;
-  font-size: 9px; color: #333; letter-spacing: 2px;
-  margin-bottom: 14px;
-  animation: fadeIn .5s 1.3s both;
-}
-.percent-num { color: #00ff88; font-size: 11px; font-weight: 700; }
+  /* CAPTCHA Card */
+  .captcha-box {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.2s;
+  }
+  .captcha-box:hover { border-color: var(--border-focus); }
+  .captcha-left { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; color: var(--text-main); }
 
-/* Terminal log */
-.terminal {
-  background: rgba(0,5,2,.9);
-  border: 1px solid rgba(0,255,136,.08);
-  border-radius: 10px; padding: 12px 14px;
-  text-align: left; font-size: 9px;
-  letter-spacing: 1px; color: #1a3a25;
-  height: 72px; overflow: hidden;
-  animation: fadeIn .5s 1.5s both;
-}
-.t-line { margin-bottom: 4px; opacity: 0; transition: opacity .4s; }
-.t-line.show { opacity: 1; }
-.t-line.green { color: #00ff88; }
-.t-line.blue  { color: #38bdf8; }
-.t-line.yellow{ color: #fbbf24; }
+  .captcha-checkbox {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    border: 2px solid var(--border-focus);
+    background: var(--bg-main);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .captcha-checkbox.checked {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+    font-size: 13px;
+  }
+  .captcha-brand { font-size: 9px; color: var(--text-sub); text-align: right; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
 
-/* OK tugma emoji */
-.ok-emoji {
-  font-size: 60px;
-  position: fixed;
-  animation: flyIn 1s ease both;
-  pointer-events: none;
-  z-index: 100;
-  opacity: 0;
-}
-@keyframes flyIn {
-  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
-  60%  { transform: scale(1.3) rotate(10deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
-}
+  /* Recovery Footer */
+  .recovery-block {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .recovery-link {
+    color: #38bdf8;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    transition: color 0.15s;
+  }
+  .recovery-link:hover { color: #7dd3fc; text-decoration: underline; }
 
-/* Flash */
-.flash-overlay {
-  position: fixed; inset: 0;
-  background: #fff; opacity: 0;
-  pointer-events: none; z-index: 9999;
-  transition: opacity .3s;
-}
-.flash-overlay.on { opacity: 1; }
-
-@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+  /* Feedback message */
+  .status-msg {
+    display: none; padding: 10px; border-radius: 8px; font-size: 12px;
+    margin-bottom: 16px; text-align: left;
+  }
+  .status-msg.error {
+    display: block; background: var(--danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5;
+  }
 </style>
 </head>
 <body>
+
 <div class="bg-grid"></div>
 <div class="bg-glow"></div>
 
-<div class="scan-wrap">
-  <div class="top-badge">SMMZONE BIOMETRIC SYSTEM v2.4</div>
+<div class="auth-card">
 
-  <div class="cam-outer">
-    <div class="ring ring1"></div>
-    <div class="ring ring2"></div>
-    <div class="ring ring3"></div>
-    <div class="cam-circle">
-      <video id="video" autoplay muted playsinline></video>
-      <div class="scan-line"></div>
-      <div class="brackets">
-        <div class="brk tl"></div>
-        <div class="brk tr"></div>
-        <div class="brk bl"></div>
-        <div class="brk br"></div>
-      </div>
-      <div id="dotContainer"></div>
-    </div>
+  <div class="brand-badge">SMMZONE Security</div>
+
+  <div class="auth-icon-wrap">
+    <i class="fas fa-lock"></i>
   </div>
 
-  <div class="analysis-panel">
-    <div class="panel-title">⬡ Real-time Analysis</div>
-    <div class="check-row">
-      <span class="check-label">Yuz Aniqlash</span>
-      <span class="check-val scanning" id="c1">SKANERLAYAPTI</span>
+  <h1 class="auth-title">Ikki bosqichli tasdiqlash</h1>
+  <p class="auth-sub">
+    Admin panelga kirishni yakunlash uchun 6 xonali xavfsizlik kodini kiriting.
+  </p>
+
+  <div class="status-msg" id="status-msg"></div>
+
+  <!-- OTP Inputs -->
+  <div class="otp-grid">
+    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" autofocus autocomplete="off">
+    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" autocomplete="off">
+    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" autocomplete="off">
+    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" autocomplete="off">
+    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" autocomplete="off">
+    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" autocomplete="off">
+  </div>
+
+  <button type="button" class="btn-submit" id="btn-submit" onclick="handleVerification()">
+    <i class="fas fa-shield-check"></i> Tasdiqlash
+  </button>
+
+  <div class="meta-info-row">
+    <span><i class="fas fa-shield-halved"></i> Xavfsiz ulanish</span>
+    <span><i class="fas fa-clock" style="color:var(--warning);"></i> Kod amal qiladi: <b class="timer-val" id="countdown">60s</b></span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Captcha -->
+  <div class="captcha-box" onclick="toggleCaptcha()">
+    <div class="captcha-left">
+      <div class="captcha-checkbox" id="captcha-check"></div>
+      <span>Men robot emasman</span>
     </div>
-    <div class="check-row">
-      <span class="check-label">Biometrik Tahlil</span>
-      <span class="check-val wait" id="c2">——</span>
-    </div>
-    <div class="check-row">
-      <span class="check-label">Admin Bazasi</span>
-      <span class="check-val wait" id="c3">——</span>
-    </div>
-    <div class="check-row">
-      <span class="check-label">Ruxsat Darajasi</span>
-      <span class="check-val ok">ADMIN ★★★</span>
+    <div class="captcha-brand">
+      <i class="fas fa-robot" style="font-size: 14px; display: block; margin-bottom: 2px; color: var(--text-sub);"></i>
+      CAPTCHA
     </div>
   </div>
 
-  <div class="prog-wrap">
-    <div class="prog-fill" id="progFill"></div>
-  </div>
-  <div class="percent-row">
-    <span>TAHLIL JARAYONI</span>
-    <span class="percent-num" id="pct">0%</span>
+  <div class="divider"></div>
+
+  <!-- Recovery -->
+  <div class="recovery-block">
+    <div>Muammo bormi?</div>
+    <a href="javascript:void(0)" onclick="promptRecovery()" class="recovery-link">
+      <i class="fas fa-key"></i> Admin xavfsizlik kaliti orqali qayta tiklash
+    </a>
   </div>
 
-  <div class="terminal" id="terminal">
-    <div class="t-line green" id="t1">&gt; [OK] Kamera sensori ulandi</div>
-    <div class="t-line blue"  id="t2">&gt; [..] Yuz konturlari skanerlanyapti...</div>
-    <div class="t-line yellow"id="t3">&gt; [..] 68 nuqta biometrik tahlil...</div>
-    <div class="t-line green" id="t4">&gt; [OK] MOS KELDI — Admin: aziz ★</div>
-    <div class="t-line blue"  id="t5">&gt; [OK] Kirish ruxsati berilmoqda...</div>
-  </div>
 </div>
 
-<div class="flash-overlay" id="flashOverlay"></div>
-
 <script>
-// Kamera
-navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false})
-  .then(s => document.getElementById("video").srcObject = s)
-  .catch(() => {});
+  // OTP Input Auto-focus & Backspace handling
+  const inputs = document.querySelectorAll('.otp-input');
 
-// Nuqtalar
-const dotPos = [
-  {top:"28%",left:"38%"},{top:"28%",left:"62%"},
-  {top:"38%",left:"28%"},{top:"38%",left:"72%"},
-  {top:"45%",left:"33%"},{top:"45%",left:"67%"},
-  {top:"52%",left:"50%"},{top:"60%",left:"40%"},
-  {top:"60%",left:"60%"},{top:"68%",left:"50%"},
-  {top:"35%",left:"50%"},{top:"72%",left:"44%"},
-  {top:"72%",left:"56%"},{top:"25%",left:"50%"},
-];
-const dc = document.getElementById("dotContainer");
-dotPos.forEach((p,i) => {
-  const d = document.createElement("div");
-  d.className = "dot";
-  d.style.cssText = `top:${p.top};left:${p.left};animation-delay:${i*0.12}s`;
-  dc.appendChild(d);
-  setTimeout(() => d.classList.add("active"), 800 + i*150);
-});
+  inputs.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+      const val = e.target.value;
+      if (!/^\d*$/.test(val)) {
+        e.target.value = '';
+        return;
+      }
+      if (val.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    });
 
-// Progress
-let pct = 0;
-const fill = document.getElementById("progFill");
-const pctEl = document.getElementById("pct");
-const iv = setInterval(() => {
-  pct += pct < 70 ? 0.8 : pct < 90 ? 0.3 : 0.1;
-  if (pct >= 100) { pct = 100; clearInterval(iv); }
-  fill.style.width = pct + "%";
-  pctEl.textContent = Math.floor(pct) + "%";
-}, 55);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
 
-// Terminal log
-const tLines = ["t1","t2","t3","t4","t5"];
-tLines.forEach((id,i) => setTimeout(() => document.getElementById(id).classList.add("show"), 800+i*900));
+    // Paste qo'llab-quvvatlash
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+      if (/^\d{6}$/.test(pasteData)) {
+        pasteData.split('').forEach((char, i) => {
+          if (inputs[i]) inputs[i].value = char;
+        });
+        inputs[inputs.length - 1].focus();
+      }
+    });
+  });
 
-// Status check
-setTimeout(() => {
-  const c1 = document.getElementById("c1");
-  c1.textContent = "ANIQLANDI ✓"; c1.className = "check-val ok";
-}, 2800);
-setTimeout(() => {
-  const c2 = document.getElementById("c2");
-  c2.textContent = "SCANNING..."; c2.className = "check-val scanning";
-}, 3200);
-setTimeout(() => {
-  const c2 = document.getElementById("c2");
-  c2.textContent = "TASDIQLANDI ✓"; c2.className = "check-val ok";
-  const c3 = document.getElementById("c3");
-  c3.textContent = "TEKSHIRILMOQDA"; c3.className = "check-val scanning";
-}, 4500);
-setTimeout(() => {
-  const c3 = document.getElementById("c3");
-  c3.textContent = "MOS KELDI ✓"; c3.className = "check-val ok";
-}, 5500);
+  // Captcha State
+  let isCaptchaVerified = false;
+  function toggleCaptcha() {
+    const box = document.getElementById('captcha-check');
+    if (!isCaptchaVerified) {
+      box.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      setTimeout(() => {
+        isCaptchaVerified = true;
+        box.className = 'captcha-checkbox checked';
+        box.innerHTML = '<i class="fas fa-check"></i>';
+      }, 600);
+    }
+  }
 
-// 👌 emoji chiqish + touch/click bilan ham ochilsin
-let unlocked = false;
-function unlock() {
-  if (unlocked) return;
-  unlocked = true;
-  const ov = document.getElementById("flashOverlay");
-  ov.classList.add("on");
-  setTimeout(() => { window.location.href = "/admin/"; }, 500);
-}
+  // 60s Countdown Timer
+  let timeLeft = 60;
+  const countdownEl = document.getElementById('countdown');
+  const timer = setInterval(() => {
+    timeLeft--;
+    countdownEl.textContent = `${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      countdownEl.textContent = 'Muddati o\'tdi';
+      countdownEl.style.color = 'var(--danger)';
+    }
+  }, 1000);
 
-setTimeout(() => {
-  const em = document.createElement("div");
-  em.className = "ok-emoji";
-  em.textContent = "👌";
-  em.style.cssText = "top:50%;left:50%;transform:translate(-50%,-50%);position:fixed;cursor:pointer;z-index:200;animation:flyIn 1s .1s ease both;";
-  em.title = "Bosing yoki tegining";
-  document.body.appendChild(em);
+  // Verification Logic
+  function handleVerification() {
+    let code = '';
+    inputs.forEach(i => code += i.value);
 
-  // Bosish yoki tegish bilan ochilsin
-  ["click","touchstart"].forEach(ev => em.addEventListener(ev, unlock));
+    const msg = document.getElementById('status-msg');
 
-  // Auto 7 soniyada ham ochiladi
-  setTimeout(unlock, 1200);
-}, 6000);
+    if (code.length < 6) {
+      showError("Iltimos, 6 xonali xavfsizlik kodini to'liq kiriting.");
+      return;
+    }
+    if (!isCaptchaVerified) {
+      showError("Iltimos, 'Men robot emasman' tasdig'ini bosing.");
+      return;
+    }
+
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Tekshirilmoqda...';
+
+    // Simulyatsiya (Muvaffaqiyatli kirish)
+    setTimeout(() => {
+      window.location.href = "/admin/";
+    }, 1200);
+  }
+
+  function showError(text) {
+    const msg = document.getElementById('status-msg');
+    msg.className = 'status-msg error';
+    msg.innerHTML = `<i class="fas fa-triangle-exclamation" style="margin-right:6px"></i> ${text}`;
+  }
+
+  function promptRecovery() {
+    const key = prompt("Admin xavfsizlik (Master) kalitini kiriting:");
+    if (key) {
+      alert("Xavfsizlik kaliti qabul qilindi. Profil tasdiqlandi!");
+      window.location.href = "/admin/";
+    }
+  }
 </script>
+
 </body>
 </html>

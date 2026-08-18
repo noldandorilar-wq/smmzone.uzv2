@@ -1,404 +1,735 @@
 {% extends "base.html" %}
-{% block title %}API Docs — SMMZone.uz{% endblock %}
+{% block title %}API Hujjatlari va Hamkorlik — SMMZone.uz{% endblock %}
 {% block content %}
 
 <style>
-  .page-header {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --bg-main:      #0b1120;
+    --bg-card:      #111827;
+    --bg-card2:     #0f1a2e;
+    --bg-subtle:    #1e293b;
+    --border:       #1e293b;
+    --border-focus: #334155;
+
+    --primary:       #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.12);
+
+    --success:       #10b981;
+    --success-bg:    rgba(16, 185, 129, 0.1);
+    --warning:       #f59e0b;
+    --warning-bg:    rgba(245, 158, 11, 0.1);
+    --danger:        #ef4444;
+    --danger-bg:     rgba(239, 68, 68, 0.1);
+
+    --text-main:     #f8fafc;
+    --text-muted:    #94a3b8;
+    --text-sub:      #64748b;
+  }
+
+  .api-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /* ── 1. HEADER ── */
+  .api-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
-    animation: fadeUp 0.5s ease both;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 14px;
   }
-  .page-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 24px; font-weight: 800;
-    color: var(--white); letter-spacing: -0.5px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .page-title-icon {
-    width: 40px; height: 40px;
-    background: var(--grad);
-    border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; color: #fff;
-  }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  .api-title { font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: -0.4px; }
+  .api-sub   { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
 
-  /* LAYOUT */
-  .api-grid {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 20px;
-    align-items: start;
-    animation: fadeUp 0.5s 0.1s ease both;
+  .api-status-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 100px; font-size: 12px; color: var(--text-muted);
   }
+  .api-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
 
-  /* CARD */
+  /* ── LAYOUT ── */
+  .api-layout {
+    display: grid; grid-template-columns: 1fr 360px;
+    gap: 20px; align-items: start;
+  }
+  .api-main-col { display: flex; flex-direction: column; gap: 20px; }
+  .api-side-col { display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── CARDS ── */
   .api-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 20px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
   }
-  .api-card:last-child { margin-bottom: 0; }
-
   .api-card-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 15px; font-weight: 700;
-    color: var(--white); letter-spacing: -0.2px;
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 18px;
+    font-size: 13px; font-weight: 700; color: var(--text-main);
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px;
   }
-  .api-card-title i { color: var(--accent); font-size: 14px; }
+  .api-card-title-left { display: flex; align-items: center; gap: 8px; }
+  .api-card-title-left i { color: var(--primary); font-size: 14px; }
 
-  /* API KEY BOX */
-  .key-box {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-family: 'Courier New', monospace;
-    font-size: 13px; color: #34d399;
-    word-break: break-all; letter-spacing: 0.5px;
-    line-height: 1.5; margin-bottom: 14px;
-    user-select: all; cursor: text;
+  /* ── 5. API KEY CREDENTIAL BOX ── */
+  .key-cred-box {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; margin-bottom: 12px;
   }
-
-  .key-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-  .btn-copy {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 9px 16px; border-radius: 10px;
-    background: var(--card2); color: var(--text);
-    border: 1px solid var(--border);
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
+  .key-mask-text {
+    font-family: monospace; font-size: 16px; font-weight: 700;
+    color: #38bdf8; letter-spacing: 1px; word-break: break-all; margin-bottom: 14px;
   }
-  .btn-copy:hover { border-color: rgba(56,189,248,0.3); color: var(--white); }
-  .btn-copy.copied { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.08); }
-
-  .btn-regen {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 9px 16px; border-radius: 10px;
-    background: rgba(248,113,113,0.08); color: #f87171;
-    border: 1px solid rgba(248,113,113,0.2);
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
+  .key-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-action {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all .15s; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-focus); color: var(--text-main);
   }
-  .btn-regen:hover { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.4); }
+  .btn-action:hover { border-color: var(--primary); background: var(--primary-light); }
+  .btn-action.copied { background: var(--success); border-color: var(--success); color: #fff; }
+  .btn-action.danger { color: #fca5a5; border-color: rgba(239,68,68,0.3); }
+  .btn-action.danger:hover { background: var(--danger-bg); border-color: var(--danger); }
 
-  /* ENDPOINT BADGE */
-  .endpoint-url {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 24px;
+  /* ── 1. HAMKORLIK BANNERI ── */
+  .partner-banner {
+    background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(15,26,46,0.8) 100%);
+    border: 1px solid rgba(37,99,235,0.3); border-radius: 16px; padding: 22px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
   }
-  .method-badge {
-    display: inline-flex; align-items: center;
-    padding: 4px 10px; border-radius: 7px;
+  .partner-banner-info h3 { font-size: 17px; font-weight: 800; color: #fff; margin: 0 0 6px; }
+  .partner-banner-info p  { font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+  .btn-partner {
+    display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px;
+    border-radius: 10px; background: var(--primary); color: #fff; font-size: 13px;
+    font-weight: 700; text-decoration: none; transition: background .15s;
+  }
+  .btn-partner:hover { background: var(--primary-hover); }
+
+  /* ── 9. STATISTIKA GRID ── */
+  .stats-4grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  }
+  .stat-box-cell { background: var(--bg-card2); padding: 14px 12px; text-align: center; }
+  .stat-box-cell .val { font-family: monospace; font-size: 18px; font-weight: 800; color: var(--text-main); }
+  .stat-box-cell .lbl { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-top: 4px; }
+
+  /* ── 6. API ACCORDION SECTIONS ── */
+  .endpoint-url-box {
+    display: flex; align-items: center; gap: 10px; background: var(--bg-card2);
+    border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; margin-bottom: 16px;
+  }
+  .http-method {
+    background: var(--primary-light); color: var(--primary);
+    border: 1px solid rgba(37,99,235,0.3); padding: 3px 8px; border-radius: 6px;
     font-size: 11px; font-weight: 800; letter-spacing: 0.5px;
-    flex-shrink: 0;
   }
-  .method-post { background: rgba(56,189,248,0.12); color: var(--accent); border: 1px solid rgba(56,189,248,0.2); }
-  .endpoint-url code {
-    font-family: 'Courier New', monospace;
-    font-size: 13px; color: var(--accent3);
-    word-break: break-all;
+  .endpoint-url-box code { font-family: monospace; font-size: 13px; color: #34d399; }
+
+  .doc-accordion { display: flex; flex-direction: column; gap: 8px; }
+  .doc-item {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .doc-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 16px; cursor: pointer; user-select: none;
+  }
+  .doc-header-left { display: flex; align-items: center; gap: 10px; }
+  .doc-header-left b { font-size: 13.5px; color: var(--text-main); font-family: monospace; }
+  .doc-header-left span { font-size: 12px; color: var(--text-muted); }
+  .doc-header i { font-size: 11px; color: var(--text-sub); transition: transform .2s; }
+  .doc-item.open .doc-header i { transform: rotate(180deg); color: var(--primary); }
+
+  .doc-body {
+    display: none; padding: 14px 16px; border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.15); font-size: 12.5px;
+  }
+  .doc-item.open .doc-body { display: block; }
+
+  .param-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  .param-table th { font-size: 10.5px; text-transform: uppercase; color: var(--text-sub); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .param-table td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 12px; }
+  .param-tag { font-family: monospace; color: #38bdf8; background: var(--bg-subtle); padding: 2px 6px; border-radius: 4px; }
+
+  .code-viewer {
+    background: var(--bg-main); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px;
+    color: #34d399; line-height: 1.5; overflow-x: auto; white-space: pre;
   }
 
-  /* API SECTIONS */
-  .api-section {
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 12px;
-    transition: border-color 0.2s;
+  /* ── 7. CODE EXAMPLES TABS ── */
+  .code-tabs-nav { display: flex; gap: 4px; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; }
+  .code-tab-btn {
+    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    cursor: pointer; background: transparent; border: none; color: var(--text-muted);
   }
-  .api-section:last-child { margin-bottom: 0; }
-  .api-section:hover { border-color: rgba(56,189,248,0.2); }
+  .code-tab-btn.active { background: var(--primary-light); color: var(--primary); }
+  .code-tab-content { display: none; }
+  .code-tab-content.active { display: block; }
 
-  .api-section-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 18px;
-    background: rgba(56,189,248,0.03);
-    cursor: pointer; user-select: none;
+  /* ── 8. API PLAYGROUND ── */
+  .pg-field { margin-bottom: 12px; }
+  .pg-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 5px; }
+  .pg-select, .pg-input {
+    width: 100%; padding: 9px 12px; background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text-main); font-size: 13px; outline: none;
   }
-  .api-section-header b {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px; font-weight: 700; color: var(--white);
+  .pg-select:focus, .pg-input:focus { border-color: var(--primary); }
+  .btn-run-test {
+    width: 100%; padding: 11px; border-radius: 8px; border: none;
+    background: var(--primary); color: #fff; font-size: 13px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .api-section-header span {
-    font-size: 13px; color: var(--muted); margin-left: 2px;
-  }
-  .api-section-header .toggle-icon {
-    margin-left: auto; color: var(--muted); font-size: 12px;
-    transition: transform 0.3s;
-  }
-  .api-section.open .toggle-icon { transform: rotate(180deg); }
+  .btn-run-test:hover { background: var(--primary-hover); }
 
-  .api-section-body {
-    max-height: 0; overflow: hidden;
-    transition: max-height 0.4s ease;
-    padding: 0 18px;
-  }
-  .api-section.open .api-section-body { max-height: 400px; padding: 0 18px 18px; }
-
-  .params-list { margin-bottom: 12px; }
-  .param-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 7px 0;
-    border-bottom: 1px solid rgba(99,179,237,0.06);
-    font-size: 13px;
-  }
-  .param-row:last-child { border-bottom: none; }
-  .param-name {
-    font-family: 'Courier New', monospace;
-    background: var(--bg);
-    padding: 3px 8px; border-radius: 6px;
-    font-size: 12px; color: var(--accent2);
-    border: 1px solid rgba(129,140,248,0.15);
-    flex-shrink: 0;
-  }
-  .param-desc { color: var(--muted); }
-
-  .code-block {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px; color: #34d399;
-    white-space: pre; overflow-x: auto;
-    line-height: 1.6;
+  .pg-response-box {
+    margin-top: 12px; background: var(--bg-main); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11.5px;
+    color: #34d399; min-height: 80px; max-height: 200px; overflow-y: auto; white-space: pre; display: none;
   }
 
-  /* SIDEBAR CARD */
-  .sidebar-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    position: sticky; top: 80px;
+  /* ── 3. PARTNER LEVELS ── */
+  .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tier-card {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 12px; text-align: center;
   }
+  .tier-card.highlight { border-color: var(--primary); background: var(--primary-light); }
+  .tier-name { font-size: 13px; font-weight: 800; color: var(--text-main); text-transform: uppercase; margin-bottom: 2px; }
+  .tier-vol { font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; }
+  .tier-features { list-style: none; padding: 0; margin: 0; font-size: 11.5px; color: var(--text-muted); line-height: 1.6; text-align: left; }
+  .tier-features li i { color: var(--success); font-size: 10px; margin-right: 4px; }
 
-  /* FORM */
-  .form-group { margin-bottom: 16px; }
-  .form-label {
-    display: block;
-    font-size: 11px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.8px;
-    color: var(--muted); margin-bottom: 7px;
-  }
-  .form-control {
-    width: 100%;
-    padding: 11px 14px;
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 11px;
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px; outline: none;
-    transition: border-color 0.25s, box-shadow 0.25s;
-  }
-  .form-control:focus {
-    border-color: rgba(56,189,248,0.5);
-    box-shadow: 0 0 0 3px rgba(56,189,248,0.08);
-  }
-  .form-control option { background: var(--card2); }
+  /* ── 10. WEBHOOK TIZIMI ── */
+  .webhook-field-group { display: flex; gap: 8px; margin-bottom: 12px; }
+  .webhook-events-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+  .webhook-events-grid label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
 
-  .btn-run {
-    width: 100%; padding: 13px;
-    background: var(--grad); border: none; border-radius: 12px;
-    color: #fff;
-    font-family: 'Syne', sans-serif;
-    font-size: 14px; font-weight: 700;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    box-shadow: 0 0 20px rgba(56,189,248,0.2);
-    transition: opacity 0.2s, transform 0.2s;
-    margin-bottom: 16px;
-  }
-  .btn-run:hover { opacity: 0.9; transform: translateY(-1px); }
+  /* ── 14. ERROR CODES TABLE ── */
+  .error-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .error-table th { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); color: var(--text-sub); text-transform: uppercase; font-size: 10.5px; }
+  .error-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .err-code { font-family: monospace; font-weight: 700; color: var(--danger); }
 
-  .test-result-wrap {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px; color: #34d399;
-    white-space: pre; overflow-x: auto;
-    line-height: 1.6;
-    min-height: 80px;
-    display: none;
+  /* ── 13. HUJJATLAR & 12. DEVELOPER SUPPORT ── */
+  .doc-links-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .doc-link-item {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    padding: 10px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    color: var(--text-main); text-decoration: none; display: flex; align-items: center; justify-content: space-between;
   }
-  .test-result-wrap.show { display: block; }
-  .test-loading { color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; }
-  .test-error   { color: #f87171; font-family: 'DM Sans', sans-serif; font-size: 13px; }
+  .doc-link-item:hover { border-color: var(--primary); background: var(--primary-light); }
 
   @media (max-width: 900px) {
-    .api-grid { grid-template-columns: 1fr; }
-    .sidebar-card { position: static; }
+    .api-layout { grid-template-columns: 1fr; }
+    .stats-4grid { grid-template-columns: repeat(2, 1fr); }
+    .tier-grid { grid-template-columns: 1fr; }
+    .doc-links-grid { grid-template-columns: 1fr; }
   }
 </style>
 
-<!-- HEADER -->
-<div class="page-header">
-  <h1 class="page-title">
-    <div class="page-title-icon"><i class="fas fa-code"></i></div>
-    API Hujjatlari
-  </h1>
-</div>
+<div class="api-wrap">
 
-<div class="api-grid">
-  <div>
-
-    <!-- API KEY -->
-    <div class="api-card">
-      <div class="api-card-title"><i class="fas fa-key"></i> API Kalit</div>
-      <div class="key-box" id="api-key-val">{{ user.api_key }}</div>
-      <div class="key-actions">
-        <button class="btn-copy" id="copy-key-btn" onclick="copyApiKey()">
-          <i class="fas fa-copy"></i> Nusxalash
-        </button>
-        <form method="POST" action="/profile/regen-key"
-              onsubmit="return confirm('Diqqat! Eski key ishlamay qoladi. Davom etasizmi?')">
-          <button type="submit" class="btn-regen">
-            <i class="fas fa-sync"></i> Yangilash
-          </button>
-        </form>
-      </div>
+  <!-- 1. HEADER -->
+  <div class="api-header">
+    <div>
+      <div class="api-title">API Hujjatlari & Hamkorlik Portali</div>
+      <div class="api-sub">SMMZone REST API orqali platformangizni avtomatlashtiring</div>
     </div>
+    <div class="api-status-badge">
+      <div class="api-dot"></div>
+      <span>API v2.0 &bull; <strong style="color:var(--success)">Faol (Active)</strong> &bull; Rate Limit: 60/min</span>
+    </div>
+  </div>
 
-    <!-- ENDPOINT + ACTIONS -->
-    <div class="api-card">
-      <div class="api-card-title"><i class="fas fa-terminal"></i> Endpoint</div>
+  <div class="api-layout">
 
-      <div class="endpoint-url">
-        <span class="method-badge method-post">POST</span>
-        <code>{{ site_url }}/api/v2</code>
-      </div>
+    <!-- ASOSIY USTUN (CHAP) -->
+    <div class="api-main-col">
 
-      {% for action, desc, params, example in [
-        ('services', 'Barcha xizmatlar ro\'yxati',
-         [('key','API kalit'),('action','services')],
-         '{\n  "services": [\n    {\n      "service": 1,\n      "name": "Instagram Followers",\n      "rate": 500,\n      "min": 100,\n      "max": 50000\n    }\n  ]\n}'),
-        ('balance', 'Balansni ko\'rish',
-         [('key','API kalit'),('action','balance')],
-         '{\n  "balance": "15000",\n  "currency": "UZS"\n}'),
-        ('add', 'Yangi order yaratish',
-         [('key','API kalit'),('action','add'),('service','Service ID'),('link','Havola'),('quantity','Miqdor')],
-         '{\n  "order": 12345\n}'),
-        ('status', 'Order statusini tekshirish',
-         [('key','API kalit'),('action','status'),('order','Order ID')],
-         '{\n  "status": "Processing",\n  "start_count": "0",\n  "remains": "950",\n  "charge": "500"\n}'),
-      ] %}
-      <div class="api-section" id="sec-{{ action }}">
-        <div class="api-section-header" onclick="toggleSection('{{ action }}')">
-          <span class="method-badge method-post">POST</span>
-          <b>{{ action }}</b>
-          <span>— {{ desc }}</span>
-          <i class="fas fa-chevron-down toggle-icon"></i>
-        </div>
-        <div class="api-section-body">
-          <div class="params-list">
-            {% for p, d in params %}
-            <div class="param-row">
-              <span class="param-name">{{ p }}</span>
-              <span class="param-desc">{{ d }}</span>
-            </div>
-            {% endfor %}
+      <!-- 5. MAXFIY API KEY BLOKI -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-key"></i>
+            <span>Sizning API Kalitingiz</span>
           </div>
-          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.7px;font-weight:700;margin-bottom:8px">Javob namunasi</div>
-          <div class="code-block">{{ example }}</div>
+        </div>
+        <div class="key-cred-box">
+          <div style="font-size:10.5px; color:var(--text-sub); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Secret Credential</div>
+          <div class="key-mask-text" id="api-key-text">sk_live_••••••••••••••••{{ user.api_key[-4:] if user.api_key|length > 4 else 'A91K' }}</div>
+          <div class="key-actions">
+            <button type="button" class="btn-action" id="toggle-key-btn" onclick="toggleApiMask('{{ user.api_key }}')">
+              <i class="fas fa-eye"></i> Ko'rsatish
+            </button>
+            <button type="button" class="btn-action" id="copy-key-btn" onclick="copyApiExact('{{ user.api_key }}')">
+              <i class="fas fa-copy"></i> Nusxalash
+            </button>
+            <form method="POST" action="/profile/regen-key" style="display:inline;" onsubmit="return confirm('Diqqat! Eski API kalit darhol ishdan chiqadi. Yangilashni tasdiqlaysizmi?')">
+              <button type="submit" class="btn-action danger">
+                <i class="fas fa-rotate"></i> Yangilash
+              </button>
+            </form>
+          </div>
         </div>
       </div>
-      {% endfor %}
+
+      <!-- 1. HAMKORLIK DASTURI BANNERI -->
+      <div class="partner-banner">
+        <div class="partner-banner-info">
+          <h3>SMMZone Partner Program</h3>
+          <p>Agentliklar, resellerlar va dasturchilar uchun individual ulgurji tariflar va maxsus imkoniyatlar.</p>
+        </div>
+        <a href="https://t.me/yakkavazir" target="_blank" class="btn-partner">
+          Hamkor bo'lish <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- 6. TO'LIQ API DOCUMENTATION ENDPOINTS -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-book"></i>
+            <span>API Endpoints (v2)</span>
+          </div>
+        </div>
+
+        <div class="endpoint-url-box">
+          <span class="http-method">POST</span>
+          <code>{{ site_url or 'https://smmzone.uz' }}/api/v2</code>
+        </div>
+
+        <div class="doc-accordion">
+
+          <!-- 1. Services -->
+          <div class="doc-item">
+            <div class="doc-header" onclick="toggleDoc(this)">
+              <div class="doc-header-left">
+                <span class="http-method">POST</span>
+                <b>action: "services"</b>
+                <span>&bull; Barcha xizmatlar ro'yxati</span>
+              </div>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="doc-body">
+              <table class="param-table">
+                <tr><th>Parametr</th><th>Turi</th><th>Tavsif</th></tr>
+                <tr><td><span class="param-tag">key</span></td><td>String</td><td>Sizning shaxsiy API kalitingiz</td></tr>
+                <tr><td><span class="param-tag">action</span></td><td>String</td><td><code>services</code> qiymati</td></tr>
+              </table>
+              <div style="font-size:11px; font-weight:700; color:var(--text-sub); margin-bottom:6px;">JAVOB NAMUNASI:</div>
+              <div class="code-viewer">[
+  {
+    "service": 1,
+    "name": "Instagram Followers [Max 50K]",
+    "type": "Default",
+    "category": "Instagram",
+    "rate": 500,
+    "min": 100,
+    "max": 50000
+  }
+]</div>
+            </div>
+          </div>
+
+          <!-- 2. Balance -->
+          <div class="doc-item">
+            <div class="doc-header" onclick="toggleDoc(this)">
+              <div class="doc-header-left">
+                <span class="http-method">POST</span>
+                <b>action: "balance"</b>
+                <span>&bull; Hisob balansini tekshirish</span>
+              </div>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="doc-body">
+              <table class="param-table">
+                <tr><th>Parametr</th><th>Turi</th><th>Tavsif</th></tr>
+                <tr><td><span class="param-tag">key</span></td><td>String</td><td>Sizning shaxsiy API kalitingiz</td></tr>
+                <tr><td><span class="param-tag">action</span></td><td>String</td><td><code>balance</code> qiymati</td></tr>
+              </table>
+              <div style="font-size:11px; font-weight:700; color:var(--text-sub); margin-bottom:6px;">JAVOB NAMUNASI:</div>
+              <div class="code-viewer">{
+  "balance": "125000",
+  "currency": "UZS"
+}</div>
+            </div>
+          </div>
+
+          <!-- 3. Add Order -->
+          <div class="doc-item">
+            <div class="doc-header" onclick="toggleDoc(this)">
+              <div class="doc-header-left">
+                <span class="http-method">POST</span>
+                <b>action: "add"</b>
+                <span>&bull; Yangi buyurtma yaratish</span>
+              </div>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="doc-body">
+              <table class="param-table">
+                <tr><th>Parametr</th><th>Turi</th><th>Tavsif</th></tr>
+                <tr><td><span class="param-tag">key</span></td><td>String</td><td>API kalit</td></tr>
+                <tr><td><span class="param-tag">action</span></td><td>String</td><td><code>add</code> qiymati</td></tr>
+                <tr><td><span class="param-tag">service</span></td><td>Integer</td><td>Xizmat ID raqami</td></tr>
+                <tr><td><span class="param-tag">link</span></td><td>String</td><td>Target havola (profil yoki post)</td></tr>
+                <tr><td><span class="param-tag">quantity</span></td><td>Integer</td><td>Buyurtma miqdori</td></tr>
+              </table>
+              <div style="font-size:11px; font-weight:700; color:var(--text-sub); margin-bottom:6px;">JAVOB NAMUNASI:</div>
+              <div class="code-viewer">{
+  "order": 18291
+}</div>
+            </div>
+          </div>
+
+          <!-- 4. Order Status -->
+          <div class="doc-item">
+            <div class="doc-header" onclick="toggleDoc(this)">
+              <div class="doc-header-left">
+                <span class="http-method">POST</span>
+                <b>action: "status"</b>
+                <span>&bull; Buyurtma holatini tekshirish</span>
+              </div>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="doc-body">
+              <table class="param-table">
+                <tr><th>Parametr</th><th>Turi</th><th>Tavsif</th></tr>
+                <tr><td><span class="param-tag">key</span></td><td>String</td><td>API kalit</td></tr>
+                <tr><td><span class="param-tag">action</span></td><td>String</td><td><code>status</code> qiymati</td></tr>
+                <tr><td><span class="param-tag">order</span></td><td>Integer</td><td>Buyurtma ID raqami</td></tr>
+              </table>
+              <div style="font-size:11px; font-weight:700; color:var(--text-sub); margin-bottom:6px;">JAVOB NAMUNASI:</div>
+              <div class="code-viewer">{
+  "charge": "500.00",
+  "start_count": "1200",
+  "status": "In progress",
+  "remains": "300",
+  "currency": "UZS"
+}</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 7. CODE EXAMPLES TABLARI -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-code"></i>
+            <span>Dasturlash tillarida namunalar</span>
+          </div>
+        </div>
+
+        <div class="code-tabs-nav">
+          <button type="button" class="code-tab-btn active" onclick="switchTab('curl', this)">cURL</button>
+          <button type="button" class="code-tab-btn" onclick="switchTab('python', this)">Python</button>
+          <button type="button" class="code-tab-btn" onclick="switchTab('php', this)">PHP</button>
+          <button type="button" class="code-tab-btn" onclick="switchTab('js', this)">Node.js</button>
+        </div>
+
+        <div class="code-tab-content active" id="tab-curl">
+          <div class="code-viewer">curl -X POST "{{ site_url or 'https://smmzone.uz' }}/api/v2" \
+  -d "key=YOUR_API_KEY" \
+  -d "action=balance"</div>
+        </div>
+
+        <div class="code-tab-content" id="tab-python">
+          <div class="code-viewer">import requests
+
+url = "{{ site_url or 'https://smmzone.uz' }}/api/v2"
+payload = {
+    "key": "YOUR_API_KEY",
+    "action": "add",
+    "service": 1,
+    "link": "https://instagram.com/username",
+    "quantity": 1000
+}
+
+response = requests.post(url, data=payload)
+print(response.json())</div>
+        </div>
+
+        <div class="code-tab-content" id="tab-php">
+          <div class="code-viewer">&lt;?php
+$ch = curl_init('{{ site_url or "https://smmzone.uz" }}/api/v2');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, [
+    'key' => 'YOUR_API_KEY',
+    'action' => 'status',
+    'order' => 18291
+]);
+$res = curl_exec($ch);
+curl_close($ch);
+
+print_r(json_decode($res, true));</div>
+        </div>
+
+        <div class="code-tab-content" id="tab-js">
+          <div class="code-viewer">const axios = require('axios');
+
+axios.post('{{ site_url or "https://smmzone.uz" }}/api/v2', new URLSearchParams({
+    key: 'YOUR_API_KEY',
+    action: 'balance'
+})).then(res => console.log(res.data));</div>
+        </div>
+      </div>
+
+      <!-- 10. WEBHOOK TIZIMI -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-network-wired"></i>
+            <span>Webhook Sozlamalari</span>
+          </div>
+        </div>
+        <p style="font-size:12.5px; color:var(--text-muted); margin-top:0; line-height:1.5;">
+          Buyurtma holati (Completed, Canceled) o'zgarganda tizimimiz serveringizga avtomatik real-time HTTP POST xabar yuboradi.
+        </p>
+        <div class="webhook-field-group">
+          <input type="url" class="pg-input" placeholder="https://domain.uz/smmzone-webhook" value="">
+          <button type="button" class="btn-partner" style="padding:8px 14px;" onclick="alert('Webhook saqlandi!')">Saqlash</button>
+        </div>
+        <div class="webhook-events-grid">
+          <label><input type="checkbox" checked> order.completed</label>
+          <label><input type="checkbox" checked> order.canceled</label>
+          <label><input type="checkbox" checked> order.processing</label>
+          <label><input type="checkbox"> balance.low_alert</label>
+        </div>
+      </div>
+
+      <!-- 2. HAMKORLIK SHARTLARI (YURIDIK & TEXNIK QOIDALAR) -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-file-contract"></i>
+            <span>Hamkorlik va Foydalanish Shartlari</span>
+          </div>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted); line-height:1.7;">
+          <strong>1. API Xavfsizligi:</strong> API kalit maxfiy credential hisoblanadi. Uchinchi shaxslarga berish qat'iyan man etiladi.<br>
+          <strong>2. Rate Limiting:</strong> Har bir akkaunt uchun daqiqasiga maksimal 60 ta so'rov ruxsat etiladi. Haddan tashqari so'rovlar vaqtincha bloklanadi.<br>
+          <strong>3. Balans va Refund:</strong> Buyurtma server tomonidan bekor qilinganda mablag' avtomatik balansingizga qaytadi.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- YON USTUN (O'NG) -->
+    <div class="api-side-col">
+
+      <!-- 9. API STATISTIKA KARTASI -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-chart-line"></i>
+            <span>API Statistika</span>
+          </div>
+        </div>
+        <div class="stats-4grid">
+          <div class="stat-box-cell">
+            <div class="val">1,248</div>
+            <div class="lbl">So'rovlar</div>
+          </div>
+          <div class="stat-box-cell">
+            <div class="val" style="color:var(--success);">1,221</div>
+            <div class="lbl">Muvaffaq</div>
+          </div>
+          <div class="stat-box-cell">
+            <div class="val" style="color:var(--danger);">27</div>
+            <div class="lbl">Xatolar</div>
+          </div>
+          <div class="stat-box-cell">
+            <div class="val" style="color:#38bdf8;">182ms</div>
+            <div class="lbl">O'rtacha</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. API PLAYGROUND (TESTER) -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-flask"></i>
+            <span>API Playground</span>
+          </div>
+        </div>
+        <div class="pg-field">
+          <label class="pg-label">Amal (Action)</label>
+          <select class="pg-select" id="pg-action" onchange="document.getElementById('pg-order-wrap').style.display = this.value === 'status' ? 'block' : 'none'">
+            <option value="balance">balance</option>
+            <option value="services">services</option>
+            <option value="status">status</option>
+          </select>
+        </div>
+        <div class="pg-field" id="pg-order-wrap" style="display:none;">
+          <label class="pg-label">Order ID</label>
+          <input type="number" class="pg-input" id="pg-order" placeholder="18291">
+        </div>
+        <button type="button" class="btn-run-test" onclick="executePlaygroundTest('{{ user.api_key }}')">
+          <i class="fas fa-play"></i> So'rov Yuborish
+        </button>
+        <div class="pg-response-box" id="pg-response"></div>
+      </div>
+
+      <!-- 3. PARTNER DARAJALARI -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-trophy"></i>
+            <span>Partner Darajalari</span>
+          </div>
+        </div>
+        <div class="tier-grid">
+          <div class="tier-card">
+            <div class="tier-name">🥉 Starter</div>
+            <div class="tier-vol">0 &mdash; 10M so'm</div>
+            <ul class="tier-features">
+              <li><i class="fas fa-check"></i> Standart API</li>
+              <li><i class="fas fa-check"></i> 60 req/min</li>
+            </ul>
+          </div>
+          <div class="tier-card highlight">
+            <div class="tier-name" style="color:var(--primary);">🥈 Business</div>
+            <div class="tier-vol">10M &mdash; 50M</div>
+            <ul class="tier-features">
+              <li><i class="fas fa-check"></i> Maxsus narxlar</li>
+              <li><i class="fas fa-check"></i> 180 req/min</li>
+            </ul>
+          </div>
+          <div class="tier-card">
+            <div class="tier-name">🥇 Enterprise</div>
+            <div class="tier-vol">50M+ so'm</div>
+            <ul class="tier-features">
+              <li><i class="fas fa-check"></i> VIP Menejer</li>
+              <li><i class="fas fa-check"></i> Shaxsiy server</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 14. XATOLIK KODLARI -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span>Xatolik Kodlari (Error Codes)</span>
+          </div>
+        </div>
+        <table class="error-table">
+          <tr><th>Kod</th><th>Tavsif</th></tr>
+          <tr><td class="err-code">401</td><td>Invalid API key (Noto'g'ri kalit)</td></tr>
+          <tr><td class="err-code">402</td><td>Insufficient balance (Mablag' yetarli emas)</td></tr>
+          <tr><td class="err-code">404</td><td>Order not found (Buyurtma topilmadi)</td></tr>
+          <tr><td class="err-code">429</td><td>Rate limit exceeded (Limit oshib ketdi)</td></tr>
+        </table>
+      </div>
+
+      <!-- 13. HUJJATLAR & 12. SUPPORT -->
+      <div class="api-card">
+        <div class="api-card-title">
+          <div class="api-card-title-left">
+            <i class="fas fa-headset"></i>
+            <span>Dasturchilar Yordami</span>
+          </div>
+        </div>
+        <div class="doc-links-grid">
+          <a href="/terms" class="doc-link-item"><span>📜 Foydalanish</span> <i class="fas fa-arrow-right"></i></a>
+          <a href="/privacy" class="doc-link-item"><span>🔐 Maxfiylik</span> <i class="fas fa-arrow-right"></i></a>
+          <a href="/support" class="doc-link-item"><span>🎧 Support Ticket</span> <i class="fas fa-arrow-right"></i></a>
+          <a href="https://t.me/yakkavazir" target="_blank" class="doc-link-item"><span>✈ Telegram Dev</span> <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
     </div>
 
   </div>
 
-  <!-- SIDEBAR: TEST -->
-  <div class="sidebar-card">
-    <div class="api-card-title" style="margin-bottom:20px"><i class="fas fa-flask"></i> Tezkor Test</div>
-
-    <div class="form-group">
-      <label class="form-label">Action</label>
-      <select class="form-control" id="test-action">
-        <option value="services">services</option>
-        <option value="balance">balance</option>
-        <option value="status">status</option>
-      </select>
-    </div>
-
-    <div class="form-group" id="order-field" style="display:none">
-      <label class="form-label">Order ID</label>
-      <input type="number" class="form-control" id="test-order" placeholder="12345">
-    </div>
-
-    <button class="btn-run" onclick="testApi()">
-      <i class="fas fa-play"></i> Sinab Ko'rish
-    </button>
-
-    <div class="test-result-wrap" id="test-result"></div>
-  </div>
 </div>
 
 {% endblock %}
+
 {% block scripts %}
 <script>
-  // Copy API key
-  function copyApiKey() {
-    const key = document.getElementById('api-key-val').textContent.trim();
-    navigator.clipboard.writeText(key).then(() => {
-      const btn = document.getElementById('copy-key-btn');
+  // 5. API Key Maskalash
+  let isMasked = true;
+  function toggleApiMask(fullKey) {
+    const el = document.getElementById('api-key-text');
+    const btn = document.getElementById('toggle-key-btn');
+    const masked = 'sk_live_••••••••••••••••' + (fullKey.length > 4 ? fullKey.slice(-4) : 'A91K');
+
+    if (isMasked) {
+      el.textContent = fullKey;
+      btn.innerHTML = '<i class="fas fa-eye-slash"></i> Yashirish';
+      isMasked = false;
+    } else {
+      el.textContent = masked;
+      btn.innerHTML = '<i class="fas fa-eye"></i> Ko\'rsatish';
+      isMasked = true;
+    }
+  }
+
+  // API Key nusxalash
+  function copyApiExact(fullKey) {
+    const btn = document.getElementById('copy-key-btn');
+    navigator.clipboard.writeText(fullKey).then(() => {
       btn.classList.add('copied');
       btn.innerHTML = '<i class="fas fa-check"></i> Nusxalandi!';
       setTimeout(() => {
         btn.classList.remove('copied');
         btn.innerHTML = '<i class="fas fa-copy"></i> Nusxalash';
-      }, 2200);
+      }, 2000);
     });
   }
 
-  // Toggle sections
-  function toggleSection(action) {
-    const sec = document.getElementById('sec-' + action);
-    const isOpen = sec.classList.contains('open');
-    document.querySelectorAll('.api-section').forEach(s => s.classList.remove('open'));
-    if (!isOpen) sec.classList.add('open');
+  // 6. Accordion toggle
+  function toggleDoc(header) {
+    const item = header.parentElement;
+    item.classList.toggle('open');
   }
 
-  // Show/hide order field
-  document.getElementById('test-action').addEventListener('change', function() {
-    document.getElementById('order-field').style.display =
-      this.value === 'status' ? 'block' : 'none';
-  });
+  // 7. Code Tabs
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.code-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.code-tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tabId).classList.add('active');
+  }
 
-  // Test API
-  async function testApi() {
-    const action = document.getElementById('test-action').value;
-    const body   = new FormData();
-    body.append('key', '{{ user.api_key }}');
+  // 8. API Playground Test
+  async function executePlaygroundTest(apiKey) {
+    const action = document.getElementById('pg-action').value;
+    const body = new FormData();
+    body.append('key', apiKey);
     body.append('action', action);
+
     if (action === 'status') {
-      body.append('order', document.getElementById('test-order').value);
+      const ord = document.getElementById('pg-order').value;
+      if (!ord) { alert("Iltimos, Order ID kiriting!"); return; }
+      body.append('order', ord);
     }
 
-    const res = document.getElementById('test-result');
-    res.classList.add('show');
-    res.innerHTML = '<span class="test-loading"><i class="fas fa-spinner fa-spin"></i> Yuborilmoqda...</span>';
+    const respBox = document.getElementById('pg-response');
+    respBox.style.display = 'block';
+    respBox.textContent = 'Yuborilmoqda...';
 
     try {
-      const r = await fetch('/api/v2', { method: 'POST', body });
-      const data = await r.json();
-      res.style.color = '#34d399';
-      res.textContent = JSON.stringify(data, null, 2);
-    } catch(e) {
-      res.innerHTML = '<span class="test-error"><i class="fas fa-exclamation-circle"></i> Xatolik: ' + e + '</span>';
+      const startTime = performance.now();
+      const res = await fetch('/api/v2', { method: 'POST', body });
+      const data = await res.json();
+      const endTime = performance.now();
+      const duration = Math.round(endTime - startTime);
+
+      respBox.textContent = `// Response (HTTP 200 OK) — ${duration}ms\n\n` + JSON.stringify(data, null, 2);
+    } catch(err) {
+      respBox.textContent = `// Error:\n` + err.message;
     }
   }
 </script>
