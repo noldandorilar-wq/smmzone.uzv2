@@ -1,25 +1,15 @@
-# Database
-
-
-# Logs
-*.log
-smm.log
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
 .venv/
-
-# macOS
-.DS_Store
-
-# IDE
-.idea/
-
-# Secrets (agar bo'lsa)
+venv/
+env/
+__pycache__/
+*.py[cod]
 .env
-config_local.py
-
-# Bo'sh fayl
-requirements
+.env.*
+database.db
+*.sqlite3
+*.db
+.DS_Store
+static/music/*.mp3
+instance/
+uploads/
+media/
