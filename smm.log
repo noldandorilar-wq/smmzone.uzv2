@@ -1048,3 +1048,15 @@
 2026-08-25 08:37:13,138 [INFO] 127.0.0.1 - - [25/Aug/2026 08:37:13] "GET / HTTP/1.1" 200 -
 2026-08-25 08:37:13,533 [INFO] 127.0.0.1 - - [25/Aug/2026 08:37:13] "[33mGET /static/music/deep.mp3 HTTP/1.1[0m" 404 -
 2026-08-25 08:37:13,682 [INFO] 127.0.0.1 - - [25/Aug/2026 08:37:13] "[33mGET /static/music/deep.mp3 HTTP/1.1[0m" 404 -
+2026-08-26 10:48:03,294 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.20.10.2:8000
+2026-08-26 10:48:03,294 [INFO] [33mPress CTRL+C to quit[0m
+2026-08-26 10:48:04,485 [INFO] 127.0.0.1 - - [26/Aug/2026 10:48:04] "GET / HTTP/1.1" 200 -
+2026-08-26 10:49:56,472 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.20.10.2:8000
+2026-08-26 10:49:56,473 [INFO] [33mPress CTRL+C to quit[0m
+2026-08-26 10:49:57,581 [INFO] 127.0.0.1 - - [26/Aug/2026 10:49:57] "GET / HTTP/1.1" 200 -
